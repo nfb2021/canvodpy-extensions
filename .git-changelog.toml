@@ -1,0 +1,33 @@
+# Git Changelog Configuration for canvodpy-extensions Monorepo
+# https://pawamoy.github.io/git-changelog/
+
+[changelog]
+# Use Angular/Conventional Commits convention
+convention = "angular"
+
+# Sections to include in changelog
+sections = [
+    { name = "Features", types = ["feat"], order = 1 },
+    { name = "Bug Fixes", types = ["fix"], order = 2 },
+    { name = "Performance Improvements", types = ["perf"], order = 3 },
+    { name = "Documentation", types = ["docs"], order = 4 },
+    { name = "Code Refactoring", types = ["refactor"], order = 5 },
+    { name = "Tests", types = ["test"], order = 6 },
+    { name = "Build System", types = ["build", "chore", "ci"], order = 7 },
+]
+
+# Template for changelog
+template = "keepachangelog"
+
+# Output file
+output = "CHANGELOG.md"
+
+# Commit link style (GitHub)
+provider = "github"
+repository = "nfb2021/canvodpy-extensions"
+
+# Parse trailers (e.g., "Closes #123")
+parse_trailers = true
+
+# Include commits without type (e.g., merge commits)
+include_no_type = false

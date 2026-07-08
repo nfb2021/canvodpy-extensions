@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.coverage
+*.lcov
+htmlcov/
+.ruff_cache/
+.ty_cache/
+node_modules/
+site/
+*.png
+*.svg

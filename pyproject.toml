@@ -1,0 +1,80 @@
+# ============================================================================
+# Workspace Configuration — canvodpy-extensions
+# ============================================================================
+# Optional extension packages for canvodpy. Not part of the core monorepo.
+# Install individually: uv add canvod-filemap
+#
+# Packages:
+#   canvod-filemap  — recipe-based filename mapping for non-canonical
+#                              GNSS filenames; slot-in for canvodpy >= 0.3.0
+#   canvod-airflow           — Airflow DAG definitions for canvodpy pipelines
+#                              (planned)
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+# ============================================================================
+# Development Dependencies (Workspace-wide)
+# ============================================================================
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.0",
+    "mkdocstrings-python>=2.0.4",
+    "pre-commit>=4.0",
+    "pytest>=9.0",
+    "pytest-cov>=7.0",
+    "ruff>=0.15",
+    "ty>=0.0.44",
+    "zensical>=0.0.44",
+]
+
+# ============================================================================
+# Ruff Configuration
+# ============================================================================
+
+[tool.ruff]
+line-length = 99
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# ============================================================================
+# Pytest Configuration
+# ============================================================================
+
+[tool.pytest.ini_options]
+testpaths = [
+    "packages/canvod-filemap/tests",
+]
+markers = [
+    "integration: marks tests as integration tests (may require config files or external resources)",
+]
+
+[tool.coverage.run]
+relative_files = true
+source = [
+    "packages/canvod-filemap/src",
+]
+
+# ============================================================================
+# Commitizen Configuration (Conventional Commits)
+# ============================================================================
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_files = [
+    "packages/canvod-filemap/pyproject.toml:version",
+]
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_incremental = true
+annotated_tag = true

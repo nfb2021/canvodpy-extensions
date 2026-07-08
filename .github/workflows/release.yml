@@ -1,0 +1,72 @@
+# GitHub Release Workflow
+# Automatically creates a draft release when a version tag is pushed
+# https://docs.github.com/en/actions/using-workflows
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"           # Production: v0.1.0, v1.0.0
+      - "v*.*.*-beta.*"    # Beta: v0.1.0-beta.1
+      - "v*.*.*-alpha.*"   # Alpha: v0.1.0-alpha.1
+      - "v*.*.*-rc.*"      # Release candidate: v0.1.0-rc.1
+
+permissions: read-all
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to create releases
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0  # Need full history for changelog
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+
+      - name: Set up Python
+        run: uv python install 3.14
+
+      - name: Generate release notes from git commits
+        run: |
+          uvx git-changelog --release-notes > release-notes.md
+          echo "Generated release notes:"
+          cat release-notes.md
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Create GitHub release (draft)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Determine if this is a pre-release
+          if echo "${{ github.ref_name }}" | grep -qE '(alpha|beta|rc)'; then
+            PRERELEASE="--prerelease"
+          else
+            PRERELEASE=""
+          fi
+
+          gh release create ${{ github.ref_name }} \
+            --repo ${{ github.repository }} \
+            --title "canvodpy-extensions ${{ github.ref_name }}" \
+            --notes-file release-notes.md \
+            --draft \
+            $PRERELEASE \
+            --verify-tag
+
+      - name: Summary
+        run: |
+          echo "Draft release created: ${{ github.ref_name }}"
+          echo "Review at: https://github.com/${{ github.repository }}/releases"
+          echo "Publish the release manually when ready"
