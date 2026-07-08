@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from canvod.filemap import CanVODFilename, FilenameMapper
+from canvod.filemap import CanVODFilename, FilenameMapper, FileType, ReceiverType
 from canvod.filemap.mapping import VirtualFile
 
 
@@ -18,7 +18,7 @@ def _vf(
     """Create a VirtualFile with the given parameters."""
     cn = CanVODFilename(
         site="ROS",
-        receiver_type="R",
+        receiver_type=ReceiverType.REFERENCE,
         receiver_number=1,
         agency="TUW",
         year=year,
@@ -28,7 +28,7 @@ def _vf(
         period=period,
         sampling="05S",
         content="AA",
-        file_type="rnx",
+        file_type=FileType.RNX,
     )
     return VirtualFile(
         physical_path=Path(f"/data/{cn.name}"),

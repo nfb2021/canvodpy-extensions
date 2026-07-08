@@ -249,9 +249,7 @@ class FilenameCatalog:
         results = []
         for phys_str, conv_name in rows:
             cn = CanVODFilename.from_filename(conv_name)
-            results.append(
-                VirtualFile(physical_path=Path(phys_str), conventional_name=cn)
-            )
+            results.append(VirtualFile(physical_path=Path(phys_str), conventional_name=cn))
         return results
 
     def verify_integrity(self) -> list[str]:
@@ -283,11 +281,9 @@ class FilenameCatalog:
         -------
         polars.DataFrame
         """
-        import polars as pl
+        import polars as pl  # ty: ignore[unresolved-import]
 
-        arrow_table = self._conn.execute(
-            "SELECT * FROM file_mapping"
-        ).fetch_arrow_table()
+        arrow_table = self._conn.execute("SELECT * FROM file_mapping").fetch_arrow_table()
         return pl.from_arrow(arrow_table)
 
     def close(self) -> None:

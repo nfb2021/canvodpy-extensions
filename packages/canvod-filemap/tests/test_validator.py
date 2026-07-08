@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from canvod.filemap import (
     DataDirectoryValidator,
+    DirectoryLayout,
     ReceiverNamingConfig,
     SiteNamingConfig,
 )
@@ -25,7 +25,7 @@ def receiver_naming() -> ReceiverNamingConfig:
     return ReceiverNamingConfig(
         receiver_number=1,
         source_pattern="auto",
-        directory_layout="flat",
+        directory_layout=DirectoryLayout.FLAT,
     )
 
 
@@ -55,9 +55,7 @@ class TestValidationPasses:
         assert report.is_valid
         assert len(report.matched) == 2
 
-    def test_valid_rinex3_files_tmpdir(
-        self, tmp_path, validator, site_naming, receiver_naming
-    ):
+    def test_valid_rinex3_files_tmpdir(self, tmp_path, validator, site_naming, receiver_naming):
         _create_file(tmp_path, "ROSR01TUW_R_20250010000_01D_05S_AA.rnx")
         _create_file(tmp_path, "ROSR01TUW_R_20250020000_01D_05S_AA.rnx")
 
@@ -79,7 +77,7 @@ class TestValidationPasses:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="flat",
+            directory_layout=DirectoryLayout.FLAT,
         )
 
         report = validator.validate_receiver(
@@ -99,7 +97,7 @@ class TestValidationPasses:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="flat",
+            directory_layout=DirectoryLayout.FLAT,
         )
 
         report = validator.validate_receiver(
@@ -111,9 +109,7 @@ class TestValidationPasses:
         assert report.is_valid
         assert len(report.matched) == 2
 
-    def test_empty_directory_is_valid(
-        self, tmp_path, validator, site_naming, receiver_naming
-    ):
+    def test_empty_directory_is_valid(self, tmp_path, validator, site_naming, receiver_naming):
         report = validator.validate_receiver(
             site_naming=site_naming,
             receiver_naming=receiver_naming,
@@ -140,7 +136,7 @@ class TestDirectoryLayouts:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="yyddd_subdirs",
+            directory_layout=DirectoryLayout.YYDDD_SUBDIRS,
         )
 
         report = validator.validate_receiver(
@@ -165,7 +161,7 @@ class TestDirectoryLayouts:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="yyyyddd_subdirs",
+            directory_layout=DirectoryLayout.YYYYDDD_SUBDIRS,
         )
 
         report = validator.validate_receiver(
@@ -177,9 +173,7 @@ class TestDirectoryLayouts:
         assert report.is_valid
         assert len(report.matched) == 2
 
-    def test_yyddd_subdirs_ignores_files_in_wrong_subdir(
-        self, tmp_path, validator, site_naming
-    ):
+    def test_yyddd_subdirs_ignores_files_in_wrong_subdir(self, tmp_path, validator, site_naming):
         """Files in non-matching subdirectory names are not discovered."""
         # Valid subdir
         subdir = tmp_path / "25001"
@@ -194,7 +188,7 @@ class TestDirectoryLayouts:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="yyddd_subdirs",
+            directory_layout=DirectoryLayout.YYDDD_SUBDIRS,
         )
 
         report = validator.validate_receiver(
@@ -216,7 +210,7 @@ class TestDirectoryLayouts:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="yyddd_subdirs",
+            directory_layout=DirectoryLayout.YYDDD_SUBDIRS,
         )
 
         with pytest.raises(ValueError, match="overlap"):
@@ -227,16 +221,14 @@ class TestDirectoryLayouts:
                 receiver_base_dir=tmp_path,
             )
 
-    def test_flat_files_not_found_in_subdirs_mode(
-        self, tmp_path, validator, site_naming
-    ):
+    def test_flat_files_not_found_in_subdirs_mode(self, tmp_path, validator, site_naming):
         """Files at root level are not discovered when layout expects subdirs."""
         _create_file(tmp_path, "ROSR01TUW_R_20250010000_01D_05S_AA.rnx")
 
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="yyddd_subdirs",
+            directory_layout=DirectoryLayout.YYDDD_SUBDIRS,
         )
 
         report = validator.validate_receiver(
@@ -253,9 +245,7 @@ class TestDirectoryLayouts:
 class TestValidationRejectsUnmatched:
     """Validation rejects directories with unmappable files."""
 
-    def test_unmatched_files_raise(
-        self, tmp_path, validator, site_naming, receiver_naming
-    ):
+    def test_unmatched_files_raise(self, tmp_path, validator, site_naming, receiver_naming):
         """Files that match globs but fail regex → unmatched error."""
         _create_file(tmp_path, "garbage.25o")
 
@@ -267,9 +257,7 @@ class TestValidationRejectsUnmatched:
                 receiver_base_dir=tmp_path,
             )
 
-    def test_non_conventional_names_from_test_data(
-        self, validator, site_naming, receiver_naming
-    ):
+    def test_non_conventional_names_from_test_data(self, validator, site_naming, receiver_naming):
         """Files in test_data/invalid_names are not discoverable by globs.
 
         Since globs only match GNSS file extensions, truly random files
@@ -286,9 +274,7 @@ class TestValidationRejectsUnmatched:
         assert report.is_valid
         assert len(report.matched) == 0
 
-    def test_mixed_valid_and_invalid_names(
-        self, validator, site_naming, receiver_naming
-    ):
+    def test_mixed_valid_and_invalid_names(self, validator, site_naming, receiver_naming):
         """Directory with valid + non-GNSS files: non-GNSS files are invisible.
 
         Only files matching GNSS globs are attempted. The .xyz file is
@@ -323,9 +309,7 @@ class TestValidationRejectsUnmatched:
 class TestDuplicateDetection:
     """Validation detects duplicate canonical names as overlaps."""
 
-    def test_duplicate_canonical_name_is_overlap(
-        self, tmp_path, validator, site_naming
-    ):
+    def test_duplicate_canonical_name_is_overlap(self, tmp_path, validator, site_naming):
         """Two physical files mapping to same time range → overlap error."""
         # Same RINEX v2 name, different compression → same canonical time range
         _create_file(tmp_path, "ract001a.25o")
@@ -334,7 +318,7 @@ class TestDuplicateDetection:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="flat",
+            directory_layout=DirectoryLayout.FLAT,
         )
 
         with pytest.raises(ValueError, match="overlap"):
@@ -358,7 +342,7 @@ class TestOverlapDetection:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="flat",
+            directory_layout=DirectoryLayout.FLAT,
         )
 
         with pytest.raises(ValueError, match="overlap"):
@@ -379,7 +363,7 @@ class TestOverlapDetection:
         receiver_naming = ReceiverNamingConfig(
             receiver_number=1,
             source_pattern="auto",
-            directory_layout="flat",
+            directory_layout=DirectoryLayout.FLAT,
         )
 
         report = validator.validate_receiver(
