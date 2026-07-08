@@ -1,0 +1,140 @@
+{
+    "folders": [
+        {
+            "name": "🏠 Root",
+            "path": ".",
+        },
+        {
+            "name": "🏷️ canvod-filemap",
+            "path": "packages/canvod-filemap",
+        },
+        {
+            "name": "📖 docs",
+            "path": "docs",
+        },
+    ],
+    "settings": {
+        // --- Python Environment ---
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+
+        // --- Testing Configuration ---
+        "python.testing.pytestEnabled": true,
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestArgs": [
+            "-v",
+            "--tb=short",
+            "--strict-markers",
+            "--strict-config",
+        ],
+        "python.testing.autoTestDiscoverOnSaveEnabled": true,
+
+        // --- Ruff (native server) ---
+        "ruff.enable": true,
+        "ruff.lint.enable": true,
+        "ruff.format.enable": true,
+        "ruff.organizeImports": true,
+        "ruff.lint.fixAll": true,
+
+        // --- Editor Integration (on save cleanup) ---
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit",
+        },
+
+        // --- Type Checking ---
+        "python.analysis.typeCheckingMode": "strict",
+        "python.analysis.diagnosticSeverityOverrides": {
+            "reportMissingTypeStubs": "none",
+        },
+
+        // --- File Exclusions ---
+        "files.exclude": {
+            "**/__pycache__": true,
+            "**/*.pyc": true,
+            "**/.pytest_cache": true,
+            "**/*.egg-info": true,
+            "**/.ruff_cache": true,
+        },
+
+        // --- Theme / UI ---
+        "peacock.color": "#215732",
+        "workbench.colorCustomizations": {
+            "activityBar.activeBackground": "#2f7c47",
+            "activityBar.background": "#2f7c47",
+            "activityBar.foreground": "#e7e7e7",
+            "activityBar.inactiveForeground": "#e7e7e799",
+            "activityBarBadge.background": "#422c74",
+            "activityBarBadge.foreground": "#e7e7e7",
+            "commandCenter.border": "#e7e7e799",
+            "sash.hoverBorder": "#2f7c47",
+            "statusBar.background": "#215732",
+            "statusBar.foreground": "#e7e7e7",
+            "statusBarItem.hoverBackground": "#2f7c47",
+            "statusBarItem.remoteBackground": "#215732",
+            "statusBarItem.remoteForeground": "#e7e7e7",
+            "titleBar.activeBackground": "#215732",
+            "titleBar.activeForeground": "#e7e7e7",
+            "titleBar.inactiveBackground": "#21573299",
+            "titleBar.inactiveForeground": "#e7e7e799"
+        },
+        "liveServer.settings.multiRootWorkspaceName": "🏠 Root",
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.vscode-pylance",
+            "charliermarsh.ruff",
+            "ms-toolsai.jupyter",
+            "njpwerner.autodocstring",
+            "skellock.just",
+        ],
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Root: Lint & Format",
+                "type": "shell",
+                "command": "uv run ruff check --fix . && uv run ruff format .",
+                "group": "build",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Root: Type Check",
+                "type": "shell",
+                "command": "uv run ty check .",
+                "group": "build",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Root: Test All",
+                "type": "shell",
+                "command": "uv run pytest",
+                "group": "test",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Check (lint+format+type)",
+                "type": "shell",
+                "command": "just check",
+                "group": "build",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Test",
+                "type": "shell",
+                "command": "just test",
+                "group": "test",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Docs Preview",
+                "type": "shell",
+                "command": "just docs",
+                "group": "build",
+                "problemMatcher": [],
+            },
+        ],
+    },
+}

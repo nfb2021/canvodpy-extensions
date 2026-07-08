@@ -20,13 +20,14 @@ alias t := test
 # Setup
 # ============================================================================
 
-# install dependencies
+# install dependencies and ensure all git hooks are active
 sync:
     uv sync
+    uv run pre-commit install --hook-type pre-commit --hook-type commit-msg --hook-type pre-push
 
-# install pre-commit hooks
+# install pre-commit, commit-msg and pre-push git hooks
 hooks:
-    uvx pre-commit install
+    uv run pre-commit install --hook-type pre-commit --hook-type commit-msg --hook-type pre-push
 
 # ============================================================================
 # Code Quality

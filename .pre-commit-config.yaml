@@ -1,0 +1,50 @@
+repos:
+  - repo: local
+    hooks:
+      # Use uv-managed ruff so local hooks and CI always use the same version
+      - id: ruff-check
+        name: ruff lint
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        stages: [pre-commit]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        stages: [pre-commit]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.14
+    hooks:
+      # Update the uv lockfile
+      - id: uv-lock
+        stages: [pre-commit]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        stages: [pre-commit]
+      - id: check-added-large-files
+        stages: [pre-commit]
+      - id: detect-private-key
+        stages: [pre-commit]
+      - id: end-of-file-fixer
+        stages: [pre-commit]
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.16.2
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: ty-check
+        name: ty type check
+        entry: uv run ty check
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
