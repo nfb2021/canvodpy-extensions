@@ -8,7 +8,6 @@
 #   canvod-filemap  — recipe-based filename mapping for non-canonical
 #                              GNSS filenames; slot-in for canvodpy >= 0.3.0
 #   canvod-airflow           — Airflow DAG definitions for canvodpy pipelines
-#                              (planned)
 
 [tool.uv.workspace]
 members = ["packages/*"]
@@ -54,6 +53,7 @@ quote-style = "double"
 [tool.pytest.ini_options]
 testpaths = [
     "packages/canvod-filemap/tests",
+    "packages/canvod-airflow/tests",
 ]
 markers = [
     "integration: marks tests as integration tests (may require config files or external resources)",
@@ -63,6 +63,7 @@ markers = [
 relative_files = true
 source = [
     "packages/canvod-filemap/src",
+    "packages/canvod-airflow/src",
 ]
 
 # ============================================================================
@@ -73,6 +74,7 @@ source = [
 name = "cz_conventional_commits"
 version_files = [
     "packages/canvod-filemap/pyproject.toml:version",
+    "packages/canvod-airflow/pyproject.toml:version",
 ]
 tag_format = "v$version"
 update_changelog_on_bump = true
