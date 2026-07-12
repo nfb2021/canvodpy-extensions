@@ -16,10 +16,6 @@
 
 ::: canvod.filemap.validator
 
-## Catalog
-
-::: canvod.filemap.catalog
-
 ## Patterns
 
 ::: canvod.filemap.patterns

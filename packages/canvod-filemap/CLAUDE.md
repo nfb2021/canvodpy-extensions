@@ -9,7 +9,6 @@ Filename convention virtualization — single source of truth for GNSS file nami
 | `convention.py` | `CanVODFilename` — parses `{SIT}{T}{NN}{AGC}_R_{YYYY}{DOY}{HHMM}_{PERIOD}_{SAMPLING}_{CONTENT}.{TYPE}` |
 | `mapping.py` | `FilenameMapper` — physical filenames → canonical names |
 | `validator.py` | `DataDirectoryValidator` — pre-flight hard gate (unmatched/overlapping = blocked) |
-| `catalog.py` | `FilenameCatalog` — DuckDB-backed file discovery |
 | `patterns.py` | `BUILTIN_PATTERNS` — glob patterns for all GNSS file types |
 | `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` (Pydantic) |
 | `recipe.py` | `NamingRecipe` — config generation |
