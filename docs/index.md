@@ -46,6 +46,15 @@ and other slot-in components. Install only what you need.
 
     [:octicons-arrow-right-24: Overview](packages/airflow/overview.md)
 
+-   :fontawesome-solid-arrows-turn-to-dots: &nbsp; **canvod-adapters**
+
+    ---
+
+    Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools
+    (currently gnssvod) — convert VOD stores to and from gnssvod's data model.
+
+    [:octicons-arrow-right-24: Overview](packages/adapters/overview.md)
+
 </div>
 
 ---
