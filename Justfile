@@ -113,9 +113,9 @@ changelog VERSION="auto":
 # bump version across all packages (major, minor, patch, or explicit like 0.2.0)
 bump VERSION:
     @echo "{{GREEN}}{{BOLD}}Bumping all packages to {{VERSION}}{{NORMAL}}"
-    uv run cz bump --increment {{VERSION}} --yes
+    uv run cz bump {{VERSION}} --yes
     uv lock
-    @echo "{{GREEN}}Version bumped to $(uv version --short){{NORMAL}}"
+    @echo "{{GREEN}}Version bumped to {{VERSION}}{{NORMAL}}"
 
 # create a new release (runs tests, updates changelog, bumps version, tags)
 release VERSION: test
