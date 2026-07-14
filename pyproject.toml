@@ -97,6 +97,9 @@ version_files = [
     "packages/canvod-adapters/pyproject.toml:version",
 ]
 tag_format = "v$version"
-update_changelog_on_bump = true
-changelog_incremental = true
+# CHANGELOG.md is owned by `just changelog` (git-changelog), run as its own
+# step in `just release` before bump -- update_changelog_on_bump would have
+# cz try to regenerate it too, and changelog_incremental fails outright with
+# no prior tag to diff against (broke the very first release attempt).
+update_changelog_on_bump = false
 annotated_tag = true
