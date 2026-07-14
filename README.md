@@ -21,9 +21,17 @@ command).
 
 ## Installation
 
+Each package installs from this repo directly via a git-subdirectory source —
+there's no PyPI package to `uv add <name>` for. For `canvod-filemap`:
+
 ```bash
 uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-filemap"
 ```
+
+The other packages follow the same pattern — just swap `canvod-filemap` for
+`canvod-airflow` or `canvod-adapters` in both the package name and the
+`subdirectory=` path. See each package's own README for extras (e.g.
+`canvod-airflow[airflow]`, `canvod-adapters[store]`).
 
 ## Development Setup
 
