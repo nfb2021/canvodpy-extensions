@@ -3,11 +3,12 @@ message: "If you use this software, please cite it as below."
 type: software
 title: "canvodpy-extensions: Optional Slot-In Packages for the canVODpy GNSS-Transmissometry Ecosystem"
 abstract: >
-  canvodpy-extensions hosts optional packages that slot into canVODpy but don't
-  belong in its core monorepo: recipe-based filename mapping for non-canonical
-  GNSS receiver output (canvod-filemap), Airflow DAG definitions for canVODpy
-  pipelines (canvod-airflow), and bidirectional data adapters between canVODpy
-  and third-party GNSS-VOD tools (canvod-adapters). Install only what you need.
+  canvodpy-extensions is a supplement to canVODpy, hosting optional packages
+  that slot into it but don't belong in its core monorepo: recipe-based
+  filename mapping for non-canonical GNSS receiver output (canvod-filemap),
+  Airflow DAG definitions for canVODpy pipelines (canvod-airflow), and
+  bidirectional data adapters between canVODpy and third-party GNSS-VOD tools
+  (canvod-adapters). Install only what you need.
 authors:
   - family-names: Bader
     given-names: Nicolas François
@@ -29,6 +30,8 @@ keywords:
   - remote sensing
   - geodesy
 license: Apache-2.0
+version: 0.1.0
+doi: "10.5281/zenodo.21359005"
 references:
   - type: software
     title: "canVODpy: An Open Python Ecosystem for GNSS-Transmissometry Canopy VOD Retrievals"
