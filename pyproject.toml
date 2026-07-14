@@ -90,7 +90,7 @@ unresolved-import = "ignore"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.0.0"
+version = "0.1.0"
 version_files = [
     "packages/canvod-filemap/pyproject.toml:version",
     "packages/canvod-airflow/pyproject.toml:version",
