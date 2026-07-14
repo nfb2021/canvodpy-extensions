@@ -2,7 +2,7 @@
 # Workspace Configuration — canvodpy-extensions
 # ============================================================================
 # Optional extension packages for canvodpy. Not part of the core monorepo.
-# Install individually: uv add canvod-filemap
+# GitHub-only by design — install via git-subdirectory sources (see READMEs).
 #
 # Packages:
 #   canvod-filemap  — recipe-based filename mapping for non-canonical

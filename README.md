@@ -7,7 +7,9 @@
 # canvodpy-extensions
 
 Optional extension packages for [canVODpy](https://github.com/nfb2021/canvodpy).
-Not part of the core monorepo — install individually via `uv add`.
+Not part of the core monorepo, and GitHub-only by design — install individually
+via git-subdirectory sources, not PyPI (see each package's README for the exact
+command).
 
 ## Packages
 
@@ -20,7 +22,7 @@ Not part of the core monorepo — install individually via `uv add`.
 ## Installation
 
 ```bash
-uv add canvod-filemap
+uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-filemap"
 ```
 
 ## Development Setup

@@ -133,35 +133,4 @@ release VERSION: test
     @echo "Next steps:"
     @echo "  1. Review the commits and tag"
     @echo "  2. Push with: git push && git push --tags"
-    @echo "  3. GitHub Actions will build, publish to PyPI and draft the release"
-
-# ============================================================================
-# Build & Publish
-# ============================================================================
-
-# build every package under packages/* into dist/
-build-all:
-    @echo "Building all packages..."
-    @rm -rf dist/
-    @mkdir -p dist/
-    @for pkg in packages/*/; do \
-        name=$(basename "$pkg"); \
-        if [ -f "$pkg/pyproject.toml" ]; then \
-            echo "  - $name"; \
-            uv build --package "$name" --out-dir dist/; \
-        fi; \
-    done
-    @echo "{{GREEN}}Built packages:{{NORMAL}}"
-    @ls -lh dist/*.whl
-
-# publish all built packages to TestPyPI (requires credentials)
-publish-testpypi: build-all
-    @echo "Publishing to TestPyPI..."
-    uv tool run twine upload --repository testpypi dist/*
-    @echo "{{GREEN}}Published to https://test.pypi.org{{NORMAL}}"
-
-# publish all built packages to PyPI (requires credentials)
-publish-pypi: build-all
-    @echo "Publishing to PyPI..."
-    uv tool run twine upload dist/*
-    @echo "{{GREEN}}Published to https://pypi.org{{NORMAL}}"
+    @echo "  3. GitHub Actions will draft a GitHub Release (GitHub-only, no PyPI)"
