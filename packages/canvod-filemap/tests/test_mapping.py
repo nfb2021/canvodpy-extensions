@@ -1,7 +1,6 @@
 """Tests for canvod.filemap.mapping."""
 
 import pytest
-
 from canvod.filemap.config_models import (
     DirectoryLayout,
     ReceiverNamingConfig,
@@ -176,7 +175,6 @@ class TestFilenameMapperYYDDD:
         )
         vfs = mapper.discover_all()
         assert len(vfs) == 3
-        names = [vf.conventional_name.name for vf in vfs]
         # All should have ROS site, R receiver type, TUW agency
         for vf in vfs:
             assert vf.conventional_name.site == "ROS"

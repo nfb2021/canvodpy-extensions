@@ -58,6 +58,7 @@ testpaths = [
     "packages/canvod-airflow/tests",
     "packages/canvod-adapters/tests",
 ]
+addopts = "--cov --cov-report term-missing --cov-report lcov -rsx --verbose --color=yes"
 markers = [
     "integration: marks tests as integration tests (may require config files or external resources)",
 ]
@@ -69,6 +70,19 @@ source = [
     "packages/canvod-airflow/src",
     "packages/canvod-adapters/src",
 ]
+
+# ============================================================================
+# ty Configuration (Type Checking)
+# ============================================================================
+
+[tool.ty.environment]
+python-version = "3.14"
+
+[tool.ty.rules]
+# Ignore unresolved imports: canvod-airflow's `apache-airflow` dependency is
+# an optional extra (not installed in a plain dev sync), and workspace
+# packages may not all be installed in isolation.
+unresolved-import = "ignore"
 
 # ============================================================================
 # Commitizen Configuration (Conventional Commits)

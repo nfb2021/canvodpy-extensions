@@ -33,11 +33,34 @@ hooks:
 # Code Quality
 # ============================================================================
 
-# lint, format and type-check all packages
-check:
+# check uv.lock is up to date (for CI)
+check-lock:
+    uv lock --check
+
+# lint python code using ruff
+[private]
+check-lint:
     uv run ruff check . --fix
+
+# lint python code without auto-fixing (for CI)
+check-lint-only:
+    uv run ruff check .
+
+# format python code using ruff
+[private]
+check-format:
     uv run ruff format .
+
+# check formatting without modifying files (for CI)
+check-format-only:
+    uv run ruff format --check .
+
+# run the type checker ty (config lives in [tool.ty] in pyproject.toml)
+check-types:
     uv run ty check
+
+# lint, format and type-check all packages
+check: check-lint check-format check-types
 
 # run all tests
 test:
@@ -45,7 +68,7 @@ test:
 
 # run all tests with coverage report
 test-coverage:
-    uv run pytest --cov --cov-report=term-missing
+    uv run pytest
 
 # run tests for a single package, e.g. `just test-package canvod-filemap`
 test-package PKG:

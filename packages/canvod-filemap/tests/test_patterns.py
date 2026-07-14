@@ -1,7 +1,6 @@
 """Tests for canvod.filemap.patterns."""
 
 import pytest
-
 from canvod.filemap.patterns import (
     AUTO_PATTERN_ORDER,
     BUILTIN_PATTERNS,
@@ -110,19 +109,19 @@ class TestMatchPattern:
     def test_auto_matches_canvod(self):
         result = match_pattern("ROSR01TUW_R_20250010000_01D_05S_AA.rnx")
         assert result is not None
-        pat, m = result
+        pat, _m = result
         assert pat.name == "canvod"
 
     def test_auto_matches_rinex_v2(self):
         result = match_pattern("rosl001a.25o")
         assert result is not None
-        pat, m = result
+        pat, _m = result
         assert pat.name == "rinex_v2_short"
 
     def test_auto_matches_septentrio(self):
         result = match_pattern("rref001a00.25_")
         assert result is not None
-        pat, m = result
+        pat, _m = result
         assert pat.name == "septentrio_sbf"
 
     def test_auto_returns_none_for_unknown(self):
@@ -132,7 +131,7 @@ class TestMatchPattern:
     def test_specific_pattern_name(self):
         result = match_pattern("rosl001a.25o", "rinex_v2_short")
         assert result is not None
-        pat, m = result
+        pat, _m = result
         assert pat.name == "rinex_v2_short"
 
     def test_specific_pattern_no_match(self):
