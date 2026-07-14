@@ -41,6 +41,12 @@ nav = [
     { "canvod-filemap" = [
       { "Overview" = "packages/filemap/overview.md" },
     ]},
+    { "canvod-airflow" = [
+      { "Overview" = "packages/airflow/overview.md" },
+    ]},
+    { "canvod-adapters" = [
+      { "Overview" = "packages/adapters/overview.md" },
+    ]},
   ]},
 
   { "Development" = [
@@ -50,6 +56,8 @@ nav = [
 
   { "API Reference" = [
     { "canvod.filemap" = "api/canvod-filemap.md" },
+    { "canvod.airflow" = "api/canvod-airflow.md" },
+    { "canvod.adapters" = "api/canvod-adapters.md" },
   ]},
 ]
 

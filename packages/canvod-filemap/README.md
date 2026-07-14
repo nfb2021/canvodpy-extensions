@@ -23,7 +23,6 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 | `CanVODFilename` | Pydantic model — parses and validates a single filename |
 | `FilenameMapper` | Maps physical filenames to canonical names (virtual renaming) |
 | `DataDirectoryValidator` | Pre-pipeline hard gate: blocks on unmatched or overlapping files |
-| `FilenameCatalog` | DuckDB-backed catalog for file discovery |
 | `BUILTIN_PATTERNS` | Glob patterns for all GNSS file types (single source of truth) |
 
 ## Installation

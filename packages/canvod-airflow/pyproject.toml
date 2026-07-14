@@ -1,0 +1,27 @@
+[project]
+name = "canvod-airflow"
+version = "0.3.0"
+description = "Airflow DAG definitions for canvodpy GNSS-T pipelines"
+readme = "README.md"
+requires-python = ">=3.14"
+
+dependencies = [
+    "structlog>=23.0",
+    "canvodpy>=0.3.0",
+]
+
+[project.optional-dependencies]
+airflow = ["apache-airflow>=3.0"]
+
+[project.urls]
+Homepage = "https://github.com/nfb2021/canvodpy-extensions"
+Documentation = "https://nfb2021.github.io/canvodpy-extensions/packages/airflow/overview/"
+Repository = "https://github.com/nfb2021/canvodpy-extensions"
+Issues = "https://github.com/nfb2021/canvodpy-extensions/issues"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "canvod.airflow"

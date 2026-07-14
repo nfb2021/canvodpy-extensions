@@ -37,11 +37,14 @@ and other slot-in components. Install only what you need.
 
     [:octicons-arrow-right-24: Overview](packages/filemap/overview.md)
 
--   :fontawesome-solid-diagram-project: &nbsp; **canvod-airflow** *(planned)*
+-   :fontawesome-solid-diagram-project: &nbsp; **canvod-airflow**
 
     ---
 
-    Airflow DAG definitions for canvodpy pipelines.
+    Airflow DAG definitions for canvodpy pipelines — daily SBF, RINEX, and
+    SBF+agency-ephemeris DAGs plus a manually-triggered backfill DAG.
+
+    [:octicons-arrow-right-24: Overview](packages/airflow/overview.md)
 
 </div>
 

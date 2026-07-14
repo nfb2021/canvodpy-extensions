@@ -1,8 +1,7 @@
-"""canvod-filemap: Filename convention, mapping engine, and catalog for canVODpy."""
+"""canvod-filemap: Filename convention and mapping engine for canVODpy."""
 
 __version__ = "0.1.0"
 
-from .catalog import FilenameCatalog
 from .config_models import DirectoryLayout, ReceiverNamingConfig, SiteNamingConfig
 from .convention import (
     AgencyId,
@@ -27,7 +26,6 @@ __all__ = [
     "DirectoryLayout",
     "Duration",
     "FileType",
-    "FilenameCatalog",
     "FilenameMapper",
     "NamingRecipe",
     "ReceiverNamingConfig",

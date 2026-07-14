@@ -14,7 +14,8 @@ Not part of the core monorepo — install individually via `uv add`.
 | Package | Purpose | Status |
 |---|---|---|
 | [`canvod-filemap`](packages/canvod-filemap) | Recipe-based filename mapping for non-canonical GNSS filenames; slot-in for canvodpy >= 0.3.0 | Available |
-| `canvod-airflow` | Airflow DAG definitions for canvodpy pipelines | Planned |
+| [`canvod-airflow`](packages/canvod-airflow) | Airflow DAG definitions (daily SBF/RINEX/SBF-agency + backfill) for canvodpy pipelines | Available |
+| [`canvod-adapters`](packages/canvod-adapters) | Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools (gnssvod) | Available |
 
 ## Installation
 

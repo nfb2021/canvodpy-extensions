@@ -22,7 +22,6 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 | `convention.py` | `CanVODFilename` | Pydantic model — parses and validates a single filename |
 | `mapping.py` | `FilenameMapper` | Maps physical filenames to canonical names (virtual renaming) |
 | `validator.py` | `DataDirectoryValidator` | Pre-pipeline hard gate: blocks on unmatched or overlapping files |
-| `catalog.py` | `FilenameCatalog` | DuckDB-backed catalog for file discovery |
 | `patterns.py` | `BUILTIN_PATTERNS` | Glob patterns for all GNSS file types (single source of truth) |
 | `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` | Pydantic config models |
 | `recipe.py` | `NamingRecipe` | Recipe-based config generation for non-canonical layouts |

@@ -10,7 +10,7 @@ wait to be asked.
 | `pydantic` | Working with Pydantic models, validators, `BaseModel` (`canvod-filemap` config models) |
 | `python-testing-patterns` | Writing or reviewing `pytest` tests |
 | `uv-package-manager` | Running `uv`, editing `pyproject.toml`, managing workspace deps |
-| `airflow-dag-patterns` | Writing DAGs for `canvod-airflow` (planned) |
+| `airflow-dag-patterns` | Writing DAGs for `canvod-airflow` |
 
 ## What this repo is
 
@@ -26,7 +26,8 @@ package's own `CLAUDE.md` first.
 | Package | Namespace | Status | Role |
 |---|---|---|---|
 | `canvod-filemap` | `canvod.filemap` | Available | Recipe-based filename mapping for non-canonical GNSS filenames; slots in for canvodpy >= 0.3.0 |
-| `canvod-airflow` | — | Planned | Airflow DAG definitions for canvodpy pipelines |
+| `canvod-airflow` | `canvod.airflow` | Available | Airflow DAG definitions for canvodpy pipelines; `airflow` extra required to actually run them |
+| `canvod-adapters` | `canvod.adapters` | Available | Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools (gnssvod); `store` extra required for direct Icechunk I/O |
 
 Each package under `packages/*` is a self-contained uv workspace member with its
 own `pyproject.toml`, `src/`, `tests/`, `README.md`, and `CLAUDE.md`.
@@ -50,6 +51,8 @@ uv sync              # Install all workspace deps
 just check           # Lint + format + type-check
 just test            # Run all tests
 just test-package canvod-filemap  # Test a single package
+just test-package canvod-airflow  # Test canvod-airflow (structure tests run without Airflow)
+just test-package canvod-adapters  # Test canvod-adapters (no canvod-store/gnssvod needed)
 just docs            # Preview documentation locally
 just build-all        # Build every package into dist/
 ```
