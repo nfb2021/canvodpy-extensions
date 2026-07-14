@@ -1,0 +1,37 @@
+{
+  "title": "canvodpy-extensions: Optional Slot-In Packages for the canVODpy GNSS-Transmissometry Ecosystem",
+  "description": "<p>canvodpy-extensions is a supplement to canVODpy, hosting optional packages that slot into it but don't belong in its core monorepo: recipe-based filename mapping for non-canonical GNSS receiver output (canvod-filemap), Airflow DAG definitions for canVODpy pipelines (canvod-airflow), and bidirectional data adapters between canVODpy and third-party GNSS-VOD tools (canvod-adapters). Install only what you need.</p>",
+  "creators": [
+    {
+      "name": "Bader, Nicolas François",
+      "affiliation": "TU Wien, Department of Geodesy and Geoinformation, Climate and Environmental Remote Sensing CLIMERS Research Unit",
+      "orcid": "0000-0002-9932-1925"
+    }
+  ],
+  "keywords": [
+    "GNSS-Transmissometry",
+    "GNSS-T",
+    "vegetation optical depth",
+    "VOD",
+    "canVODpy",
+    "Airflow",
+    "orchestration",
+    "filename mapping",
+    "gnssvod",
+    "remote sensing",
+    "geodesy"
+  ],
+  "license": {
+    "id": "Apache-2.0"
+  },
+  "version": "0.1.0",
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/nfb2021/canvodpy",
+      "relation": "isSupplementTo",
+      "scheme": "url",
+      "resource_type": "software"
+    }
+  ]
+}
