@@ -44,9 +44,10 @@ Issues tagged "bug"/"enhancement" and "help wanted" are open for contributions.
 ### Add a New Package
 
 New extension packages live under `packages/<name>/` and are picked up automatically
-by the uv workspace (`packages/*`). Each package is independently versioned and
-published to PyPI. See `packages/canvod-filemap` for the expected layout
-(`pyproject.toml`, `src/`, `tests/`, `README.md`).
+by the uv workspace (`packages/*`). Each package is independently versioned.
+canvodpy-extensions is GitHub-only by design (see "Releasing" below) — packages
+install via git-subdirectory sources, not PyPI. See `packages/canvod-filemap`
+for the expected layout (`pyproject.toml`, `src/`, `tests/`, `README.md`).
 
 ## Development Workflow
 
@@ -148,12 +149,12 @@ just release 0.4.0   # runs tests, updates changelog, bumps all packages, tags
 git push && git push --tags
 ```
 
-Pushing a `v*.*.*` tag triggers [`publish_pypi.yml`](.github/workflows/publish_pypi.yml),
-which builds every package under `packages/*` and publishes them to PyPI via trusted
-publishing (OIDC). Pre-release tags (`-alpha.*`, `-beta.*`, `-rc.*`) publish to
-TestPyPI instead via [`publish_testpypi.yml`](.github/workflows/publish_testpypi.yml).
-See [`release.yml`](.github/workflows/release.yml) for the accompanying draft GitHub
-Release.
+canvodpy-extensions is deliberately GitHub-only — packages are still tightly
+coupled to canvodpy's internal API surface, so a PyPI release would imply a
+stability contract that isn't ready yet. Pushing a `v*.*.*` tag triggers
+[`release.yml`](.github/workflows/release.yml), which drafts a GitHub Release
+with generated notes; nothing is published to PyPI or TestPyPI. Users install
+packages via the git-subdirectory pattern (see each package's README).
 
 When adding a new package under `packages/`, add its `pyproject.toml:version` to
 `version_files` in the root `pyproject.toml` so it stays in lockstep.

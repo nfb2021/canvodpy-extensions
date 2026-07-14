@@ -57,9 +57,11 @@ can't be recovered. Reconstructed datasets carry
 
 ## Installation
 
+GitHub-only by design; install via the git-subdirectory pattern:
+
 ```bash
-uv pip install canvod-adapters
-uv pip install "canvod-adapters[store]"  # for direct Icechunk store I/O
+uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"
+uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"  # for direct Icechunk store I/O
 ```
 
 ## Documentation

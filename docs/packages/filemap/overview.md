@@ -28,8 +28,10 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 
 ## Installation
 
+GitHub-only by design; install via the git-subdirectory pattern:
+
 ```bash
-uv add canvod-filemap
+uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-filemap"
 ```
 
 ## Quick Start

@@ -156,7 +156,3 @@ toggle.name = "Switch to light mode"
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
 link = "https://github.com/nfb2021/canvodpy-extensions"
-
-[[project.extra.social]]
-icon = "fontawesome/brands/python"
-link = "https://pypi.org/project/canvod-filemap/"

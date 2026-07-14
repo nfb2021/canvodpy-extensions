@@ -27,7 +27,7 @@ dynamically at parse time via `canvod.config.load_config()`.
 
 ## Installation
 
-Not yet published to PyPI; install via the git-subdirectory pattern:
+GitHub-only by design; install via the git-subdirectory pattern:
 
 ```bash
 uv add "canvod-airflow[airflow] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-airflow"
