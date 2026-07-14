@@ -1,0 +1,3760 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Optional extension packages for the canVODpy ecosystem">
+      
+      
+        <meta name="author" content="Nicolas Bader">
+      
+      
+        <link rel="canonical" href="https://nfb2021.github.io/canvodpy-extensions/api/canvod-adapters/">
+      
+      
+        <link rel="prev" href="../canvod-airflow/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="zensical-0.0.50">
+    
+    
+      
+        <title>canvod.adapters API Reference - canvodpy-extensions</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.62c9b9cc.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+  <script>
+    // Patch mermaid to use "base" theme instead of "default" (blue).
+    // Material dynamically imports mermaid and calls initialize() —
+    // we intercept the import to patch the module before Material uses it.
+    (function() {
+      var _origImport = window.__import__ || null;
+
+      // Material uses dynamic import() for mermaid. We can't intercept
+      // native import(), but we CAN define a getter on window.mermaid
+      // that patches initialize() the moment it's assigned.
+      var _mermaid = undefined;
+      var _patched = false;
+      Object.defineProperty(window, "mermaid", {
+        configurable: true,
+        enumerable: true,
+        get: function() { return _mermaid; },
+        set: function(val) {
+          _mermaid = val;
+          if (val && val.initialize && !_patched) {
+            _patched = true;
+            var _origInit = val.initialize.bind(val);
+            val.initialize = function(config) {
+              var isDark = document.body && document.body.getAttribute("data-md-color-scheme") === "slate";
+            config = Object.assign({}, config, {
+              theme: "base",
+              themeVariables: isDark
+                ? { primaryColor: "#2a2a2a", primaryTextColor: "#E1E6B9", primaryBorderColor: "#555",
+                    lineColor: "#666", secondaryColor: "#1a1a1a", tertiaryColor: "#1e1e1e",
+                    mainBkg: "#2a2a2a", nodeBorder: "#555", clusterBkg: "#1a1a1a", clusterBorder: "#444",
+                    titleColor: "#E1E6B9", edgeLabelBackground: "#0d0d0d", nodeTextColor: "#E1E6B9",
+                    textColor: "#E1E6B9", fontFamily: '"Space Grotesk", system-ui, sans-serif' }
+                : { primaryColor: "#C4D7A4", primaryTextColor: "#183128", primaryBorderColor: "#5D7D5B",
+                    lineColor: "#5D7D5B", secondaryColor: "#E1E6B9", tertiaryColor: "#ABC8A4",
+                    mainBkg: "#C4D7A4", nodeBorder: "#5D7D5B", clusterBkg: "#E1E6B9", clusterBorder: "#6B8B69",
+                    titleColor: "#183128", edgeLabelBackground: "#E1E6B9", nodeTextColor: "#183128",
+                    textColor: "#183128", fontFamily: '"Space Grotesk", system-ui, sans-serif' }
+            });
+              return _origInit(config);
+            };
+          }
+        }
+      });
+    })();
+  </script>
+  
+      
+    
+
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/canvod-nordic.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#canvodadapters-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="canvodpy-extensions" class="md-header__button md-logo" aria-label="canvodpy-extensions" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            canvodpy-extensions
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              canvod.adapters API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/nfb2021/canvodpy-extensions" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfb2021/canvodpy-extensions
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+  
+  
+  
+  
+    
+      
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../packages/filemap/overview/" class="md-tabs__link">
+          
+  
+  Packages
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../CONTRIBUTING/" class="md-tabs__link">
+          
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../canvod-filemap/" class="md-tabs__link">
+          
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="canvodpy-extensions" class="md-nav__button md-logo" aria-label="canvodpy-extensions" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-book-open" viewBox="0 0 24 24"><path d="M12 7v14M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+
+    </a>
+    canvodpy-extensions
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nfb2021/canvodpy-extensions" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nfb2021/canvodpy-extensions
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Packages
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Packages
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod-filemap
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  canvod-filemap
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../packages/filemap/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod-airflow
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  canvod-airflow
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../packages/airflow/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod-adapters
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  canvod-adapters
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../packages/adapters/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Development
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Development
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CONTRIBUTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Contributing
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../SECURITY.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Security Policy
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  API Reference
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  API Reference
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canvod-filemap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod.filemap
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canvod-airflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod.airflow
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod.adapters
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  canvod.adapters
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gnssvod" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        convert
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="convert">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert--coordinate-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Coordinate conventions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GnssvodAdapter
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GnssvodAdapter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter.to_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        to_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.detect_band_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        detect_band_map
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod_merge_codes
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gnssvod_merge_codes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod_df_to_xarray
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gnssvod_df_to_xarray">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        to_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="to_gnssvod_dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--raises" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Raises
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        from_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="from_gnssvod_dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--raises" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Raises
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        provenance
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        build_provenance_attrs
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="build_provenance_attrs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vod_store_to_gnssvod_ncstore_or_site-analysis_name-out_path-band_mapnone-branchmain" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>vod_store_to_gnssvod_nc(store_or_site, analysis_name, out_path, *, band_map=None, branch="main")</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnssvod_nc_to_vod_storenc_path-store_or_site-analysis_name-band_mapnone-branchmain-commit_messagenone" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>gnssvod_nc_to_vod_store(nc_path, store_or_site, analysis_name, *, band_map=None, branch="main", commit_message=None)</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gnssvod" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        convert
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="convert">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert--coordinate-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Coordinate conventions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GnssvodAdapter
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GnssvodAdapter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter.to_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        to_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.detect_band_map" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        detect_band_map
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod_merge_codes
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gnssvod_merge_codes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        gnssvod_df_to_xarray
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gnssvod_df_to_xarray">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        to_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="to_gnssvod_dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--raises" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Raises
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        from_gnssvod_dataset
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="from_gnssvod_dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--raises" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Raises
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        provenance
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        build_provenance_attrs
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="build_provenance_attrs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Parameters
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--returns" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Returns
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vod_store_to_gnssvod_ncstore_or_site-analysis_name-out_path-band_mapnone-branchmain" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>vod_store_to_gnssvod_nc(store_or_site, analysis_name, out_path, *, band_map=None, branch="main")</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnssvod_nc_to_vod_storenc_path-store_or_site-analysis_name-band_mapnone-branchmain-commit_messagenone" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>gnssvod_nc_to_vod_store(nc_path, store_or_site, analysis_name, *, band_map=None, branch="main", commit_message=None)</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../canvod-filemap/" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+<h1 id="canvodadapters-api-reference">canvod.adapters API Reference<a class="headerlink" href="#canvodadapters-api-reference" title="Permanent link">&para;</a></h1>
+<h2 id="gnssvod">gnssvod<a class="headerlink" href="#gnssvod" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="canvod.adapters.gnssvod.convert"></a>
+    <div class="doc doc-contents first">
+
+        <p>Pure-format conversion between canvodpy and gnssvod data shapes.</p>
+<p>No dependency on <code>canvod-store</code> or the real <code>gnssvod</code> package — this
+module only matches gnssvod's documented data shape, verified against
+gnssvod's own <code>io/io.py::Observation.to_xarray()</code> and
+<code>io/exporters.py::export_as_nc()</code>.</p>
+<h3 id="canvod.adapters.gnssvod.convert--coordinate-conventions">Coordinate conventions<a class="headerlink" href="#canvod.adapters.gnssvod.convert--coordinate-conventions" title="Permanent link">&para;</a></h3>
+<p>canvodpy:
+    theta = polar angle from zenith, [0, pi/2] rad (0=zenith, pi/2=horizon)
+    phi   = azimuth from North clockwise, [0, 2*pi) rad</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+<details class="gnssvod" open>
+  <summary><p>gnssvod</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools --></summary>
+  <p>Elevation = angle from horizon, [0, 90] degrees (0=horizon, 90=zenith)
+Azimuth   = angle from North clockwise, [0, 360) degrees</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+</details>
+
+<details class="mapping" open>
+  <summary><p>Mapping</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools --></summary>
+  <p>Elevation = 90 - degrees(theta)
+Azimuth   = degrees(phi) mod 360</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+</details>        <p>Originally built for <code>canvod-audit</code>'s Tier-3 comparison
+(<code>audit_vs_gnssvod</code>); extracted here so it's reusable outside the audit
+suite. <code>GnssvodAdapter</code>/<code>detect_band_map</code>/<code>BAND_MAP</code>/
+<code>gnssvod_merge_codes</code>/<code>gnssvod_df_to_xarray</code> are unchanged from that
+origin. <code>to_gnssvod_dataset</code>/<code>from_gnssvod_dataset</code> are new: they
+operate on an already-computed, multi-band canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> dataset (the shape
+written to the <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> <abbr title="Version-controlled cloud-native tensor storage engine — git-like snapshots over Zarr v3 chunks">Icechunk</abbr> store — variables <code>VOD</code>, <code>delta_snr</code>,
+<code>phi</code>, <code>theta</code>), merging/splitting across every band in one call,
+rather than the single-band-at-a-time comparison use in <code>GnssvodAdapter</code>.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="canvod.adapters.gnssvod.convert.GnssvodAdapter" class="doc doc-heading">
+            <code>GnssvodAdapter</code>
+
+
+<a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Project a canvodpy (epoch, sid) dataset into gnssvod variable space.</p>
+<p>Transforms canvodpy's <abbr title="Signal Identifier — canVODpy format: SV|Band|Code (e.g. G01|L1|C). Uniquely identifies one observable per epoch.">SID</abbr>-indexed data into <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr>-indexed data with
+gnssvod-compatible variable names and units. One adapter instance
+handles one frequency band.</p>
+<h4 id="canvod.adapters.gnssvod.convert.GnssvodAdapter--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.convert.GnssvodAdapter--parameters" title="Permanent link">&para;</a></h4>
+<p>ds : <abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    canvodpy dataset with (epoch, sid) dims and variables: <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr>, phi,
+    theta, and optionally <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr>.
+band_filter : str
+    <abbr title="Signal Identifier — canVODpy format: SV|Band|Code (e.g. G01|L1|C). Uniquely identifies one observable per epoch.">SID</abbr> band suffix to select, e.g. <code>"L1|C"</code> or <code>"L2|W"</code>.
+snr_col : str
+    gnssvod column name for <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr> at this band (e.g. <code>"S1C"</code>).
+vod_col : str or None
+    gnssvod column name for <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> at this band (e.g. <code>"VOD1"</code>).</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GnssvodAdapter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Project a canvodpy (epoch, sid) dataset into gnssvod variable space.</span>
+
+<span class="sd">    Transforms canvodpy&#39;s SID-indexed data into PRN-indexed data with</span>
+<span class="sd">    gnssvod-compatible variable names and units. One adapter instance</span>
+<span class="sd">    handles one frequency band.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ds : xarray.Dataset</span>
+<span class="sd">        canvodpy dataset with (epoch, sid) dims and variables: SNR, phi,</span>
+<span class="sd">        theta, and optionally VOD.</span>
+<span class="sd">    band_filter : str</span>
+<span class="sd">        SID band suffix to select, e.g. ``&quot;L1|C&quot;`` or ``&quot;L2|W&quot;``.</span>
+<span class="sd">    snr_col : str</span>
+<span class="sd">        gnssvod column name for SNR at this band (e.g. ``&quot;S1C&quot;``).</span>
+<span class="sd">    vod_col : str or None</span>
+<span class="sd">        gnssvod column name for VOD at this band (e.g. ``&quot;VOD1&quot;``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ds</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">band_filter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">snr_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">vod_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Select SIDs matching this band</span>
+        <span class="n">all_sids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="n">band_sids</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_sids</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|</span><span class="si">{</span><span class="n">band_filter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">band_sids</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No SIDs match band filter &#39;|</span><span class="si">{</span><span class="n">band_filter</span><span class="si">}</span><span class="s2">&#39;. Available: </span><span class="si">{</span><span class="n">all_sids</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="n">band_sids</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band_filter</span> <span class="o">=</span> <span class="n">band_filter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snr_col</span> <span class="o">=</span> <span class="n">snr_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vod_col</span> <span class="o">=</span> <span class="n">vod_col</span>
+
+        <span class="c1"># Map SIDs to PRNs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prns</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">band_sids</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prns</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prns</span><span class="p">)):</span>
+            <span class="n">dupes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prns</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Duplicate PRNs after SID-&gt;PRN mapping for band </span><span class="si">{</span><span class="n">band_filter</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dupes</span><span class="si">}</span><span class="s2">. Input was not trimmed to one code per band.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_gnssvod_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a gnssvod-shaped dataset with PRN sids.</span>
+
+<span class="sd">        Returns dataset with variables named like gnssvod output:</span>
+<span class="sd">        - ``{snr_col}`` (e.g. S1C): SNR in dB-Hz (unchanged)</span>
+<span class="sd">        - ``Azimuth``: degrees from North, clockwise [0, 360)</span>
+<span class="sd">        - ``Elevation``: degrees from horizon [0, 90]</span>
+<span class="sd">        - ``{vod_col}`` (e.g. VOD1): VOD (unchanged) if present</span>
+
+<span class="sd">        Coordinates: epoch (datetime), sid (PRN strings like &quot;G01&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_vars</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># SNR: same units (dB-Hz), just rename</span>
+        <span class="k">if</span> <span class="s2">&quot;SNR&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">data_vars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snr_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;SNR&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="c1"># Azimuth: phi (rad, from North CW) -&gt; degrees</span>
+        <span class="k">if</span> <span class="s2">&quot;phi&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">az_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span>
+            <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;Azimuth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">az_deg</span><span class="p">)</span>
+
+        <span class="c1"># Elevation: theta (rad, polar angle) -&gt; 90 - degrees(theta)</span>
+        <span class="k">if</span> <span class="s2">&quot;theta&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">el_deg</span> <span class="o">=</span> <span class="mf">90.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;Elevation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">el_deg</span><span class="p">)</span>
+
+        <span class="c1"># VOD: same units, just rename</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vod_col</span> <span class="ow">and</span> <span class="s2">&quot;VOD&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">data_vars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">vod_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;VOD&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+            <span class="n">data_vars</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">epoch</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prns</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="canvod.adapters.gnssvod.convert.GnssvodAdapter.to_gnssvod_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_gnssvod_dataset</span><span class="p">()</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.GnssvodAdapter.to_gnssvod_dataset" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert to a gnssvod-shaped dataset with <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> sids.</p>
+<p>Returns dataset with variables named like gnssvod output:
+- <code>{snr_col}</code> (e.g. S1C): <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr> in dB-Hz (unchanged)
+- <code>Azimuth</code>: degrees from North, clockwise [0, 360)
+- <code>Elevation</code>: degrees from horizon [0, 90]
+- <code>{vod_col}</code> (e.g. VOD1): <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> (unchanged) if present</p>
+<p>Coordinates: epoch (datetime), sid (<abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> strings like "G01").</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_gnssvod_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert to a gnssvod-shaped dataset with PRN sids.</span>
+
+<span class="sd">    Returns dataset with variables named like gnssvod output:</span>
+<span class="sd">    - ``{snr_col}`` (e.g. S1C): SNR in dB-Hz (unchanged)</span>
+<span class="sd">    - ``Azimuth``: degrees from North, clockwise [0, 360)</span>
+<span class="sd">    - ``Elevation``: degrees from horizon [0, 90]</span>
+<span class="sd">    - ``{vod_col}`` (e.g. VOD1): VOD (unchanged) if present</span>
+
+<span class="sd">    Coordinates: epoch (datetime), sid (PRN strings like &quot;G01&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_vars</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># SNR: same units (dB-Hz), just rename</span>
+    <span class="k">if</span> <span class="s2">&quot;SNR&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snr_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;SNR&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Azimuth: phi (rad, from North CW) -&gt; degrees</span>
+    <span class="k">if</span> <span class="s2">&quot;phi&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="n">az_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;Azimuth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">az_deg</span><span class="p">)</span>
+
+    <span class="c1"># Elevation: theta (rad, polar angle) -&gt; 90 - degrees(theta)</span>
+    <span class="k">if</span> <span class="s2">&quot;theta&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="n">el_deg</span> <span class="o">=</span> <span class="mf">90.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;Elevation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">el_deg</span><span class="p">)</span>
+
+    <span class="c1"># VOD: same units, just rename</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vod_col</span> <span class="ow">and</span> <span class="s2">&quot;VOD&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">vod_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="p">[</span><span class="s2">&quot;VOD&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">data_vars</span><span class="p">,</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">epoch</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prns</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.convert.detect_band_map" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">detect_band_map</span><span class="p">(</span><span class="n">ds_canvod</span><span class="p">,</span> <span class="n">ds_gnssvod</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.detect_band_map" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Auto-detect band mapping from available variables.</p>
+<p>Scans canvodpy SIDs and gnssvod columns to find matching bands.
+Returns list of (canvodpy_band_suffix, gnssvod_snr_col, gnssvod_vod_col).</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detect_band_map</span><span class="p">(</span>
+    <span class="n">ds_canvod</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">ds_gnssvod</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Auto-detect band mapping from available variables.</span>
+
+<span class="sd">    Scans canvodpy SIDs and gnssvod columns to find matching bands.</span>
+<span class="sd">    Returns list of (canvodpy_band_suffix, gnssvod_snr_col, gnssvod_vod_col).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Detect bands in canvodpy SIDs</span>
+    <span class="n">all_sids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ds_canvod</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">canvod_bands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># band_num -&gt; set of tracking codes</span>
+    <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">all_sids</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">sid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">band</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># e.g. &quot;L1&quot;</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># e.g. &quot;C&quot;</span>
+            <span class="n">band_num</span> <span class="o">=</span> <span class="n">band</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># e.g. &quot;1&quot;</span>
+            <span class="n">canvod_bands</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">band_num</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="c1"># Match against gnssvod SNR columns (S1C, S2W, etc.)</span>
+    <span class="n">gnssvod_var_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ds_gnssvod</span><span class="o">.</span><span class="n">data_vars</span><span class="p">]</span>
+    <span class="n">gnssvod_snr_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gnssvod_var_names</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="c1"># VOD column mapping: band 1 -&gt; VOD1, band 2 -&gt; VOD2, etc.</span>
+    <span class="n">gnssvod_vod_cols</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gnssvod_var_names</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;VOD&quot;</span><span class="p">)}</span>
+
+    <span class="n">band_map</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">band_num</span><span class="p">,</span> <span class="n">codes</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">canvod_bands</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="c1"># Find which gnssvod SNR columns exist for this band</span>
+        <span class="n">matching_snr</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gnssvod_snr_cols</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">band_num</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matching_snr</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Match canvodpy code to the gnssvod SNR column&#39;s tracking code</span>
+        <span class="n">snr_col</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">primary_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">mc</span> <span class="ow">in</span> <span class="n">matching_snr</span><span class="p">:</span>
+            <span class="n">gnssvod_code</span> <span class="o">=</span> <span class="n">mc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># e.g. &quot;C&quot; from &quot;S1C&quot;</span>
+            <span class="k">if</span> <span class="n">gnssvod_code</span> <span class="ow">in</span> <span class="n">codes</span><span class="p">:</span>
+                <span class="n">snr_col</span> <span class="o">=</span> <span class="n">mc</span>
+                <span class="n">primary_code</span> <span class="o">=</span> <span class="n">gnssvod_code</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">snr_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Fallback: lex-first code with first matching gnssvod column</span>
+            <span class="n">primary_code</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">codes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">snr_col</span> <span class="o">=</span> <span class="n">matching_snr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">vod_col</span> <span class="o">=</span> <span class="n">gnssvod_vod_cols</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_num</span><span class="p">)</span>
+        <span class="n">band_suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;L</span><span class="si">{</span><span class="n">band_num</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">primary_code</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">band_map</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">band_suffix</span><span class="p">,</span> <span class="n">snr_col</span><span class="p">,</span> <span class="n">vod_col</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">band_map</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.convert.gnssvod_merge_codes" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">gnssvod_merge_codes</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">band_num</span><span class="p">,</span> <span class="n">snr_var</span><span class="o">=</span><span class="s1">&#39;SNR&#39;</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Replicate gnssvod's fillna merge for a given band.</p>
+<p>gnssvod merges multiple tracking codes per band using fillna in
+lexicographic order (determined by <code>numpy.intersect1d</code> sorting).
+For example, with S1C and S1W both present:
+- S1C values used where available
+- S1W fills remaining NaN gaps</p>
+<p>.. note::</p>
+<div class="highlight"><pre><span></span><code>In gnssvod (``vod_calc.py``), the fillna merge operates on
+**per-code VOD values**, not raw SNR. Each code&#39;s VOD is
+computed independently first::
+
+    VOD_code = -ln(10^((grn - ref) / 10)) * cos(90 - elev)
+
+Then ``band_VOD.fillna(code_VOD)`` cascades in lex order.
+This function merges raw variable values (SNR, phi, theta)
+instead, which is equivalent for SNR (a direct observable)
+but **not** equivalent for VOD. For correct VOD merging,
+compute VOD per code first, then call this function on the
+VOD variable.
+</code></pre></div>
+<h4 id="canvod.adapters.gnssvod.convert.gnssvod_merge_codes--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--parameters" title="Permanent link">&para;</a></h4>
+<p>ds : <abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    canvodpy dataset with (epoch, sid) dims.
+band_num : str
+    Band number to merge, e.g. <code>"1"</code> for <abbr title="GPS/Galileo L1 band — centre frequency 1575.42 MHz (Navipedia: GPS Signal Plan)">L1</abbr>, <code>"2"</code> for <abbr title="GPS L2 band — centre frequency 1227.60 MHz (Navipedia: GPS Signal Plan)">L2</abbr>.
+snr_var : str
+    <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr> variable name in the dataset.</p>
+<h4 id="canvod.adapters.gnssvod.convert.gnssvod_merge_codes--returns">Returns<a class="headerlink" href="#canvod.adapters.gnssvod.convert.gnssvod_merge_codes--returns" title="Permanent link">&para;</a></h4>
+<p><abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    Dataset with one <abbr title="Signal Identifier — canVODpy format: SV|Band|Code (e.g. G01|L1|C). Uniquely identifies one observable per epoch.">SID</abbr> per <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> for this band (merged), sid
+    values replaced with <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> strings.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gnssvod_merge_codes</span><span class="p">(</span>
+    <span class="n">ds</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">band_num</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">snr_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SNR&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replicate gnssvod&#39;s fillna merge for a given band.</span>
+
+<span class="sd">    gnssvod merges multiple tracking codes per band using fillna in</span>
+<span class="sd">    lexicographic order (determined by ``numpy.intersect1d`` sorting).</span>
+<span class="sd">    For example, with S1C and S1W both present:</span>
+<span class="sd">    - S1C values used where available</span>
+<span class="sd">    - S1W fills remaining NaN gaps</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        In gnssvod (``vod_calc.py``), the fillna merge operates on</span>
+<span class="sd">        **per-code VOD values**, not raw SNR. Each code&#39;s VOD is</span>
+<span class="sd">        computed independently first::</span>
+
+<span class="sd">            VOD_code = -ln(10^((grn - ref) / 10)) * cos(90 - elev)</span>
+
+<span class="sd">        Then ``band_VOD.fillna(code_VOD)`` cascades in lex order.</span>
+<span class="sd">        This function merges raw variable values (SNR, phi, theta)</span>
+<span class="sd">        instead, which is equivalent for SNR (a direct observable)</span>
+<span class="sd">        but **not** equivalent for VOD. For correct VOD merging,</span>
+<span class="sd">        compute VOD per code first, then call this function on the</span>
+<span class="sd">        VOD variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ds : xarray.Dataset</span>
+<span class="sd">        canvodpy dataset with (epoch, sid) dims.</span>
+<span class="sd">    band_num : str</span>
+<span class="sd">        Band number to merge, e.g. ``&quot;1&quot;`` for L1, ``&quot;2&quot;`` for L2.</span>
+<span class="sd">    snr_var : str</span>
+<span class="sd">        SNR variable name in the dataset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray.Dataset</span>
+<span class="sd">        Dataset with one SID per PRN for this band (merged), sid</span>
+<span class="sd">        values replaced with PRN strings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find all SIDs for this band: e.g. &quot;G01|L1|C&quot;, &quot;G01|L1|W&quot;</span>
+    <span class="n">band_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;|L</span><span class="si">{</span><span class="n">band_num</span><span class="si">}</span><span class="s2">|&quot;</span>
+    <span class="n">all_sids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">band_sids</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_sids</span> <span class="k">if</span> <span class="n">band_prefix</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">band_sids</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No SIDs match band L</span><span class="si">{</span><span class="n">band_num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Group SIDs by PRN, sort codes lexicographically (matching gnssvod)</span>
+    <span class="n">prn_groups</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">band_sids</span><span class="p">:</span>
+        <span class="n">prn</span> <span class="o">=</span> <span class="n">sid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">prn_groups</span><span class="p">[</span><span class="n">prn</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">prn</span> <span class="ow">in</span> <span class="n">prn_groups</span><span class="p">:</span>
+        <span class="n">prn_groups</span><span class="p">[</span><span class="n">prn</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># lexicographic = gnssvod order</span>
+
+    <span class="c1"># Merge: for each PRN, fillna across codes in sorted order</span>
+    <span class="n">prns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">prn_groups</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">merged_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="n">merged_arrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">prn</span> <span class="ow">in</span> <span class="n">prns</span><span class="p">:</span>
+            <span class="n">sids_for_prn</span> <span class="o">=</span> <span class="n">prn_groups</span><span class="p">[</span><span class="n">prn</span><span class="p">]</span>
+            <span class="c1"># Start with NaN, fillna in lex order</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">epoch</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">sids_for_prn</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="n">sid</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">nan_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+                <span class="n">merged</span><span class="p">[</span><span class="n">nan_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">nan_mask</span><span class="p">]</span>
+            <span class="n">merged_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+        <span class="n">merged_data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">merged_arrays</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">merged_data</span><span class="p">,</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">epoch</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="n">prns</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">gnssvod_df_to_xarray</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">epoch_col</span><span class="o">=</span><span class="s1">&#39;Epoch&#39;</span><span class="p">,</span> <span class="n">sid_col</span><span class="o">=</span><span class="s1">&#39;SV&#39;</span><span class="p">,</span> <span class="n">value_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert a gnssvod pandas DataFrame to an <abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr> Dataset.</p>
+<p>gnssvod outputs DataFrames with MultiIndex (Epoch, <abbr title="Space Vehicle — a single GNSS satellite, identified by system prefix + PRN number">SV</abbr>) and columns
+for each observation type (S1C, S2W, ...) plus Azimuth, Elevation,
+and <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> bands (VOD1, VOD2, ...).</p>
+<h4 id="canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--parameters" title="Permanent link">&para;</a></h4>
+<p>df : pandas.DataFrame
+    Output from gnssvod (with or without MultiIndex).
+epoch_col : str
+    Column or index level name for the time axis.
+sid_col : str
+    Column or index level name for the satellite identifier.
+value_cols : list of str, optional
+    Data columns to include. If not given, uses all numeric columns.</p>
+<h4 id="canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--returns">Returns<a class="headerlink" href="#canvod.adapters.gnssvod.convert.gnssvod_df_to_xarray--returns" title="Permanent link">&para;</a></h4>
+<p><abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    With dimensions (epoch, sid).</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gnssvod_df_to_xarray</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">epoch_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Epoch&quot;</span><span class="p">,</span>
+    <span class="n">sid_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SV&quot;</span><span class="p">,</span>
+    <span class="n">value_cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a gnssvod pandas DataFrame to an xarray Dataset.</span>
+
+<span class="sd">    gnssvod outputs DataFrames with MultiIndex (Epoch, SV) and columns</span>
+<span class="sd">    for each observation type (S1C, S2W, ...) plus Azimuth, Elevation,</span>
+<span class="sd">    and VOD bands (VOD1, VOD2, ...).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        Output from gnssvod (with or without MultiIndex).</span>
+<span class="sd">    epoch_col : str</span>
+<span class="sd">        Column or index level name for the time axis.</span>
+<span class="sd">    sid_col : str</span>
+<span class="sd">        Column or index level name for the satellite identifier.</span>
+<span class="sd">    value_cols : list of str, optional</span>
+<span class="sd">        Data columns to include. If not given, uses all numeric columns.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray.Dataset</span>
+<span class="sd">        With dimensions (epoch, sid).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+    <span class="c1"># Reset MultiIndex if present</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">value_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">c</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">epoch_col</span><span class="p">,</span> <span class="n">sid_col</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="n">epochs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">epoch_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+    <span class="n">sids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">sid_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+    <span class="n">data_vars</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">value_cols</span><span class="p">:</span>
+        <span class="c1"># Use pivot (not pivot_table) to raise on duplicates instead of</span>
+        <span class="c1"># silently averaging them</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pivoted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">epoch_col</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">sid_col</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Fallback if there are true duplicates (shouldn&#39;t happen with</span>
+            <span class="c1"># trimmed RINEX, but be defensive)</span>
+            <span class="n">pivoted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">epoch_col</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">sid_col</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">pivoted</span> <span class="o">=</span> <span class="n">pivoted</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">sids</span><span class="p">)</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">pivoted</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">data_vars</span><span class="p">,</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">epochs</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sids</span><span class="p">]},</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.convert.to_gnssvod_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_gnssvod_dataset</span><span class="p">(</span><span class="n">vod_ds</span><span class="p">,</span> <span class="n">band_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Merge all bands of a canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> dataset into one gnssvod-shaped dataset.</p>
+<p>Unlike <code>GnssvodAdapter</code> (single band, used for the per-band Tier-3
+comparison), this merges every band declared in <code>band_map</code> into one
+combined <code>xr.Dataset</code> — matching gnssvod's own NetCDF layout, where
+<code>S1C</code>/<code>Azimuth</code>/<code>Elevation</code>/<code>VOD1</code>/<code>VOD2</code>/... are sibling
+variables in a single per-station file.</p>
+<h4 id="canvod.adapters.gnssvod.convert.to_gnssvod_dataset--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--parameters" title="Permanent link">&para;</a></h4>
+<p>vod_ds : <abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    A canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> dataset as written to the <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> <abbr title="Version-controlled cloud-native tensor storage engine — git-like snapshots over Zarr v3 chunks">Icechunk</abbr> store: dims
+    <code>(epoch, sid)</code>, variables <code>VOD</code>, <code>delta_snr</code> (optional),
+    <code>phi</code>, <code>theta</code>. Must contain exactly one tracking code per
+    band (raises <code>ValueError</code> otherwise — pre-merge with
+    <code>gnssvod_merge_codes</code> or trim upstream first).
+band_map : list of (band_suffix, snr_col, vod_col), optional
+    Defaults to <code>BAND_MAP</code>.</p>
+<h4 id="canvod.adapters.gnssvod.convert.to_gnssvod_dataset--returns">Returns<a class="headerlink" href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--returns" title="Permanent link">&para;</a></h4>
+<p><abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    dims <code>(epoch, sid)</code> (sid holding <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> strings, e.g. <code>"G01"</code>),
+    variables <code>Azimuth</code>, <code>Elevation</code>, <code>VOD1</code>/<code>VOD2</code>/... (per
+    band with a configured <code>vod_col</code>), and <code>dSNR1</code>/<code>dSNR2</code>/...
+    (canvodpy's <code>delta_snr</code>, per band — <strong>not</strong> renamed to
+    gnssvod's <code>S1C</code>-style columns, since <code>delta_snr</code> is a
+    canopy-minus-reference difference, not the raw per-receiver <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr>
+    those columns represent in real gnssvod output).</p>
+<h4 id="canvod.adapters.gnssvod.convert.to_gnssvod_dataset--raises">Raises<a class="headerlink" href="#canvod.adapters.gnssvod.convert.to_gnssvod_dataset--raises" title="Permanent link">&para;</a></h4>
+<p>ValueError
+    If no band in <code>band_map</code> matches any <abbr title="Signal Identifier — canVODpy format: SV|Band|Code (e.g. G01|L1|C). Uniquely identifies one observable per epoch.">SID</abbr>, or if a band has
+    more than one tracking code (ambiguous <abbr title="Pseudo-Random Noise — unique code identifying a satellite signal slot (e.g. G01, E02). PRN ≠ SVN; PRNs can be reassigned. (Navipedia: GNSS signal)">PRN</abbr> mapping).</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_gnssvod_dataset</span><span class="p">(</span>
+    <span class="n">vod_ds</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">band_map</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge all bands of a canvodpy VOD dataset into one gnssvod-shaped dataset.</span>
+
+<span class="sd">    Unlike ``GnssvodAdapter`` (single band, used for the per-band Tier-3</span>
+<span class="sd">    comparison), this merges every band declared in ``band_map`` into one</span>
+<span class="sd">    combined ``xr.Dataset`` — matching gnssvod&#39;s own NetCDF layout, where</span>
+<span class="sd">    ``S1C``/``Azimuth``/``Elevation``/``VOD1``/``VOD2``/... are sibling</span>
+<span class="sd">    variables in a single per-station file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vod_ds : xarray.Dataset</span>
+<span class="sd">        A canvodpy VOD dataset as written to the VOD Icechunk store: dims</span>
+<span class="sd">        ``(epoch, sid)``, variables ``VOD``, ``delta_snr`` (optional),</span>
+<span class="sd">        ``phi``, ``theta``. Must contain exactly one tracking code per</span>
+<span class="sd">        band (raises ``ValueError`` otherwise — pre-merge with</span>
+<span class="sd">        ``gnssvod_merge_codes`` or trim upstream first).</span>
+<span class="sd">    band_map : list of (band_suffix, snr_col, vod_col), optional</span>
+<span class="sd">        Defaults to ``BAND_MAP``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray.Dataset</span>
+<span class="sd">        dims ``(epoch, sid)`` (sid holding PRN strings, e.g. ``&quot;G01&quot;``),</span>
+<span class="sd">        variables ``Azimuth``, ``Elevation``, ``VOD1``/``VOD2``/... (per</span>
+<span class="sd">        band with a configured ``vod_col``), and ``dSNR1``/``dSNR2``/...</span>
+<span class="sd">        (canvodpy&#39;s ``delta_snr``, per band — **not** renamed to</span>
+<span class="sd">        gnssvod&#39;s ``S1C``-style columns, since ``delta_snr`` is a</span>
+<span class="sd">        canopy-minus-reference difference, not the raw per-receiver SNR</span>
+<span class="sd">        those columns represent in real gnssvod output).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If no band in ``band_map`` matches any SID, or if a band has</span>
+<span class="sd">        more than one tracking code (ambiguous PRN mapping).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">band_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">band_map</span> <span class="o">=</span> <span class="n">BAND_MAP</span>
+
+    <span class="n">all_sids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">vod_ds</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">band_datasets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">band_suffix</span><span class="p">,</span> <span class="n">_snr_col</span><span class="p">,</span> <span class="n">vod_col</span> <span class="ow">in</span> <span class="n">band_map</span><span class="p">:</span>
+        <span class="n">band_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_sids</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|</span><span class="si">{</span><span class="n">band_suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">band_positions</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Positional (not label-based) selection: a malformed/duplicated</span>
+        <span class="c1"># input dataset may have non-unique sid labels, which would make</span>
+        <span class="c1"># .sel() raise a low-level pandas index error before the</span>
+        <span class="c1"># duplicate-PRN check below ever runs.</span>
+        <span class="n">sub</span> <span class="o">=</span> <span class="n">vod_ds</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">sid</span><span class="o">=</span><span class="n">band_positions</span><span class="p">)</span>
+        <span class="n">band_sids</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_sids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">band_positions</span><span class="p">]</span>
+        <span class="n">prns</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">band_sids</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prns</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">prns</span><span class="p">)):</span>
+            <span class="n">dupes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">prns</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Duplicate PRNs after SID-&gt;PRN mapping for band </span><span class="si">{</span><span class="n">band_suffix</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dupes</span><span class="si">}</span><span class="s2">. Pass a dataset trimmed to one code per band, or &quot;</span>
+                <span class="s2">&quot;pre-merge codes with gnssvod_merge_codes().&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">band_num</span> <span class="o">=</span> <span class="n">band_suffix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># &quot;L1|C&quot; -&gt; &quot;1&quot;</span>
+        <span class="n">dvars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">&quot;phi&quot;</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dvars</span><span class="p">[</span><span class="s2">&quot;Azimuth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">%</span> <span class="mf">360.0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;theta&quot;</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dvars</span><span class="p">[</span><span class="s2">&quot;Elevation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span>
+                <span class="mf">90.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">vod_col</span> <span class="ow">and</span> <span class="s2">&quot;VOD&quot;</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dvars</span><span class="p">[</span><span class="n">vod_col</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;VOD&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;delta_snr&quot;</span> <span class="ow">in</span> <span class="n">sub</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dvars</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dSNR</span><span class="si">{</span><span class="n">band_num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">sub</span><span class="p">[</span><span class="s2">&quot;delta_snr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dvars</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">band_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">dvars</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">sub</span><span class="o">.</span><span class="n">epoch</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="n">prns</span><span class="p">}))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">band_datasets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;No bands in band_map matched any SIDs in the input dataset. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available SIDs (sample): </span><span class="si">{</span><span class="n">all_sids</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># outer join: union of PRNs across bands, NaN-filled where a band lacks</span>
+    <span class="c1"># a given PRN; compat=&quot;override&quot; -- Azimuth/Elevation are (near-)identical</span>
+    <span class="c1"># across bands for the same satellite/epoch, first band wins on overlap</span>
+    <span class="c1"># rather than requiring bit-identical equality across bands.</span>
+    <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">band_datasets</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span> <span class="n">compat</span><span class="o">=</span><span class="s2">&quot;override&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.convert.from_gnssvod_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_gnssvod_dataset</span><span class="p">(</span><span class="n">gnssvod_ds</span><span class="p">,</span> <span class="n">band_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert a gnssvod-shaped dataset into a canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> dataset.</p>
+<p>Reverse of :func:<code>to_gnssvod_dataset</code>. Accepts either that function's
+own output or a real gnssvod NetCDF export (dims <code>Epoch</code>/<code>SV</code> or
+<code>epoch</code>/<code>sid</code>; variables <code>S1C</code>/<code>Azimuth</code>/<code>Elevation</code>/
+<code>VOD1</code>/...).</p>
+<h4 id="canvod.adapters.gnssvod.convert.from_gnssvod_dataset--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--parameters" title="Permanent link">&para;</a></h4>
+<p>gnssvod_ds : <abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    gnssvod-shaped dataset, dims <code>(epoch|Epoch, sid|SV)</code>.
+band_map : list of (band_suffix, snr_col, vod_col), optional
+    Defaults to <code>BAND_MAP</code>. Only bands with a non-<code>None</code> <code>vod_col</code>
+    present in <code>gnssvod_ds</code> are reconstructed.</p>
+<h4 id="canvod.adapters.gnssvod.convert.from_gnssvod_dataset--returns">Returns<a class="headerlink" href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--returns" title="Permanent link">&para;</a></h4>
+<p><abbr title="Labelled multi-dimensional arrays for Python — extends NumPy with named dims, coords, and attrs">xarray</abbr>.Dataset
+    dims <code>(epoch, sid)</code>, <abbr title="Signal Identifier — canVODpy format: SV|Band|Code (e.g. G01|L1|C). Uniquely identifies one observable per epoch.">SID</abbr> format <code>"{PRN}|{band_suffix}"</code>
+    (e.g. <code>"G01|L1|C"</code>), variables <code>VOD</code> (always), <code>phi</code>/
+    <code>theta</code> (if Azimuth/Elevation present), <code>delta_snr</code> (if a
+    matching <abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr>/dSNR column is present). Sets attrs
+    <code>vod_reconstructed_code_ambiguous=True</code>: gnssvod merges
+    multiple tracking codes per band via fillna before it ever
+    exports data, so the per-code identity of <code>VOD</code>/<abbr title="Signal-to-Noise Ratio — carrier power relative to noise floor, in dB-Hz. Key observable for GNSS transmissometry. (Navipedia: GNSS Measurements)">SNR</abbr> is lost —
+    reconstructed SIDs use <code>band_map</code>'s declared code as a
+    placeholder, not an observed value.</p>
+<h4 id="canvod.adapters.gnssvod.convert.from_gnssvod_dataset--raises">Raises<a class="headerlink" href="#canvod.adapters.gnssvod.convert.from_gnssvod_dataset--raises" title="Permanent link">&para;</a></h4>
+<p>ValueError
+    If no band in <code>band_map</code> has a matching <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> column in
+    <code>gnssvod_ds</code>.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/convert.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">from_gnssvod_dataset</span><span class="p">(</span>
+    <span class="n">gnssvod_ds</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">band_map</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a gnssvod-shaped dataset into a canvodpy VOD dataset.</span>
+
+<span class="sd">    Reverse of :func:`to_gnssvod_dataset`. Accepts either that function&#39;s</span>
+<span class="sd">    own output or a real gnssvod NetCDF export (dims ``Epoch``/``SV`` or</span>
+<span class="sd">    ``epoch``/``sid``; variables ``S1C``/``Azimuth``/``Elevation``/</span>
+<span class="sd">    ``VOD1``/...).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gnssvod_ds : xarray.Dataset</span>
+<span class="sd">        gnssvod-shaped dataset, dims ``(epoch|Epoch, sid|SV)``.</span>
+<span class="sd">    band_map : list of (band_suffix, snr_col, vod_col), optional</span>
+<span class="sd">        Defaults to ``BAND_MAP``. Only bands with a non-``None`` ``vod_col``</span>
+<span class="sd">        present in ``gnssvod_ds`` are reconstructed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xarray.Dataset</span>
+<span class="sd">        dims ``(epoch, sid)``, SID format ``&quot;{PRN}|{band_suffix}&quot;``</span>
+<span class="sd">        (e.g. ``&quot;G01|L1|C&quot;``), variables ``VOD`` (always), ``phi``/</span>
+<span class="sd">        ``theta`` (if Azimuth/Elevation present), ``delta_snr`` (if a</span>
+<span class="sd">        matching SNR/dSNR column is present). Sets attrs</span>
+<span class="sd">        ``vod_reconstructed_code_ambiguous=True``: gnssvod merges</span>
+<span class="sd">        multiple tracking codes per band via fillna before it ever</span>
+<span class="sd">        exports data, so the per-code identity of ``VOD``/SNR is lost —</span>
+<span class="sd">        reconstructed SIDs use ``band_map``&#39;s declared code as a</span>
+<span class="sd">        placeholder, not an observed value.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If no band in ``band_map`` has a matching VOD column in</span>
+<span class="sd">        ``gnssvod_ds``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">band_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">band_map</span> <span class="o">=</span> <span class="n">BAND_MAP</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">_normalize_dims</span><span class="p">(</span><span class="n">gnssvod_ds</span><span class="p">)</span>
+    <span class="n">prns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+
+    <span class="n">az</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Azimuth&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="s2">&quot;Azimuth&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="s2">&quot;Elevation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="s2">&quot;Elevation&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">sid_labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vod_chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">phi_chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">theta_chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dsnr_chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">band_suffix</span><span class="p">,</span> <span class="n">snr_col</span><span class="p">,</span> <span class="n">vod_col</span> <span class="ow">in</span> <span class="n">band_map</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vod_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vod_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">band_num</span> <span class="o">=</span> <span class="n">band_suffix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">band_sids</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prn</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">band_suffix</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">prn</span> <span class="ow">in</span> <span class="n">prns</span><span class="p">]</span>
+        <span class="n">sid_labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">band_sids</span><span class="p">)</span>
+        <span class="n">vod_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">vod_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">az</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">phi_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">az</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">theta_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">90.0</span> <span class="o">-</span> <span class="n">el</span><span class="p">))</span>
+
+        <span class="n">dsnr_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dSNR</span><span class="si">{</span><span class="n">band_num</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">snr_col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dsnr_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">snr_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dsnr_col</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+            <span class="n">dsnr_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="n">dsnr_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sid_labels</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;No VOD column in the input dataset matched any band in &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;band_map. Available variables: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">data_vars</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;VOD&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">vod_chunks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">phi_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vod_chunks</span><span class="p">):</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;phi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">phi_chunks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vod_chunks</span><span class="p">):</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">theta_chunks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dsnr_chunks</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vod_chunks</span><span class="p">):</span>
+        <span class="n">data_vars</span><span class="p">[</span><span class="s2">&quot;delta_snr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">dsnr_chunks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">data_vars</span><span class="p">,</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">ds</span><span class="o">.</span><span class="n">epoch</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="n">sid_labels</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;vod_reconstructed_code_ambiguous&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">out</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="canvod.adapters.gnssvod.provenance"></a>
+    <div class="doc doc-contents first">
+
+        <p>Provenance metadata attached to every canvodpy &lt;-&gt; gnssvod conversion.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="canvod.adapters.gnssvod.provenance.build_provenance_attrs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_provenance_attrs</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">analysis_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the global-attrs dict recording a conversion's provenance.</p>
+<h4 id="canvod.adapters.gnssvod.provenance.build_provenance_attrs--parameters">Parameters<a class="headerlink" href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--parameters" title="Permanent link">&para;</a></h4>
+<p>direction : {"canvodpy_to_gnssvod", "gnssvod_to_canvodpy"}
+    Which way the conversion ran.
+analysis_name : str
+    The canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> analysis name (e.g. <code>"canopy_01_vs_reference_01"</code>)
+    this dataset corresponds to.
+timestamp : datetime, optional
+    UTC timestamp to record. Defaults to now — pass an explicit value
+    for reproducible/deterministic callers (e.g. tests, replay tooling).</p>
+<h4 id="canvod.adapters.gnssvod.provenance.build_provenance_attrs--returns">Returns<a class="headerlink" href="#canvod.adapters.gnssvod.provenance.build_provenance_attrs--returns" title="Permanent link">&para;</a></h4>
+<p>dict
+    Attrs to merge into the converted dataset via <code>ds.attrs.update(...)</code>.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>packages/canvod-adapters/src/canvod/adapters/gnssvod/provenance.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_provenance_attrs</span><span class="p">(</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n">Direction</span><span class="p">,</span>
+    <span class="n">analysis_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the global-attrs dict recording a conversion&#39;s provenance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    direction : {&quot;canvodpy_to_gnssvod&quot;, &quot;gnssvod_to_canvodpy&quot;}</span>
+<span class="sd">        Which way the conversion ran.</span>
+<span class="sd">    analysis_name : str</span>
+<span class="sd">        The canvodpy VOD analysis name (e.g. ``&quot;canopy_01_vs_reference_01&quot;``)</span>
+<span class="sd">        this dataset corresponds to.</span>
+<span class="sd">    timestamp : datetime, optional</span>
+<span class="sd">        UTC timestamp to record. Defaults to now — pass an explicit value</span>
+<span class="sd">        for reproducible/deterministic callers (e.g. tests, replay tooling).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Attrs to merge into the converted dataset via ``ds.attrs.update(...)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;canvodpy_to_gnssvod&quot;</span><span class="p">:</span>
+        <span class="n">source_name</span><span class="p">,</span> <span class="n">source_url</span> <span class="o">=</span> <span class="s2">&quot;canvodpy&quot;</span><span class="p">,</span> <span class="n">CANVODPY_URL</span>
+    <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;gnssvod_to_canvodpy&quot;</span><span class="p">:</span>
+        <span class="n">source_name</span><span class="p">,</span> <span class="n">source_url</span> <span class="o">=</span> <span class="s2">&quot;gnssvod&quot;</span><span class="p">,</span> <span class="n">GNSSVOD_URL</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;direction must be &#39;canvodpy_to_gnssvod&#39; or &#39;gnssvod_to_canvodpy&#39;, got </span><span class="si">{</span><span class="n">direction</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">timestamp</span> <span class="ow">or</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;conversion_source&quot;</span><span class="p">:</span> <span class="n">source_name</span><span class="p">,</span>
+        <span class="s2">&quot;conversion_source_url&quot;</span><span class="p">:</span> <span class="n">source_url</span><span class="p">,</span>
+        <span class="s2">&quot;conversion_source_version&quot;</span><span class="p">:</span> <span class="n">_package_version</span><span class="p">(</span><span class="n">source_name</span><span class="p">),</span>
+        <span class="s2">&quot;conversion_tool&quot;</span><span class="p">:</span> <span class="s2">&quot;canvod-adapters.gnssvod&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conversion_tool_version&quot;</span><span class="p">:</span> <span class="n">_package_version</span><span class="p">(</span><span class="s2">&quot;canvod-adapters&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;conversion_direction&quot;</span><span class="p">:</span> <span class="n">direction</span><span class="p">,</span>
+        <span class="s2">&quot;conversion_timestamp&quot;</span><span class="p">:</span> <span class="n">ts</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="s2">&quot;analysis_name&quot;</span><span class="p">:</span> <span class="n">analysis_name</span><span class="p">,</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><div class="admonition note">
+<p class="admonition-title">Why <code>io.py</code> isn't auto-generated below</p>
+<p><code>canvod.adapters.gnssvod.io</code> imports <code>canvod-store</code> lazily inside each
+function body specifically so the rest of the package stays importable
+without the optional <code>store</code> extra — mkdocstrings would need that extra
+installed to introspect it safely. Its public interface is documented
+by hand instead.</p>
+</div>
+<h3 id="vod_store_to_gnssvod_ncstore_or_site-analysis_name-out_path-band_mapnone-branchmain"><code>vod_store_to_gnssvod_nc(store_or_site, analysis_name, out_path, *, band_map=None, branch="main")</code><a class="headerlink" href="#vod_store_to_gnssvod_ncstore_or_site-analysis_name-out_path-band_mapnone-branchmain" title="Permanent link">&para;</a></h3>
+<p>Reads a canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> analysis and exports it as a gnssvod-shaped NetCDF
+file, with provenance attrs attached. Requires the <code>store</code> extra.</p>
+<h3 id="gnssvod_nc_to_vod_storenc_path-store_or_site-analysis_name-band_mapnone-branchmain-commit_messagenone"><code>gnssvod_nc_to_vod_store(nc_path, store_or_site, analysis_name, *, band_map=None, branch="main", commit_message=None)</code><a class="headerlink" href="#gnssvod_nc_to_vod_storenc_path-store_or_site-analysis_name-band_mapnone-branchmain-commit_messagenone" title="Permanent link">&para;</a></h3>
+<p>Imports a gnssvod NetCDF export into a canvodpy <abbr title="Vegetation Optical Depth — dimensionless measure of microwave attenuation through vegetation canopy (τ = −ln(T)·cos θ)">VOD</abbr> <abbr title="Version-controlled cloud-native tensor storage engine — git-like snapshots over Zarr v3 chunks">Icechunk</abbr> store, with
+provenance attrs attached. Requires the <code>store</code> extra.</p>
+<p>See the <a href="../../packages/adapters/overview/">Overview</a> for full usage examples.</p>
+<!-- Glossary: hover any abbreviation to see its definition -->
+
+<!-- GNSS fundamentals — see Navipedia (navipedia.net) for detailed articles -->
+<!-- Satellite identifiers -->
+<!-- Observation data -->
+<!-- VOD and transmissometry -->
+<!-- Ephemerides and orbits -->
+<!-- Data standards -->
+<!-- Infrastructure -->
+<!-- Coordinate systems -->
+<!-- Signal bands -->
+<!-- Software tools -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../canvod-airflow/" class="md-footer__link md-footer__link--prev" aria-label="Previous: canvod.airflow">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                canvod.airflow
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Nicolas François Bader, TU Wien. This documentation is provided &ldquo;as is&rdquo; without warranty of any kind, express or implied, including but not limited to warranties of correctness, completeness, or fitness for a particular purpose.
+    </div>
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/nfb2021/canvodpy-extensions" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.code.copy","content.code.annotate","content.tooltips","content.tabs.link","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.instant.progress","navigation.path","navigation.sections","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.suggest","toc.follow"],"search":"../../assets/javascripts/workers/search.b6b7e04f.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7f30b55.min.js"></script>
+      
+        <script src="../../assets/mermaid-init.js"></script>
+      
+        <script src="../../assets/mathjax-init.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
