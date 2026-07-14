@@ -3,14 +3,13 @@
 from datetime import timedelta
 
 import pytest
-from pydantic import ValidationError
-
 from canvod.filemap.convention import (
     CanVODFilename,
     FileType,
     ReceiverType,
     _duration_to_timedelta,
 )
+from pydantic import ValidationError
 
 
 class TestDurationToTimedelta:
@@ -246,9 +245,7 @@ class TestCanVODFilenameFromFilename:
         assert f.name == filename
 
     def test_strips_directory_prefix(self):
-        f = CanVODFilename.from_filename(
-            "/some/path/ROSR01TUW_R_20250010000_01D_05S_AA.rnx"
-        )
+        f = CanVODFilename.from_filename("/some/path/ROSR01TUW_R_20250010000_01D_05S_AA.rnx")
         assert f.name == "ROSR01TUW_R_20250010000_01D_05S_AA.rnx"
 
     def test_invalid_filename_raises(self):

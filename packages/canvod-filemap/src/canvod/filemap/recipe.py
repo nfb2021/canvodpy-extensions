@@ -126,9 +126,7 @@ class NamingRecipe(BaseModel):
     layout: DirectoryLayout = DirectoryLayout.YYDDD_SUBDIRS
 
     # File discovery
-    glob: str = Field(
-        description="Glob pattern to find files (e.g. '*.??o', '*.rinex')"
-    )
+    glob: str = Field(description="Glob pattern to find files (e.g. '*.??o', '*.rinex')")
 
     # Field extraction: sequential left-to-right
     # Each entry is a single-key dict: {field_name: width}
@@ -140,18 +138,12 @@ class NamingRecipe(BaseModel):
     def _validate_fields(self) -> NamingRecipe:
         for i, entry in enumerate(self.fields):
             if len(entry) != 1:
-                msg = (
-                    f"fields[{i}]: each entry must be a single "
-                    f"key-value pair, got {entry}"
-                )
+                msg = f"fields[{i}]: each entry must be a single key-value pair, got {entry}"
                 raise ValueError(msg)
             field_name = next(iter(entry))
             width = entry[field_name]
             if field_name not in KNOWN_FIELDS:
-                msg = (
-                    f"fields[{i}]: unknown field '{field_name}'. "
-                    f"Known: {sorted(KNOWN_FIELDS)}"
-                )
+                msg = f"fields[{i}]: unknown field '{field_name}'. Known: {sorted(KNOWN_FIELDS)}"
                 raise ValueError(msg)
             if not isinstance(width, int) or width < 1:
                 msg = f"fields[{i}]: width must be a positive integer, got {width}"
@@ -206,10 +198,7 @@ class NamingRecipe(BaseModel):
                 try:
                     result[field_name] = int(raw)
                 except ValueError:
-                    msg = (
-                        f"Cannot parse '{field_name}' as integer "
-                        f"from {raw!r} in {filename!r}"
-                    )
+                    msg = f"Cannot parse '{field_name}' as integer from {raw!r} in {filename!r}"
                     raise ValueError(msg) from None
 
         return result
@@ -271,11 +260,7 @@ class NamingRecipe(BaseModel):
         elif "month" in parsed and "day" in parsed:
             from datetime import date
 
-            doy = (
-                date(year, _require_int("month"), _require_int("day"))
-                .timetuple()
-                .tm_yday
-            )
+            doy = date(year, _require_int("month"), _require_int("day")).timetuple().tm_yday
         else:
             raise ValueError(
                 f"Recipe '{self.name}': no 'doy' or 'month'+'day' fields "
@@ -301,9 +286,7 @@ class NamingRecipe(BaseModel):
                 period = "01D"
 
         rx_type = (
-            ReceiverType.REFERENCE
-            if self.receiver_type == "reference"
-            else ReceiverType.ACTIVE
+            ReceiverType.REFERENCE if self.receiver_type == "reference" else ReceiverType.ACTIVE
         )
 
         conventional = CanVODFilename(

@@ -1,0 +1,51 @@
+name: Platform Tests
+
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: '0 6 * * 1'  # Weekly on Monday at 06:00 UTC
+
+permissions: read-all
+
+env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+    build:
+        name: Tests • ${{ matrix.name }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      python-version: '3.14'
+                      name: 'Python 3.14 - Ubuntu'
+                    - os: windows-latest
+                      python-version: '3.14'
+                      name: 'Python 3.14 - Windows'
+                    - os: macos-latest
+                      python-version: '3.14'
+                      name: 'Python 3.14 - macOS'
+
+        defaults:
+            run:
+                shell: bash
+
+        steps:
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - name: Install uv and set the python version
+              uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+              with:
+                  python-version: ${{ matrix.python-version }}
+                  enable-cache: true
+            - name: Set up Python
+              run: uv python install
+            - name: Update lock file (Dependabot only)
+              if: github.actor == 'dependabot[bot]'
+              run: uv lock
+            - name: Install the Project
+              run: uv sync --locked --dev
+            - name: Run Tests
+              run: uv run pytest --verbose --color=yes

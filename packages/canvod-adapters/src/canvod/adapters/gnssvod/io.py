@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from canvod.store import MyIcechunkStore
 
 
-def _resolve_store(store_or_site: Any) -> MyIcechunkStore:
+def _resolve_store(store_or_site: Any) -> MyIcechunkStore:  # ty: ignore[invalid-type-form]
     """Accept a MyIcechunkStore, a site/manager object with a ``.vod_store``
     attribute, or a filesystem path — return a MyIcechunkStore instance.
     """

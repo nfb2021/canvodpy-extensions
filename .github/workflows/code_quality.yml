@@ -1,0 +1,65 @@
+name: Python Code Quality
+
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: '0 6 * * 1' # Weekly on Monday at 06:00 UTC
+
+permissions: read-all
+
+env:
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+    lock_file:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: ./.github/actions/setup
+            - name: Install just
+              uses: taiki-e/install-action@0631aa6515c7d545823c67cfae7ef4fc7f490154 # v2.81.8
+              with:
+                  tool: just
+            - name: Check uv.lock is up to date
+              if: github.actor != 'dependabot[bot]'
+              run: just check-lock
+
+    linting:
+        runs-on: ubuntu-latest
+        needs: [lock_file]
+        steps:
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: ./.github/actions/setup
+            - name: Install just
+              uses: taiki-e/install-action@0631aa6515c7d545823c67cfae7ef4fc7f490154 # v2.81.8
+              with:
+                  tool: just
+            - name: Lint with ruff
+              run: just check-lint-only
+
+    formatting:
+        runs-on: ubuntu-latest
+        needs: [lock_file]
+        steps:
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: ./.github/actions/setup
+            - name: Install just
+              uses: taiki-e/install-action@0631aa6515c7d545823c67cfae7ef4fc7f490154 # v2.81.8
+              with:
+                  tool: just
+            - name: Check formatting
+              run: just check-format-only
+
+    type_consistency:
+        runs-on: ubuntu-latest
+        needs: [lock_file]
+        steps:
+            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: ./.github/actions/setup
+            - name: Install just
+              uses: taiki-e/install-action@0631aa6515c7d545823c67cfae7ef4fc7f490154 # v2.81.8
+              with:
+                  tool: just
+            - name: Type check with ty
+              run: just check-types

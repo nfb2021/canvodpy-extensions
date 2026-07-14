@@ -138,8 +138,7 @@ def _format_validation_error(report: ValidationReport, base_dir: Path) -> str:
 
     if report.unmatched:
         lines.append(
-            f"\n  {len(report.unmatched)} file(s) could not be mapped"
-            " to canonical names:"
+            f"\n  {len(report.unmatched)} file(s) could not be mapped to canonical names:"
         )
         for p in report.unmatched[:20]:
             lines.append(f"    - {p.name}")

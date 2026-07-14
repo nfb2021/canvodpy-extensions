@@ -193,9 +193,7 @@ class CanVODFilename:
 
         m = _FILENAME_RE.match(basename)
         if m is None:
-            raise ValueError(
-                f"Filename does not match the canVOD convention: {basename!r}"
-            )
+            raise ValueError(f"Filename does not match the canVOD convention: {basename!r}")
 
         return cls(
             site=m.group("site"),

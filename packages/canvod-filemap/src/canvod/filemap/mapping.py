@@ -132,9 +132,7 @@ class FilenameMapper:
         self.receiver_base_dir = receiver_base_dir
 
         self._rx_type = (
-            ReceiverType.REFERENCE
-            if receiver_type == "reference"
-            else ReceiverType.ACTIVE
+            ReceiverType.REFERENCE if receiver_type == "reference" else ReceiverType.ACTIVE
         )
 
     def discover_all(self) -> list[VirtualFile]:
@@ -208,7 +206,7 @@ class FilenameMapper:
         if result is None:
             raise ValueError(f"No pattern matched for {filename!r}")
 
-        pat, m = result
+        _pat, m = result
         groups = m.groupdict()
 
         # Validate station code if configured

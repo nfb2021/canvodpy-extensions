@@ -139,4 +139,4 @@ class TestProvenance:
 
     def test_invalid_direction_raises(self):
         with pytest.raises(ValueError, match="direction must be"):
-            build_provenance_attrs("sideways", "x")
+            build_provenance_attrs("sideways", "x")  # ty: ignore[invalid-argument-type]

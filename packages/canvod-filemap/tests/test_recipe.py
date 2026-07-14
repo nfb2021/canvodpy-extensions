@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import pytest
-
 from canvod.filemap.recipe import KNOWN_FIELDS, NamingRecipe
 
 # ---------------------------------------------------------------------------

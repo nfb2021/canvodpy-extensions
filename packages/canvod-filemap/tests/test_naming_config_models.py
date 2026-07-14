@@ -1,13 +1,12 @@
 """Tests for canvod.filemap.config_models."""
 
 import pytest
-from pydantic import ValidationError
-
 from canvod.filemap.config_models import (
     DirectoryLayout,
     ReceiverNamingConfig,
     SiteNamingConfig,
 )
+from pydantic import ValidationError
 
 
 class TestSiteNamingConfig:
