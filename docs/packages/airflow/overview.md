@@ -122,7 +122,7 @@ directly for scripting or debugging without running Airflow at all.
 ## Installation
 
 ```bash
-uv add "canvod-airflow[airflow] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-airflow"
+uv add "canvod-airflow[airflow] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-airflow"
 ```
 
 `apache-airflow` is an optional extra, not a hard dependency — install it

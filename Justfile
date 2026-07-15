@@ -134,3 +134,5 @@ release VERSION: test
     @echo "  1. Review the commits and tag"
     @echo "  2. Push with: git push && git push --tags"
     @echo "  3. GitHub Actions will draft a GitHub Release (GitHub-only, no PyPI)"
+    @echo "  4. Bump the @v{{VERSION}} pin in this README's install snippet and"
+    @echo "     in downstream consumers' [tool.uv.sources] (e.g. canvodpy's root pyproject.toml)"

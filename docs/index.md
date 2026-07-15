@@ -64,7 +64,7 @@ and other slot-in components. Install only what you need.
 GitHub-only by design — install via git-subdirectory sources, not PyPI:
 
 ```bash
-uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-filemap"
+uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-filemap"
 ```
 
 ## Why a separate repo?
