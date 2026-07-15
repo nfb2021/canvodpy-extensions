@@ -27,7 +27,7 @@ class TestDagFileSyntax:
         """DAG file must be valid Python (AST parse)."""
         path = DAGS_DIR / dag_file
         assert path.exists(), f"DAG file not found: {path}"
-        source = path.read_text()
+        source = path.read_text(encoding="utf-8")
         ast.parse(source, filename=dag_file)
 
     @pytest.mark.parametrize(
@@ -36,7 +36,7 @@ class TestDagFileSyntax:
     )
     def test_no_hardcoded_paths(self, dag_file):
         """DAG files must not contain hardcoded absolute paths."""
-        source = (DAGS_DIR / dag_file).read_text()
+        source = (DAGS_DIR / dag_file).read_text(encoding="utf-8")
         # Allow /dev/null (used as dummy aux path)
         lines = [
             line
@@ -54,7 +54,7 @@ class TestDailyDagStructure:
 
     @pytest.fixture()
     def dag_source(self):
-        return (DAGS_DIR / "daily_processing.py").read_text()
+        return (DAGS_DIR / "daily_processing.py").read_text(encoding="utf-8")
 
     def test_has_two_dag_factories(self, dag_source):
         """Must define create_sbf_dag and create_rinex_dag."""
@@ -147,7 +147,7 @@ class TestBackfillDagStructure:
 
     @pytest.fixture()
     def dag_source(self):
-        return (DAGS_DIR / "backfill.py").read_text()
+        return (DAGS_DIR / "backfill.py").read_text(encoding="utf-8")
 
     def test_manual_schedule(self, dag_source):
         """Backfill DAG must have schedule=None (manual only)."""
@@ -194,7 +194,7 @@ class TestImportSafety:
 
     def test_package_init_has_no_top_level_airflow_import(self):
         """canvod.airflow's own __init__.py must not import airflow at all."""
-        init_source = (DAGS_DIR / "__init__.py").read_text()
+        init_source = (DAGS_DIR / "__init__.py").read_text(encoding="utf-8")
         assert "import airflow" not in init_source
 
     @pytest.mark.parametrize(
@@ -206,7 +206,7 @@ class TestImportSafety:
         inside functions, not at module top level, so a missing/misconfigured
         canvodpy config doesn't crash DAG parsing (unchanged from the
         original dags/*.py parse-time-safety pattern)."""
-        source = (DAGS_DIR / dag_file).read_text()
+        source = (DAGS_DIR / dag_file).read_text(encoding="utf-8")
         tree = ast.parse(source, filename=dag_file)
         top_level_imports = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
         for node in top_level_imports:
