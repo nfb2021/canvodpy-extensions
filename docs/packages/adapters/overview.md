@@ -81,8 +81,8 @@ vendoring its own copy.
 ## Installation
 
 ```bash
-uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"
-uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"
+uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"
+uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"
 ```
 
 See the [API Reference](../../api/canvod-adapters.md) for the full public API.

@@ -60,8 +60,8 @@ can't be recovered. Reconstructed datasets carry
 GitHub-only by design; install via the git-subdirectory pattern:
 
 ```bash
-uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"
-uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-adapters"  # for direct Icechunk store I/O
+uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"
+uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"  # for direct Icechunk store I/O
 ```
 
 ## Documentation

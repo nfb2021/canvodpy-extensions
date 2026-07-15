@@ -30,7 +30,7 @@ dynamically at parse time via `canvod.config.load_config()`.
 GitHub-only by design; install via the git-subdirectory pattern:
 
 ```bash
-uv add "canvod-airflow[airflow] @ git+https://github.com/nfb2021/canvodpy-extensions.git#subdirectory=packages/canvod-airflow"
+uv add "canvod-airflow[airflow] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-airflow"
 ```
 
 `apache-airflow` is an optional extra, not a hard dependency — install it
