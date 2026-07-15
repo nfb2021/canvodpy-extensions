@@ -1,8 +1,8 @@
 """Airflow DAGs for GNSS-Transmissometry daily processing.
 
-Two DAGs per configured site:
+Three DAGs per configured site:
 
-**SBF DAG** (``canvod_{site}_sbf``) — same-day results::
+**SBF DAG** (``canvod_{site}_sbf``) — same-day results, broadcast ephemeris::
 
     validate_dirs → check_sbf → process_sbf
       → validate_ingest → calculate_vod → cleanup
@@ -11,6 +11,12 @@ Two DAGs per configured site:
 
     validate_dirs → wait_for_rinex → wait_for_sp3 → fetch_aux_data
       → process_rinex → validate_ingest → calculate_vod → cleanup
+
+**SBF + agency DAG** (``canvod_{site}_sbf_agency``) — best of both, 12-18 day lag::
+
+    validate_dirs → check_sbf     ─┐
+                  → wait_for_sp3 ─┘→ fetch_aux_data → process_sbf
+      → validate_ingest → calculate_vod → cleanup
 
 Requirements
 ------------
