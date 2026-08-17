@@ -17,9 +17,9 @@ jobs:
             pull-requests: write
             contents: write
         steps:
-            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
             - name: Install uv and set the python version
-              uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+              uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
               with:
                   python-version: '3.14'
                   enable-cache: true
@@ -37,13 +37,13 @@ jobs:
               run: uv run pytest
 
             - name: Upload to Coveralls
-              uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+              uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
               with:
                   file: coverage.lcov
 
             - name: Coverage comment
               id: coverage_comment
-              uses: py-cov-action/python-coverage-comment-action@df46427f7dd5d7798834fed9669de6bfb7a00628 # v3
+              uses: py-cov-action/python-coverage-comment-action@9c25e685bef36e805fede7a1508e91dd7ec30d91 # v3
               with:
                   GITHUB_TOKEN: ${{ github.token }}
                   VERBOSE: false
