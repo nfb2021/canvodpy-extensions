@@ -555,7 +555,7 @@ def from_gnssvod_dataset(
     if not sid_labels:
         raise ValueError(
             "No VOD column in the input dataset matched any band in "
-            f"band_map. Available variables: {sorted(ds.data_vars)}"
+            f"band_map. Available variables: {sorted(ds.data_vars, key=str)}"
         )
 
     data_vars: dict[str, tuple] = {"VOD": (["epoch", "sid"], np.concatenate(vod_chunks, axis=1))}
