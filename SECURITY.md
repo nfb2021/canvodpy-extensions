@@ -46,13 +46,9 @@ Please include as much of the following information as possible:
 
 ### 4. Response Timeline
 
-- **Initial Response:** Within 48 hours of report
-- **Confirmation:** Within 7 days (whether we accept or decline the report)
-- **Fix Timeline:** Depends on severity
-  - Critical: 7 days
-  - High: 30 days
-  - Medium: 60 days
-  - Low: 90 days
+canvodpy-extensions is a small, community-maintained project. We aim to
+respond and confirm reports as promptly as we can, and prioritize fixes by
+severity, but we do not guarantee specific response or fix timelines.
 
 ## Security Best Practices for Users
 
