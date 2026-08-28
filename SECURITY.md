@@ -29,7 +29,7 @@ Report security vulnerabilities via one of these methods:
 - Fill in the details
 
 **Alternative:** Email the maintainer directly:
-- Email: nicolas.bader@tuwien.ac.at
+- Email: support@canvodpy.eu
 - Include "SECURITY" in the subject line
 - Provide a detailed description of the vulnerability
 
@@ -71,7 +71,7 @@ that chain may affect these packages; we monitor and update dependencies regular
 
 For security-related questions or concerns:
 - **Maintainer:** Nicolas François Bader
-- **Email:** nicolas.bader@tuwien.ac.at
+- **Email:** support@canvodpy.eu
 - **Affiliation:** Climate and Environmental Remote Sensing (CLIMERS), TU Wien
 
 For general (non-security) questions, use GitHub Issues:
