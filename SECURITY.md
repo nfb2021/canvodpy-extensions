@@ -29,7 +29,7 @@ Report security vulnerabilities via one of these methods:
 - Fill in the details
 
 **Alternative:** Email the maintainer directly:
-- Email: nicolas.bader@tuwien.ac.at
+- Email: support@canvodpy.eu
 - Include "SECURITY" in the subject line
 - Provide a detailed description of the vulnerability
 
@@ -46,13 +46,9 @@ Please include as much of the following information as possible:
 
 ### 4. Response Timeline
 
-- **Initial Response:** Within 48 hours of report
-- **Confirmation:** Within 7 days (whether we accept or decline the report)
-- **Fix Timeline:** Depends on severity
-  - Critical: 7 days
-  - High: 30 days
-  - Medium: 60 days
-  - Low: 90 days
+canvodpy-extensions is a small, community-maintained project. We aim to
+respond and confirm reports as promptly as we can, and prioritize fixes by
+severity, but we do not guarantee specific response or fix timelines.
 
 ## Security Best Practices for Users
 
@@ -71,7 +67,7 @@ that chain may affect these packages; we monitor and update dependencies regular
 
 For security-related questions or concerns:
 - **Maintainer:** Nicolas François Bader
-- **Email:** nicolas.bader@tuwien.ac.at
+- **Email:** support@canvodpy.eu
 - **Affiliation:** Climate and Environmental Remote Sensing (CLIMERS), TU Wien
 
 For general (non-security) questions, use GitHub Issues:
