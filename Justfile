@@ -113,7 +113,10 @@ changelog VERSION="auto":
 # bump version across all packages (major, minor, patch, or explicit like 0.2.0)
 bump VERSION:
     @echo "{{GREEN}}{{BOLD}}Bumping all packages to {{VERSION}}{{NORMAL}}"
-    uv run cz bump {{VERSION}} --yes
+    @case "{{VERSION}}" in \
+        major|minor|patch|MAJOR|MINOR|PATCH) uv run cz bump --increment "$(echo {{VERSION}} | tr '[:lower:]' '[:upper:]')" --yes ;; \
+        *) uv run cz bump {{VERSION}} --yes ;; \
+    esac
     uv lock
     @echo "{{GREEN}}Version bumped to {{VERSION}}{{NORMAL}}"
 
@@ -130,9 +133,11 @@ release VERSION: test
     @echo ""
     @echo "{{GREEN}}{{BOLD}}Release v{{VERSION}} created!{{NORMAL}}"
     @echo ""
-    @echo "Next steps:"
-    @echo "  1. Review the commits and tag"
-    @echo "  2. Push with: git push && git push --tags"
-    @echo "  3. GitHub Actions will draft a GitHub Release (GitHub-only, no PyPI)"
-    @echo "  4. Bump the @v{{VERSION}} pin in this README's install snippet and"
+    @echo "Next steps (main requires a PR -- see CONTRIBUTING.md):"
+    @echo "  1. Review the commit; drop the local tag for now: git tag -d v{{VERSION}}"
+    @echo "  2. Push a branch + open a PR for the commit, merge it"
+    @echo "  3. Pull main, recreate the tag there, push it:"
+    @echo "       git pull origin main && git tag -a v{{VERSION}} -m 'Release v{{VERSION}}' && git push origin v{{VERSION}}"
+    @echo "  4. GitHub Actions will draft a GitHub Release (GitHub-only, no PyPI)"
+    @echo "  5. Bump the @v{{VERSION}} pin in this README's install snippet and"
     @echo "     in downstream consumers' [tool.uv.sources] (e.g. canvodpy's root pyproject.toml)"

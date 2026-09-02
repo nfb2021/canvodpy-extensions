@@ -146,8 +146,25 @@ package's `pyproject.toml`). To cut a release:
 
 ```bash
 just release 0.4.0   # runs tests, updates changelog, bumps all packages, tags
-git push && git push --tags
 ```
+
+`main` requires a PR (branch protection) — `git push origin main` directly
+will fail without an admin bypass, which is not how this project cuts
+releases. Instead:
+
+```bash
+git tag -d v0.4.0                       # drop the local tag for now
+git checkout -b chore/release-v0.4.0
+git push -u origin chore/release-v0.4.0
+gh pr create --title "bump: version X.Y.Z → 0.4.0" --body "..."
+# once merged:
+git checkout main && git pull origin main
+git tag -a v0.4.0 -m "Release v0.4.0"
+git push origin v0.4.0
+```
+
+(Don't push the tag before the PR merges — a merge can produce a different
+commit SHA than what you tagged locally, orphaning the tag.)
 
 canvodpy-extensions is deliberately GitHub-only — packages are still tightly
 coupled to canvodpy's internal API surface, so a PyPI release would imply a
