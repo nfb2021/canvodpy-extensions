@@ -21,13 +21,13 @@ members = ["packages/*"]
 [dependency-groups]
 dev = [
     "commitizen>=4.18.0",
-    "mkdocstrings-python>=2.0.7",
+    "mkdocstrings-python>=2.0.8",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
-    "ruff>=0.16.5",
-    "ty>=0.0.75",
-    "zensical>=0.0.57",
+    "ruff>=0.16.6",
+    "ty>=0.0.78",
+    "zensical>=0.0.59",
 ]
 
 # ============================================================================
