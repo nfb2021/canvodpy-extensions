@@ -340,3 +340,5 @@ node_modules/
 package.json
 package-lock.json
 packages/*/config/
+
+.dev_deps/
