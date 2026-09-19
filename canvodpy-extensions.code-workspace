@@ -9,6 +9,18 @@
             "path": "packages/canvod-filemap",
         },
         {
+            "name": "🌬️ canvod-airflow",
+            "path": "packages/canvod-airflow",
+        },
+        {
+            "name": "🔌 canvod-adapters",
+            "path": "packages/canvod-adapters",
+        },
+        {
+            "name": "🛰️ canvod-gnssgeodesy",
+            "path": "packages/canvod-gnssgeodesy",
+        },
+        {
             "name": "📖 docs",
             "path": "docs",
         },
@@ -142,6 +154,34 @@
                 "type": "shell",
                 "command": "just docs",
                 "group": "build",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Test canvod-filemap",
+                "type": "shell",
+                "command": "just test-package canvod-filemap",
+                "group": "test",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Test canvod-airflow",
+                "type": "shell",
+                "command": "just test-package canvod-airflow",
+                "group": "test",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Test canvod-adapters",
+                "type": "shell",
+                "command": "just test-package canvod-adapters",
+                "group": "test",
+                "problemMatcher": [],
+            },
+            {
+                "label": "Just: Test canvod-gnssgeodesy",
+                "type": "shell",
+                "command": "just test-package canvod-gnssgeodesy",
+                "group": "test",
                 "problemMatcher": [],
             },
         ],
