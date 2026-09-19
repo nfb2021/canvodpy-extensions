@@ -1,0 +1,67 @@
+[project]
+name = "canvod-gnssgeodesy"
+version = "0.1.0"
+description = "Native GNSS multipath and reflectometry products for canvodpy"
+readme = "README.md"
+license = "GPL-3.0-only"
+requires-python = ">=3.14"
+dependencies = [
+    "xarray>=2024.1.0",
+    "numpy>=1.26.0",
+    "scipy>=1.13.0",
+    "pandas>=2.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+# TEMPORARY: pinned to >=0.2.3 (matching canvod-adapters) only because
+# >=0.4.0 -- which this package actually needs, for the nested-group-path
+# fix io.py's geodesy_store groups (code_multipath/nmri/<strategy>, etc.)
+# depend on -- is not yet published (confirmed against PyPI 2026-09-19,
+# latest is 0.2.3). Bump back to >=0.4.0 the moment that release exists;
+# io.py's group-path scheme is not safe to rely on before then.
+store = ["canvod-store>=0.2.3"]
+parallel = ["joblib>=1.4.0"]          # arc-level fan-out, see PLAN.md §5
+# NOTE: there is deliberately no `astropy`/`scipy` extra here anymore. Earlier
+# drafts planned canvod-gnssgeodesy's own dual LSP-backend dispatch — withdrawn
+# along with the from-scratch RH reimplementation (PLAN.md §5 steps 1-4,
+# RATIONALE.md §17). RH now calls gnssrefl's gps.py:strip_compute() directly,
+# which already does its own astropy/scipy dispatch internally via its own
+# `lsp_method` argument (translated from RhStrategyConfig.lsp_backend, §11 —
+# named explicitly after the library each option actually uses, not gnssrefl's
+# internal 'fast'/'scipy' shorthand); astropy/scipy both arrive transitively
+# through the `gnssrefl` extra below, not as direct dependencies.
+# Prerequisite for implementing against this plan: every exact file:line
+# citation throughout docs/design/canvod-gnssgeodesy/{PLAN,RATIONALE}.md was
+# read against a local clone of each wrapped library, at:
+#   gnssrefl:      .dev_deps/gnssrefl (github.com/kristinemlarson/gnssrefl @ 526060f, 2026-08-30)
+#   gnssmultipath: .dev_deps/GNSS_Multipath_Analysis_Software
+#                  (github.com/paarnes/GNSS_Multipath_Analysis_Software @ e037a9b, 2026-08-21)
+# `.dev_deps/` is gitignored — it does NOT ship with this repo. Clone both
+# repos there yourself at the commits above before trusting any file:line
+# citation in the design docs.
+gnssrefl = ["gnssrefl"]                # GPLv3 — see RATIONALE.md §17/§19. The whole package is GPL-3.0-only
+                                        # (`license` above), so there is no Apache-2.0 core left to protect —
+                                        # kept as an extra purely for install-footprint minimalism, not a
+                                        # license-boundary requirement. Version floor not yet verified against
+                                        # a pinned gnssrefl release — do not ship this unpinned, resolve before
+                                        # Phase 3. `refraction.py`'s GnssreflRefractionCorrector imports gnssrefl
+                                        # lazily (inside the method, not at module import time) so the rest of
+                                        # the package works with this extra absent.
+gnssmultipath = ["gnssmultipath"]      # MIT — see RATIONALE.md §18. Same footprint-only reasoning as gnssrefl
+                                        # above (MIT never carried a license-boundary requirement). §6's
+                                        # Mp1Computer imports it lazily, same pattern. Version floor not yet
+                                        # verified — resolve before Phase 3, same as gnssrefl.
+
+[project.urls]
+Homepage = "https://github.com/nfb2021/canvodpy-extensions"
+Documentation = "https://nfb2021.github.io/canvodpy-extensions/packages/geodesy/overview/"
+Repository = "https://github.com/nfb2021/canvodpy-extensions"
+Issues = "https://github.com/nfb2021/canvodpy-extensions/issues"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "canvod.gnssgeodesy"
