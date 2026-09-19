@@ -55,6 +55,17 @@ and other slot-in components. Install only what you need.
 
     [:octicons-arrow-right-24: Overview](packages/adapters/overview.md)
 
+-   :fontawesome-solid-satellite-dish: &nbsp; **canvod-gnssgeodesy**
+
+    ---
+
+    Native GNSS geodetic products — reflector height (GNSS-IR), code/pseudorange
+    multipath (NMRI), and firmware multipath diagnostics, wrapping
+    [gnssrefl](https://github.com/kristinemlarson/gnssrefl) where a trusted core
+    exists. GPL-3.0-only. Pre-implementation scaffold.
+
+    [:octicons-arrow-right-24: Overview](packages/geodesy/overview.md)
+
 </div>
 
 ---

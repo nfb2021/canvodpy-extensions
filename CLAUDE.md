@@ -7,7 +7,7 @@ wait to be asked.
 
 | Skill | Apply when |
 |---|---|
-| `pydantic` | Working with Pydantic models, validators, `BaseModel` (`canvod-filemap` config models) |
+| `pydantic` | Working with Pydantic models, validators, `BaseModel` (`canvod-filemap` config models, `canvod-gnssgeodesy` strategy configs) |
 | `python-testing-patterns` | Writing or reviewing `pytest` tests |
 | `uv-package-manager` | Running `uv`, editing `pyproject.toml`, managing workspace deps |
 | `airflow-dag-patterns` | Writing DAGs for `canvod-airflow` |
@@ -28,6 +28,7 @@ package's own `CLAUDE.md` first.
 | `canvod-filemap` | `canvod.filemap` | Available | Recipe-based filename mapping for non-canonical GNSS filenames; slots in for canvodpy >= 0.3.0 |
 | `canvod-airflow` | `canvod.airflow` | Available | Airflow DAG definitions for canvodpy pipelines; `airflow` extra required to actually run them |
 | `canvod-adapters` | `canvod.adapters` | Available | Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools (gnssvod); `store` extra required for direct Icechunk I/O |
+| `canvod-gnssgeodesy` | `canvod.gnssgeodesy` | Pre-implementation scaffold | Native GNSS geodetic products (reflector height, code-multipath/NMRI, firmware multipath diagnostics) wrapping `gnssrefl`; GPL-3.0-only (not this monorepo's Apache-2.0 default) — see `packages/canvod-gnssgeodesy/CLAUDE.md` before touching it |
 
 Each package under `packages/*` is a self-contained uv workspace member with its
 own `pyproject.toml`, `src/`, `tests/`, `README.md`, and `CLAUDE.md`.
@@ -53,6 +54,7 @@ just test            # Run all tests
 just test-package canvod-filemap  # Test a single package
 just test-package canvod-airflow  # Test canvod-airflow (structure tests run without Airflow)
 just test-package canvod-adapters  # Test canvod-adapters (no canvod-store/gnssvod needed)
+just test-package canvod-gnssgeodesy  # Test canvod-gnssgeodesy (gnssrefl/gnssmultipath-gated tests skip if extras absent)
 just docs            # Preview documentation locally
 just build-all        # Build every package into dist/
 ```

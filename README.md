@@ -20,6 +20,7 @@ command).
 | [`canvod-filemap`](packages/canvod-filemap) | Recipe-based filename mapping for non-canonical GNSS filenames; slot-in for canvodpy >= 0.3.0 | Available |
 | [`canvod-airflow`](packages/canvod-airflow) | Airflow DAG definitions (daily SBF/RINEX/SBF-agency + backfill) for canvodpy pipelines | Available |
 | [`canvod-adapters`](packages/canvod-adapters) | Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools (gnssvod) | Available |
+| [`canvod-gnssgeodesy`](packages/canvod-gnssgeodesy) | Native GNSS geodetic products (reflector height, code-multipath/NMRI, firmware multipath diagnostics; tropospheric and PPP planned) | Pre-implementation scaffold |
 
 ## Installation
 
@@ -32,9 +33,12 @@ uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git@
 ```
 
 The other packages follow the same pattern — just swap `canvod-filemap` for
-`canvod-airflow` or `canvod-adapters` in both the package name and the
-`subdirectory=` path. See each package's own README for extras (e.g.
-`canvod-airflow[airflow]`, `canvod-adapters[store]`).
+`canvod-airflow`, `canvod-adapters`, or `canvod-gnssgeodesy` in both the
+package name and the `subdirectory=` path. See each package's own README for
+extras (e.g. `canvod-airflow[airflow]`, `canvod-adapters[store]`,
+`canvod-gnssgeodesy[gnssrefl]`). `canvod-gnssgeodesy` is GPL-3.0-only, not
+this monorepo's Apache-2.0 default — see its own README before depending on
+it from an Apache-2.0 package.
 
 **Every new tagged release must bump the `@v0.1.0` ref above** (and the
 matching `tag =` pins in downstream consumers' `[tool.uv.sources]`, e.g.

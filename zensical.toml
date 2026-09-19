@@ -47,6 +47,9 @@ nav = [
     { "canvod-adapters" = [
       { "Overview" = "packages/adapters/overview.md" },
     ]},
+    { "canvod-gnssgeodesy" = [
+      { "Overview" = "packages/geodesy/overview.md" },
+    ]},
   ]},
 
   { "Development" = [
@@ -58,6 +61,7 @@ nav = [
     { "canvod.filemap" = "api/canvod-filemap.md" },
     { "canvod.airflow" = "api/canvod-airflow.md" },
     { "canvod.adapters" = "api/canvod-adapters.md" },
+    { "canvod.gnssgeodesy" = "api/canvod-gnssgeodesy.md" },
   ]},
 ]
 
