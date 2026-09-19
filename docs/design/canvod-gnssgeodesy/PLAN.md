@@ -847,7 +847,7 @@ arc's LSP was run on, genuinely per-`sid` (not just per-satellite, see
 RATIONALE.md §23). **No `station` dim** — `station` is never a real Dataset
 dimension in canvodpy (confirmed: zero matches for `"station"` as a dim
 anywhere in `canvod-store/manager.py`), it's the group-path argument
-`write_multipath_group()` already takes (§10); one station = one group,
+`write_or_append_geodesy_group()` already takes (§10); one station = one group,
 same as `gnss_store`/`vod_store`. Vars `RH`, `amplitude`, `peak2noise`,
 `n_arcs_used`, all per-`sid`-per-day. A separate, explicitly-derived
 per-day rollup (sample-count-weighted mean of `RH` across available `sid`s
@@ -1182,12 +1182,19 @@ gnssrefl, no packaging/license-boundary decision is needed here (MIT).
    Minimum record length — see resolved question 3 in §13; now evaluated
    per `sv` (a satellite that's only intermittently tracked has its own,
    possibly thinner, baseline history than the station's other satellites).
+   **Which days count as "the record" at all — entire-record vs. frozen
+   climatology, `climatology_min_years`, and the update mechanism this
+   enables — is specified in full in §10 (io.py) and RATIONALE.md §33,
+   not here**; this step only fixes the per-`sv` formula itself.
    Station-metadata discontinuities: antenna, radome, or receiver/firmware
    changes step `MP1rms` discontinuously and corrupt a multi-year baseline
    silently. At minimum, expose station-metadata-change dates (if available
    from `canvod-store-metadata`) as an optional input that marks
    baseline-eligible date ranges; full handling deferred, but the absence
-   must be documented as a known limitation, not silently ignored.
+   must be documented as a known limitation, not silently ignored. (This is
+   not a moving-window problem like §10's deferred climatology-revision
+   stub — it's a discontinuity, and per §10 must split the baseline into
+   separate eras, never blend across the change.)
 
 Output: `xr.Dataset`, dims `(epoch, sv)` (epoch = one daily timestamp, see
 §10; `sv` — **not** `sid`, see step 5 — GPS-only in v1 so always a `G`
@@ -1337,12 +1344,57 @@ def build_provenance_attrs(
 
 ## 10. `io.py`
 
-Icechunk group naming: **no blanket family prefix** — a `gnssir/` prefix
-over both families would mislabel the code-multipath side. Use the
-module/algorithm name as the group family, exactly matching VOD's own
-precedent (`{calculator_name}/{analysis_name}`, verified directly in
-`canvod-store/src/canvod/store/manager.py:484,540,588` — e.g.
-`"tau_omega_zeroth_order/canopy_01_vs_reference_01"`):
+**A dedicated `geodesy_store`, mirroring `vod_store` — decided
+2026-09-19, see RATIONALE.md §32.** Products land in their own Icechunk
+store, not as extra groups bolted onto `gnss_store`. Verified directly
+against `canvodpy`'s actual code (not assumed): `StorageConfig`
+(`canvod-config/src/canvod/config/models/storage.py:112-150`) already
+defines **four** independent, per-site named store slots, each a
+separate on-disk Icechunk/Zarr repo under
+`stores_root_dir/<site>/<name>` — `gnss_store` (dir `"rinex"`),
+`vod_store` (dir `"vod"`), `statistics_store` (Zarr), `rollup_store`
+(dir `"rollup"`) — each with its own write-strategy field
+(`gnss_store_strategy`/`vod_store_strategy`,
+`skip`/`overwrite`/`unsafe_append`) and its own property on
+`GnssResearchSite`/`Site` (`site.gnss_store`, `site.vod_store`,
+`canvodpy/canvodpy/src/canvodpy/api.py:120-128`). A fifth slot,
+`geodesy_store` (dir default `"geodesy"`), is this same pattern extended
+by one, not a new concept — see RATIONALE.md §32 for why the name is
+`geodesy_store` and not `nmri_store`/`gnssir_store` (both would misname
+what's inside: RH, NMRI, the firmware diagnostic, tropospheric, and
+eventually PPP all share this store).
+
+Four small `canvodpy`-core touch points this requires (none owned by
+this package, all mirroring an existing field/property one-for-one):
+- `StorageConfig.geodesy_store_name` (default `"geodesy"`) +
+  `get_geodesy_store_path(site_name)`, mirroring
+  `gnss_store_name`/`get_gnss_store_path`.
+- `StorageConfig.geodesy_store_strategy` (`skip`/`overwrite`/
+  `unsafe_append`), mirroring `gnss_store_strategy`/`vod_store_strategy`.
+- `IcechunkConfig.chunk_strategies["geodesy_store"]` — reuses the exact
+  same `ChunkStrategy(epoch=17280, sid=-1)` default already used for
+  `gnss_store`/`vod_store` (`compression.py:87-94`); every product in §5/
+  §6/§7 is already `(epoch, sid)`- or `(epoch, sv)`-shaped, so nothing new
+  to invent here.
+- `GnssResearchSite.geodesy_store` property + a `create_geodesy_store()`
+  factory in `canvod-store` (mirroring `create_gnss_store()`/
+  `create_vod_store()`, `store.py:4004-4035`), and `Site.geodesy_store` in
+  canvodpy's public `api.py`.
+
+A dedicated store still has exactly one `main` branch, same as
+`gnss_store`/`vod_store` — the `branch=` kwarg below is for the general
+Icechunk capability (e.g. a throwaway experimental run against an
+alternate strategy config), not a second permanent branch for this
+package's own products; see RATIONALE.md §32 for why a branch-per-product
+scheme was considered and rejected in favor of one store per product
+family.
+
+Icechunk group naming *within* `geodesy_store`: **no blanket family
+prefix** — a `gnssir/` prefix over both families would mislabel the
+code-multipath side. Use the module/algorithm name as the group family,
+exactly matching VOD's own precedent (`{calculator_name}/{analysis_name}`,
+verified directly in `canvod-store/src/canvod/store/manager.py:484,540,588`
+— e.g. `"tau_omega_zeroth_order/canopy_01_vs_reference_01"`):
 
 - `snr_multipath/rh/<strategy>`
 - `code_multipath/nmri/<strategy>`
@@ -1366,26 +1418,25 @@ directly, and the default chunk strategy keys off `"epoch"`. This is why
 timestamp per day) to go through either write path; `station` is never a
 Dataset dim at all (confirmed: zero matches in `canvod-store/manager.py` —
 see §5/§6 Output), it's purely an Icechunk group-path/routing parameter to
-`write_multipath_group` below. `sid`/`sv`-dimensioned chunking is **not**
+`write_or_append_geodesy_group` below. `sid`/`sv`-dimensioned chunking is **not**
 an open problem — `canvod-config`'s `ChunkStrategy`
 (`canvod-config/src/canvod/config/models/compression.py:27-44`) already
 has exactly two fields, `epoch` and `sid` (no `station` field exists at
 all), and `gnss_store`/`vod_store` already default to
 `ChunkStrategy(epoch=17280, sid=-1)` (`compression.py:87-94`) — a `sid`-
 chunked dimension is existing, reusable precedent, not something this
-package introduces. The one real touch point is registering a
-`"multipath_store"`-style entry mirroring that same default in
-`canvod-config`'s `chunk_strategies` dict (currently only
-`gnss_store`/`vod_store` exist) — a small canvodpy-core touch point
-(chunking config only, not the observable-parsing path, which stays
-config-only per §3).
+package introduces. The touch point is registering a `"geodesy_store"`
+entry mirroring that same default in `canvod-config`'s `chunk_strategies`
+dict (see the dedicated-store touch points above) — a small canvodpy-core
+touch point (chunking config only, not the observable-parsing path, which
+stays config-only per §3).
 
 **Per-day rollup, a second, explicitly-derived product.** Since the
 GNSS-VOD-feeding use case (this package's original motivating goal) wants
 one scalar per station per day, not one per satellite, each of §5/§6/§7
 also produces a rollup — sample-count-weighted mean across available
 `sid`s/`sv`s that day, dims `(epoch,)` (no `station` dim — see above; a
-`station` value is implicit in which group `write_multipath_group` wrote
+`station` value is implicit in which group `write_or_append_geodesy_group` wrote
 to), carrying `n_satellites_used` (moved here from §6's per-`sv` output) —
 written to a sibling group (`code_multipath/nmri/<strategy>/rollup`, same
 pattern for the other two) rather than overwriting the per-`sid`/per-`sv`
@@ -1396,20 +1447,124 @@ genuinely per-band); §6's collapses `sv`→scalar (MP1/NMRI is genuinely
 per-satellite, see §6 step 5) — same rollup pattern, different source dim,
 not a discrepancy.
 
-Baseline-recomputation semantics: `MP1max` is a function of the *entire*
-record, so appending one new day of data can silently change every
-previously-emitted `NMRI` value if recomputed naively on every append. This
-is incompatible with a pure append-only write mode. Two options, pick one
-explicitly: (a) freeze the baseline window in the strategy config
-(`baseline_from: [start_date, end_date]`, computed once, reused thereafter),
-or (b) always recompute-and-overwrite (`mode="w"`) the whole `NMRI` series
-on each run rather than appending, documenting that NMRI values are not
-stable across reprocessing. Recommend (a) for scientific reproducibility.
+**Update mechanism: reuse VOD's append/dedup ledger, not a bespoke
+one — decided 2026-09-19, see RATIONALE.md §32.** Verified directly
+against `canvod-store/src/canvod/store/store.py:2206-2224`:
+`write_or_append_vod_group()` already solves "a derived product, computed
+from `gnss_store` data, needs to be appended to incrementally as new days
+land" — it writes the computed dataset and a metadata-ledger row in one
+Icechunk commit, keyed on `source_file_hashes: dict[receiver_name, File
+Hash]` (the `gnss_store` files actually consumed), and
+`should_skip_vod_write()`/`_vod_metadata_row_exists()` gate every write on
+exact-hash-match (already computed from this exact source → skip) or
+temporal overlap with a *different* hash (something changed upstream →
+warn, don't silently diverge). This is generic — nothing about it is
+VOD-specific except the method name and ledger column names — so
+`canvod-gnssgeodesy` gets its own `write_or_append_geodesy_group()` in
+`canvod-store`, structurally identical, not a new mechanism:
 
 ```python
-def write_multipath_group(store_or_site, station, family, strategy_name, ds, *, branch="main", commit_message=None): ...
-def read_multipath_group(store_or_site, station, family, strategy_name, *, branch="main") -> xr.Dataset: ...
+def write_or_append_geodesy_group(
+    store_or_site, group_name, dataset, source_file_hashes, source_gnss_stores,
+    product_name, *, append_dim="epoch", branch="main", commit_message=None, dedup=True,
+) -> bool: ...
+def read_geodesy_group(store_or_site, station, family, strategy_name, *, branch="main") -> xr.Dataset: ...
 ```
+
+**This mechanism only fits a genuinely per-day-independent product.** RH
+(§5) and the firmware diagnostic (§7) are: each day's value stands on its
+own, so they fit unmodified. MP1/NMRI (§6) does **not**, as originally
+specified — `MP1max` was a function of the *entire* record, so recomputing
+it naively on every append would silently rewrite every previously-emitted
+`NMRI` value, which this same dedup ledger is specifically built to
+*block* (a same-range-different-value write reads as a conflicting
+overlap, not a legitimate update). Resolving this is what the
+climatology-baseline policy below is for — it's not just a scientific
+improvement, it's what makes NMRI eligible for this same append mechanism
+at all, rather than needing separate overwrite-mode plumbing nothing else
+in this store uses.
+
+**NMRI baseline: a two-tier, entire-record-vs-climatology policy — decided
+2026-09-19, see RATIONALE.md §33 for the full literature investigation
+(what Larson & Small actually did, what teqc does and doesn't do, and why
+their numbers don't transfer directly).**
+
+`MP1max` — the normalizer in `NMRI = (MP1max − MP1rms) / MP1max` — is,
+by Larson & Small's own definition, the mean of the top
+`baseline_top_fraction` (5% in the literature) of daily `MP1rms` values.
+The open question was never the formula, it's *which days* count as "the
+record" that top-5% is drawn from, and that has real implications for
+what `NMRI` even means at a station with more than a year or two of data:
+pooling an ever-growing record mixes genuine year-to-year climate
+variability (a system-wide dry year vs. a wet year) into what's supposed
+to be a fixed geometric/instrumental reference level — the literature's
+own retrospective papers never had to confront this, because they
+computed `MP1max` once, after the fact, over an already-finished
+multi-year archive (RATIONALE.md §33). An operational pipeline that keeps
+growing does have to confront it.
+
+**Tier 1 — short record (< `climatology_min_years`, default 2):** use
+Larson & Small's literal definition as-is, `baseline_from=None` meaning
+"top 5% of the entire available record so far." This is honestly
+provisional, not a stable climatology — it will keep shifting as more
+data arrives — but it's what lets a brand-new station produce `NMRI`
+output from day one rather than waiting years for a stable baseline.
+`nmri_baseline_n_days`/`nmri_baseline_confidence` (§6 step 8's existing
+output vars) mark this tier's output as low-confidence; nothing is
+silently withheld while a station is young.
+
+**Tier 2 — mature record (≥ `climatology_min_years`):** stop pooling the
+ever-growing record and fix an explicit climatology window,
+`baseline_from: [start_date, end_date]`, computed once and reused
+thereafter — the same mechanism previously described as "freeze the
+baseline," now correctly understood as computing an actual climatology
+rather than an arbitrary frozen convenience window. The transition from
+Tier 1 to Tier 2 is **manual, never automatic** — a caller (or operator)
+must set `baseline_from` explicitly once a station's record qualifies;
+silently switching what `NMRI` means underneath a station without a
+visible config change would violate this project's own loud-not-silent
+convention (§4's tracking-code policy is the precedent for this same
+principle).
+
+**Why `climatology_min_years=2`, not 6, and not 1 — this is
+canvod-gnssgeodesy's own engineering judgment, explicitly not a
+literature-mandated number (RATIONALE.md §33 confirms the literature is
+silent on this exact operational question).** The floor is set by what
+the word "climatology" requires to mean anything at all: **a climatology
+needs at least two independent annual cycles to be computed, because with
+only one year available, "the climatology" is numerically identical to
+that one year's own raw data — there is nothing to average over, no way
+to tell a genuinely typical dry period apart from that particular year's
+weather.** Two years is the minimum at which the concept stops being
+vacuous, not a number chosen for statistical comfort beyond that. (Small
+et al. 2018's six-year figure, considered and rejected as this package's
+default, was a retrospective *study-inclusion* filter over a pre-existing
+multi-decade archive Larson already had access to — it answers "which
+stations were trustworthy enough to include in a comparison paper," not
+"how long before a new station's own baseline is usable," and adopting it
+here would categorically block every new deployment's `NMRI` output for
+its first six years. `climatology_min_years` is exposed as a config field,
+not hardcoded, so a station with an unusually weak or ambiguous seasonal
+contrast can be tuned without a code change.)
+
+**Explicit stub, not implemented in v1: revisiting a mature station's
+climatology as decades of data accumulate.** Once a station is in Tier 2,
+nothing in v1 ever recomputes its frozen `baseline_from` window — that is
+a deliberate limitation, not an oversight. Whether and how a long-lived
+station's climatology should ever shift (a periodically-revised trailing
+window, in the spirit of how meteorological climate normals get revised
+every decade or so, is the most likely future direction — but the exact
+cadence, overlap handling, and how to avoid retroactively rewriting
+already-published `NMRI` values when the window moves are all unresolved)
+is out of scope here. `code_multipath.py`'s entry point raises
+`NotImplementedError` if asked to auto-revise a Tier 2 station's
+`baseline_from`; the only supported path is an operator setting a new
+`baseline_from` explicitly, same as the initial Tier 1→2 transition. The
+one case that **is** handled, because it isn't a moving-window problem —
+it's a discontinuity, and it was already flagged as a known limitation in
+§6 step 8: a station hardware change (antenna, radome, receiver swap)
+shifts the raw `MP1rms` power level permanently and must split the
+baseline into separate eras, never blended across the change.
 
 ## 11. `config.py` — pydantic models
 
@@ -1580,8 +1735,22 @@ class NmriStrategyConfig(ArcStrategyConfig):
         "None = fall back to the active constellation's AlphaCalibration.baseline_top_fraction (§6 step 2; "
         "0.05 for GPS) — an explicit value here always overrides the literature-sourced default."
     )
+    climatology_min_years: int = Field(
+        2, description="Minimum record span, in years, before a station may move from Tier 1 (entire-"
+        "available-record baseline) to Tier 2 (frozen climatology window) — see io.py's baseline policy. "
+        "2 is canvod-gnssgeodesy's own engineering default, NOT a literature-sourced number (RATIONALE.md "
+        "§33: the literature is silent on this exact operational question) — it's the floor at which "
+        "'climatology' stops being numerically identical to the raw record (a single year has nothing to "
+        "average over). Exposed here, not hardcoded, so a station with an unusually weak/ambiguous seasonal "
+        "contrast can be tuned without a code change."
+    )
     baseline_from: tuple[str, str] | None = Field(
-        None, description="Frozen [start, end] baseline window (ISO dates); None = recompute each run, see io.py notes"
+        None, description="Explicit [start, end] climatology window (ISO dates). None (default) = Tier 1, "
+        "use the entire available record so far (provisional, matches Larson & Small's literal one-time-"
+        "retrospective definition — see io.py). Setting this is the only supported way to enter Tier 2; "
+        "the transition is never automatic, even once climatology_min_years is exceeded (loud-not-silent, "
+        "same principle as §4's tracking-code policy) — see io.py for the full two-tier policy and the "
+        "explicit stub for revisiting a Tier 2 window later."
     )
     outlier_mad_threshold: float = Field(3.0, description="MAD-based outlier threshold on daily MP1rms")
 

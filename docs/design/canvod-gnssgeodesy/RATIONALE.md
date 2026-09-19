@@ -9,7 +9,7 @@ primary source versus asserted with confidence. Nothing in this file should
 be read as current guidance if `PLAN.md` says something different —
 `PLAN.md` wins.
 
-Section numbers here (`§0`, `§14`–`§31`) continue the numbering of an
+Section numbers here (`§0`, `§14`–`§33`) continue the numbering of an
 earlier single-file draft and are kept for continuity with the audit log's
 own citations; they don't imply sections 1-13 are missing — those are
 `PLAN.md`'s.
@@ -1576,3 +1576,220 @@ both out of an ephemeral session scratchpad into the repository so a
 fresh agent can actually find them. The Phase 0.5 verification script that
 produced the empirical SBF-fixture evidence cited throughout `PLAN.md` §3
 is preserved alongside these two files as `verify_phase0_5.py`.
+
+## 32. `geodesy_store`: a dedicated Icechunk store, not groups inside `gnss_store` (2026-09-19)
+
+**Starting point.** Working through how `canvod-gnssgeodesy` actually gets
+used surfaced a question `PLAN.md` §10 had left implicit: which Icechunk
+store do RH/NMRI/the firmware diagnostic actually get written into? The
+original §10 draft assumed "the store" generically, without saying whether
+that meant `gnss_store` (with these products as extra groups) or something
+else. Two sub-questions got resolved in sequence, both by reading
+`canvodpy`'s actual code rather than assuming:
+
+**Branch vs. store — a real distinction that got conflated at first.** The
+first framing considered was "should this package's products get their own
+Icechunk *branch*?" Rejected: an Icechunk branch is for versioning the
+*whole tree over time* (diverge/merge/rebase, git-like), not for keeping
+two products apart within one store — that's what group paths already do,
+and it's the same pattern VOD already uses on `main` alongside raw GNSS
+data. A dedicated branch would mean periodically rebasing against `main`
+as new raw days land, and would break the ability to atomically commit
+"new raw day + its derived metrics" together. `write_or_append_geodesy_group`'s
+`branch="main"` kwarg (§10) stays for the general Icechunk capability (a
+throwaway experimental run against an alternate strategy config), not as a
+second permanent branch.
+
+**But that only answered "not a branch" — it didn't answer "which store."**
+Re-reading `canvodpy`'s actual `StorageConfig`
+(`canvod-config/src/canvod/config/models/storage.py:112-150`) rather than
+assuming settled it: there are already **four** independent, per-site named
+store slots, not two — `gnss_store` (dir `"rinex"`), `vod_store` (dir
+`"vod"`), `statistics_store` (Zarr), `rollup_store` (dir `"rollup"`) — each
+a genuinely separate on-disk Icechunk/Zarr repo under
+`stores_root_dir/<site>/<name>`, each with its own write-strategy field
+(`gnss_store_strategy`/`vod_store_strategy`), each exposed as its own
+property on `GnssResearchSite`/`Site`
+(`canvodpy/canvodpy/src/canvodpy/api.py:120-128`: `site.gnss_store`,
+`site.vod_store`). VOD — the closest existing analogue to this package
+(a derived product computed from `gnss_store` data) — already gets its own
+store rather than living inside `gnss_store`'s groups. A fifth slot,
+`geodesy_store`, is that same established pattern extended by one, not a
+new architectural concept, and is the more consistent answer than the
+groups-inside-`gnss_store` framing §10 originally implied.
+
+**Naming: `geodesy_store`, not `nmri_store`/`gnssir_store`.** Both narrower
+names were considered and rejected for the same reason `canvod-gnssgeodesy`
+itself was already renamed away from a multipath/GNSS-IR-specific name
+(§20): NMRI (code-multipath) is not GNSS-IR (that's the SNR/reflectometry
+family, per `PLAN.md` §1's own table) — a name built around either family
+misdescribes what's inside once RH, NMRI, the firmware diagnostic,
+tropospheric ZHD/ZWD, and eventually PPP all land in the same store.
+`vod_store` also sets a naming precedent worth matching: it drops the
+`gnss_` prefix (it's not `gnss_vod_store`) — `geodesy_store` matches that
+brevity and echoes the package name directly.
+
+**Update mechanism: reuse VOD's, don't invent a new one.** Read
+`write_or_append_vod_group()`/`should_skip_vod_write()`/
+`_vod_metadata_row_exists()` in full
+(`canvod-store/src/canvod/store/store.py:2095-2224`) rather than assuming
+a mechanism existed to reuse. It does: a per-write metadata ledger keyed on
+`source_file_hashes` (the `gnss_store` files actually consumed), gating
+every write on exact-hash-match (skip, already computed from this source)
+or temporal overlap with a different hash (warn, don't silently diverge) —
+one Icechunk commit per write covering data and metadata together. Nothing
+about this mechanism is VOD-specific except the method name and ledger
+column names, so `canvod-gnssgeodesy` gets `write_or_append_geodesy_group()`
+in `canvod-store`, structurally identical (`PLAN.md` §10). This mechanism
+only fits a genuinely per-day-independent product, which is what made the
+NMRI baseline question (§33) load-bearing rather than a nice-to-have:
+without resolving what "the record" means for `MP1max`, NMRI couldn't use
+this same append path at all.
+
+`PLAN.md` updated: §10 (dedicated-store definition, four canvodpy-core
+touch points, `write_or_append_geodesy_group()`).
+
+## 33. NMRI baseline: entire-record vs. climatology, and why `climatology_min_years=2` (2026-09-19)
+
+**Starting point.** §10's original baseline-recomputation paragraph posed
+two options — freeze `baseline_from` once, or recompute-and-overwrite on
+every run — and recommended freezing "for scientific reproducibility."
+That reasoning was engineering-only; it never asked what Larson & Small
+themselves actually did, or what a *stable* baseline should mean at a
+station whose record spans multiple, genuinely different climate years.
+Investigated in three passes, source-tiered explicitly below because two
+different earlier framings of this investigation's own findings needed
+correcting mid-stream — flagged here rather than silently smoothed over,
+per this project's verification convention.
+
+**Pass 1 — does teqc itself define any baseline concept? No, confirmed
+three independent ways, not just asserted once.** `PLAN.md` §5 step 5
+had already established that gnssrefl never implements MP1/NMRI in code
+(it shells out to the deprecated `teqc` binary). This pass asked the
+follow-up: does *teqc* itself define a multi-day baseline, separately from
+whatever gnssrefl does or doesn't wrap? Three independent sources, all
+answering no:
+1. The NMRI literature itself (queried via the project's NotebookLM
+   notebook, §26's source): *"teqc itself does not compute or define any
+   baseline value (MP1max)... The baseline estimation... was defined by
+   Larson & Small entirely on top of teqc's raw output."*
+2. Official, currently-reachable UNAVCO documentation
+   (`unavco.org/software/data-processing/teqc/teqc.html`): confirms teqc
+   is end-of-life since 2019-02-25, and cites Estey & Meertens (1999,
+   *GPS Solutions*, paywalled — full formula not retrievable) as the only
+   source for teqc's QC linear combinations; no baseline/normalization
+   concept mentioned anywhere on the page. (The specific mailing-list URL
+   the user supplied, `postal.unavco.org/pipermail/teqc/2019/002642.html`,
+   is unreachable — the whole mailing-list host is down, confirmed via
+   both `WebFetch` `ECONNREFUSED` and a direct `curl` timeout, not just a
+   sandbox restriction. A neighboring message from the same list,
+   `002644.html`, titled "So long, partner... (Goodbye)," suggests this is
+   Lou Estey's 2019 retirement post, consistent with the EOL date above,
+   but wasn't itself retrievable to confirm.)
+3. A teqc tutorial PDF the user added to the NotebookLM notebook directly
+   (primary source, not a paper's paraphrase of teqc): confirms teqc
+   computes a moving-average RMS over one observation window and checks it
+   against **static, global, hardcoded** thresholds (*"Expected rms of
+   MP1 multipath: 50.00 cm; Expected rms of MP2 multipath: 65.00 cm"*),
+   used only for single-run hardware-health flags (*"Significantly higher
+   [slip] ratios... are an indication of a sick receiver"*) — categorically
+   different from a per-station, per-satellite, multi-day statistical
+   baseline. teqc's own defaults must not be borrowed for anything
+   baseline-related; they answer a different question ("is this receiver
+   behaving normally") than NMRI's ("how dry can it get here").
+
+**Pass 2 — what did Larson & Small actually do, and does it transfer
+directly to a live, growing operational store? Quoted precisely, then a
+mistake in how the first answer was framed got caught on follow-up.**
+Queried the same NotebookLM notebook for the papers' own methods-section
+text. Confirmed with exact quotes: `MP1max` = mean of the top 5% of daily
+`MP1rms` values. Small, Larson & Smith (2014): *"NMRI is calculated by
+normalizing the daily MP1rms values using the average of the highest 5%
+individual MP1rms values... The highest 5% of observations provides a
+representative value for times when there is a minimum amount of
+vegetation."* The original retrospective database: Larson & Small (2014),
+*"begins on January 1, 2007 and extends through the end of 2012"* —
+6 years, network-wide, 300+ sites. Small, Larson & Smith (2014) validated
+against 12 Montana sites (P046/P048/P049/P719 primary, 8 supplemental);
+Small et al. (2018) extended to 146 California sites, 2007–2016.
+
+The first answer also stated that the papers' later operational system,
+PBO H2O (Larson 2016; Small et al. 2018 — a genuinely continuous,
+near-real-time pipeline, *"processed into daily MP1rms metrics,
+normalized into NMRI, and published to a public portal within 12
+hours"*), used a freeze-after-initial-calibration approach "standard for
+operational real-time products," with "at least 2-3 years" of warm-up
+before locking a station's baseline. **That characterization was wrong,
+or at least unsupported — caught on a deliberate, more precise follow-up
+query that explicitly demanded "not specified" instead of an inferred
+number.** Re-asked directly: none of the four sources (Larson & Small
+2014; Small, Larson & Smith 2014; Larson 2016; Small et al. 2018) state
+any minimum warm-up period, minimum count of dry-season days, or
+re-calibration cadence for an operational deployment — confirmed
+explicitly as "not specified" on a second pass, not merely absent from
+what was quoted the first time. The only real minimum-length number
+anywhere in these sources is Small et al. (2018)'s *"we required that a
+NMRI station have at least a six-year record"* — but that is a
+**retrospective study-inclusion filter** ("which stations were trustworthy
+enough to include in this comparison paper"), not an operational
+first-lock rule, and the first-pass answer had blurred that distinction.
+**Correction recorded here explicitly rather than silently fixed**, per
+this project's own verification convention: the "2-3 years, standard
+practice" framing from the first pass should be discounted; only the
+six-year figure is actually quotable, and even it answers a different
+question than the one this package needs answered.
+
+**Pass 3 — why six years is the wrong number for canvod-gnssgeodesy
+specifically (user's own catch, not a NotebookLM finding).** Six years
+reflects Larson having pre-existing access to a multi-decade PBO archive
+to mine retrospectively — it says nothing about what a *new* station
+needs before its own baseline is usable. Adopting it here would mean every
+new deployment produces no stable `NMRI` for its first six years, which
+defeats an incrementally-updating, near-real-time product. This is not a
+literature disagreement to resolve by more querying — the literature is
+correctly silent on this question because Larson & Small never had to
+answer it; canvod-gnssgeodesy does, because it targets stations starting
+from zero, not a pre-existing archive.
+
+**Decision — a two-tier policy, full mechanism in `PLAN.md` §10:**
+- **Tier 1** (record shorter than `climatology_min_years`): use the
+  literal literature definition, top 5% of the entire available record —
+  honestly provisional, flagged low-confidence via the existing
+  `nmri_baseline_confidence`/`nmri_baseline_n_days` output vars (§6 step
+  8), never silently withheld.
+- **Tier 2** (record at or past `climatology_min_years`): freeze an
+  explicit climatology window, `baseline_from`, set manually, never
+  auto-transitioned — this is what makes the frozen-baseline mechanism a
+  genuine *climatology* rather than an arbitrary convenience window, and
+  what makes NMRI eligible for the same append/dedup mechanism as
+  everything else in `geodesy_store` (§32) instead of needing a bespoke
+  overwrite path.
+- **`climatology_min_years=2` is canvod-gnssgeodesy's own engineering
+  judgment, stated as such, not a literature citation** — confirmed by
+  Pass 2 that the literature is silent on this exact number. The
+  motivating logic, made explicit per the user's own framing: a
+  climatology fundamentally requires observing more than one annual
+  cycle to mean anything — with only one year of data, "the climatology"
+  is numerically identical to that year's own raw record, so there is
+  nothing independent to average over and no way to separate a genuinely
+  typical dry state from that particular year's weather. Two years is the
+  floor at which the concept stops being vacuous, not a number chosen for
+  additional statistical comfort beyond that.
+- **Explicit stub, not implemented in v1:** how a mature (Tier 2)
+  station's climatology should ever be revisited as decades of data
+  accumulate is an open, deliberately deferred question — most likely a
+  periodically-revised moving/rolling window (in the spirit of
+  meteorological climate-normal revisions), but the cadence, overlap
+  handling, and how to avoid retroactively rewriting already-published
+  `NMRI` are all unresolved. `code_multipath.py` raises
+  `NotImplementedError` rather than guessing; only a manual `baseline_from`
+  change is supported, same as the initial Tier 1→2 transition. This is
+  distinct from the already-documented hardware-discontinuity handling
+  (§6 step 8) — that's a required era-split on a known event, not a
+  moving-window problem.
+
+`PLAN.md` updated: §6 step 8 (pointer to this policy, hardware-
+discontinuity note distinguished from the deferred stub), §10
+(`write_or_append_geodesy_group()`'s per-day-independence requirement,
+full two-tier policy, the stub), §11 (`NmriStrategyConfig.
+climatology_min_years`, `baseline_from`'s docstring rewritten to match).
