@@ -12,6 +12,7 @@ Filename convention virtualization — single source of truth for GNSS file nami
 | `patterns.py` | `BUILTIN_PATTERNS` — glob patterns for all GNSS file types |
 | `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` (Pydantic) |
 | `recipe.py` | `NamingRecipe` — config generation |
+| `recipe_files.py` | `find_recipe`, `create_recipe` — recipes live at `<config dir>/recipes/<site>/<name>.yaml`; template in `templates/recipe.yaml` |
 
 ## Convention format
 

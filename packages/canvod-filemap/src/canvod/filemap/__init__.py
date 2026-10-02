@@ -15,6 +15,7 @@ from .convention import (
 from .mapping import FilenameMapper, VirtualFile
 from .patterns import BUILTIN_PATTERNS, SourcePattern, match_pattern
 from .recipe import NamingRecipe
+from .recipe_files import RecipeNotFoundError, create_recipe, find_recipe, recipe_path
 from .validator import DataDirectoryValidator, ValidationReport
 
 __all__ = [
@@ -30,10 +31,14 @@ __all__ = [
     "NamingRecipe",
     "ReceiverNamingConfig",
     "ReceiverType",
+    "RecipeNotFoundError",
     "SiteId",
     "SiteNamingConfig",
     "SourcePattern",
     "ValidationReport",
     "VirtualFile",
+    "create_recipe",
+    "find_recipe",
     "match_pattern",
+    "recipe_path",
 ]

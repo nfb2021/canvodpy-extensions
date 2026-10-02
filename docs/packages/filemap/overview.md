@@ -25,6 +25,7 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 | `patterns.py` | `BUILTIN_PATTERNS` | Glob patterns for all GNSS file types (single source of truth) |
 | `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` | Pydantic config models |
 | `recipe.py` | `NamingRecipe` | Recipe-based config generation for non-canonical layouts |
+| `recipe_files.py` | `find_recipe`, `create_recipe` | Where recipe files live; new recipes from the template |
 
 ## Installation
 
@@ -94,8 +95,15 @@ sites:
   my_site:
     receivers:
       reference_01:
-        recipe: my_site_reference   # → config/recipes/my_site_reference.yaml
+        recipe: my_site_reference   # → <config dir>/recipes/my_site/my_site_reference.yaml
 ```
+
+Recipe files are kept per site in the configuration directory, at
+`<config dir>/recipes/<site>/<name>.yaml`. `find_recipe(config_dir, site, name)`
+returns that path, and raises `RecipeNotFoundError` if the file does not exist.
+A recipe saved directly in `<config dir>/recipes/` is not used; the error says
+where to move it. `create_recipe(config_dir, site, name)` creates a new recipe
+from the template shipped with this package, with `name` filled in.
 
 ## Important
 

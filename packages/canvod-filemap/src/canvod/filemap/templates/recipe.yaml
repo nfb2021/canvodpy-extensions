@@ -1,0 +1,76 @@
+# =============================================================================
+# canVODpy naming recipe
+# =============================================================================
+# A recipe maps the file names of one receiver to the canonical canVOD name
+# {SIT}{T}{NN}{AGC}_R_{YYYY}{DOY}{HHMM}_{PERIOD}_{SAMPLING}_{CONTENT}.{TYPE}
+# without renaming anything on disk. It is only needed if the receiver writes
+# non-canonical file names.
+#
+# Recipes live in <config dir>/recipes/<site>/<name>.yaml, where <site> is the
+# site name in canvod-settings.yaml and <name> is the receiver's `recipe:`
+# setting. Fill in the receiver identity below, then describe the file names
+# in the `fields:` list.
+
+name: CHANGEME               # same as the file name, without .yaml
+description: ""
+
+# -----------------------------------------------------------------------
+# Receiver identity: the first 9 characters of the canonical name
+# -----------------------------------------------------------------------
+site: CHANGEME                 # 3-character site code, e.g. ROS
+agency: CHANGEME               # 3-character agency code, e.g. TUW
+receiver_number: 1             # 1-99, unique per receiver role at the site
+receiver_type: reference       # reference or canopy
+
+# -----------------------------------------------------------------------
+# File properties written into the canonical name
+# -----------------------------------------------------------------------
+sampling: "05S"                # sampling interval, e.g. 01S, 05S, 15S, 30S
+period: "15M"                  # time span of one file, e.g. 15M, 01H, 01D
+content: AA                    # content code (AA = all observables)
+file_type: rnx                 # rnx, sbf, ubx or nmea
+
+# -----------------------------------------------------------------------
+# Which files belong to this receiver
+# -----------------------------------------------------------------------
+glob: "*.??o"                  # pattern the file names must match
+
+# -----------------------------------------------------------------------
+# Field extraction: a left-to-right walk over the file name
+# -----------------------------------------------------------------------
+# Each entry consumes N characters and either reads a value or skips them.
+# Field names:
+#   year         4-digit year (e.g. 2025)
+#   yy           2-digit year (80-99 -> 19xx, 00-79 -> 20xx)
+#   doy          day of year (1-366)
+#   month, day   calendar month and day (together, instead of doy)
+#   hour         hour (00-23)
+#   minute       minute (00-59)
+#   hour_letter  RINEX hour letter (a-x), instead of hour
+#   skip         ignore these characters
+#
+# Example 1, RINEX short name rref001a15.25o
+#   station "rref", doy "001", hour letter "a", minute "15", extension "25o"
+# fields:
+#   - skip: 4
+#   - doy: 3
+#   - hour_letter: 1
+#   - minute: 2
+#   - skip: 1
+#   - yy: 2
+#   - skip: 1
+#
+# Example 2, STATION_2025_042_00_15.rinex
+# fields:
+#   - skip: 8
+#   - year: 4
+#   - skip: 1
+#   - doy: 3
+#   - skip: 1
+#   - hour: 2
+#   - skip: 1
+#   - minute: 2
+#   - skip: 6
+
+fields:
+  - skip: 0   # CHANGEME: replace with the fields of your file names
