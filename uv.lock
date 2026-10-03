@@ -479,6 +479,7 @@ name = "canvod-filemap"
 version = "0.1.0"
 source = { editable = "packages/canvod-filemap" }
 dependencies = [
+    { name = "canvod-preflight" },
     { name = "natsort" },
     { name = "pydantic" },
     { name = "pyyaml" },
@@ -486,6 +487,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "canvod-preflight", git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-preflight&branch=fix%2Fgnssgeodesy-upstream-bugs" },
     { name = "natsort", specifier = ">=8.4.0" },
     { name = "pydantic", specifier = ">=2.5.0" },
     { name = "pyyaml", specifier = ">=6.0" },
@@ -532,6 +534,17 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/21/7b/0911eb5cbe653b38a50a7af2ff03e6fd35e38e9e21f1055f5d988e4b64b8/canvod_ops-0.3.0.tar.gz", hash = "sha256:65023826dc4fbec6697b7ef33e1cc13bd61be1d4e6fd10f7cfd43f7429570cbc", size = 6263, upload-time = "2026-04-30T11:24:05.486Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4d/6a/e2ae9f548ccfe28d0b4e04f4d61772d6bfd8ba6ffda959733067d2547f60/canvod_ops-0.3.0-py3-none-any.whl", hash = "sha256:7cc92ac8d03cce8cb20eac7f9f02f06750e6ae92cd989f371d4e9f6393d90288", size = 8723, upload-time = "2026-04-30T11:23:47.299Z" },
+]
+
+[[package]]
+name = "canvod-preflight"
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-preflight&branch=fix%2Fgnssgeodesy-upstream-bugs#2ee4c6cc50b323334c9cfe0798a0918ff4677e9d" }
+dependencies = [
+    { name = "canvod-utils" },
+    { name = "natsort" },
+    { name = "pydantic" },
+    { name = "typer" },
 ]
 
 [[package]]
@@ -597,21 +610,10 @@ wheels = [
 
 [[package]]
 name = "canvod-utils"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-utils&branch=fix%2Fgnssgeodesy-upstream-bugs#2ee4c6cc50b323334c9cfe0798a0918ff4677e9d" }
 dependencies = [
-    { name = "email-validator" },
     { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pyyaml" },
-    { name = "rich" },
-    { name = "structlog" },
-    { name = "tenacity" },
-    { name = "typer" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/34/9f/0e8f9530fc2fad90bac993ade94e163533c9c4e375d2dd12d50f8584c347/canvod_utils-0.3.0.tar.gz", hash = "sha256:f8a661b1b097528579dc42b71a309eea3f4309138797ea3c41fc655f63063935", size = 33237, upload-time = "2026-04-30T11:24:11.691Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/3e/9b51900de32f3e5726e3cbeee7ffb2c62273b2e27c402cfa49dd00d1b699/canvod_utils-0.3.0-py3-none-any.whl", hash = "sha256:82524bbc1712b9c3948f7a2a520968f96a9d9d9f90234f5ae7d5318a2ec1d791", size = 42982, upload-time = "2026-04-30T11:23:54.765Z" },
 ]
 
 [[package]]

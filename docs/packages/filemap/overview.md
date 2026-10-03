@@ -23,10 +23,12 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 
 | Module | Component | Purpose |
 |---|---|---|
-| `convention.py` | `CanVODFilename` | Pydantic model — parses and validates a single filename |
 | `recipe.py` | `NamingRecipe` | Translates a receiver's own filenames to canonical names |
 | `recipe_files.py` | `find_recipe`, `create_recipe` | Where recipe files live; new recipes from the template |
 | `mapping.py` | `VirtualFile` | A physical file paired with its canonical name (`NamingRecipe.to_virtual_file`) |
+
+The canonical names are parsed and built with `CanVODFilename` of `canvod-preflight`
+(`canvod.preflight.convention`), the same class `canvodpy run` uses.
 
 ## Installation
 

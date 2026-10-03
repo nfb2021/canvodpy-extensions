@@ -1,11 +1,12 @@
 [project]
 name = "canvod-filemap"
 version = "0.1.0"
-description = "Canonical GNSS-T filename parser and data directory validator"
+description = "Naming recipes that map non-canonical GNSS-T filenames to canVOD names"
 readme = "README.md"
 requires-python = ">=3.14"
 
 dependencies = [
+    "canvod-preflight>=0.4.0",
     "pydantic>=2.5.0",
     "pyyaml>=6.0",
     "natsort>=8.4.0",

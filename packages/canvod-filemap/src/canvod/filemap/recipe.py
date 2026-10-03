@@ -71,9 +71,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, Field, model_validator
-
-from .convention import (
+from canvod.preflight.convention import (
     AgencyId,
     CanVODFilename,
     ContentCode,
@@ -82,6 +80,8 @@ from .convention import (
     ReceiverType,
     SiteId,
 )
+from pydantic import BaseModel, Field, model_validator
+
 from .mapping import VirtualFile
 from .patterns import hour_letter_to_int, resolve_year_from_yy
 

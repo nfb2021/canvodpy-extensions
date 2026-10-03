@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from .convention import CanVODFilename
+from canvod.preflight.convention import CanVODFilename
 
 
 @dataclass(frozen=True)

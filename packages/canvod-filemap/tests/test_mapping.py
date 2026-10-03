@@ -1,7 +1,7 @@
 """Tests for canvod.filemap.mapping."""
 
-from canvod.filemap.convention import CanVODFilename, ReceiverType
 from canvod.filemap.mapping import VirtualFile
+from canvod.preflight.convention import CanVODFilename, ReceiverType
 
 
 class TestVirtualFile:

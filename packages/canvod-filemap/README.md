@@ -24,7 +24,6 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 |---|---|
 | `NamingRecipe` | Translates a receiver's own filenames to canonical names |
 | `find_recipe`, `create_recipe` | Recipe files at `<config dir>/recipes/<site>/<name>.yaml`; new ones from the template |
-| `CanVODFilename` | Pydantic model — parses and validates a single filename |
 
 `canvodpy config validate --site <site>` checks before a run which files the
 run would process.
