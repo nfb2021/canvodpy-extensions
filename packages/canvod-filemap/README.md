@@ -1,14 +1,16 @@
 # canvod-filemap
 
-Canonical GNSS-T filename parser and data directory validator.
+Naming recipes for receiver files that don't follow the canVOD filename
+convention.
 
 Part of the [canVODpy](https://github.com/nfb2021/canvodpy) ecosystem.
 
 ## Overview
 
-`canvod-filemap` enforces and virtualizes the canVOD filename convention
-throughout the processing pipeline. It is the single source of truth for GNSS file
-naming, discovery, and pre-pipeline validation.
+`canvodpy run` processes files whose names follow the canVOD convention, in
+any folder layout. For a receiver whose files are named differently, a naming
+recipe translates each filename to its canonical name, without renaming any
+file on disk.
 
 **Convention format:**
 ```
@@ -20,10 +22,12 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 
 | Component | Purpose |
 |---|---|
+| `NamingRecipe` | Translates a receiver's own filenames to canonical names |
+| `find_recipe`, `create_recipe` | Recipe files at `<config dir>/recipes/<site>/<name>.yaml`; new ones from the template |
 | `CanVODFilename` | Pydantic model — parses and validates a single filename |
-| `FilenameMapper` | Maps physical filenames to canonical names (virtual renaming) |
-| `DataDirectoryValidator` | Pre-pipeline hard gate: blocks on unmatched or overlapping files |
-| `BUILTIN_PATTERNS` | Glob patterns for all GNSS file types (single source of truth) |
+
+`canvodpy config validate --site <site>` checks before a run which files the
+run would process.
 
 ## Installation
 
@@ -36,15 +40,13 @@ uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git@
 ## Quick Start
 
 ```python
-from canvod.filemap import CanVODFilename, DataDirectoryValidator
+from pathlib import Path
 
-# Parse a filename
-fname = CanVODFilename.from_string("ROSA01TUW_R_20250010000_15M_05S_AA.rnx")
-print(fname.site, fname.year, fname.doy)  # ROSA, 2025, 1
+from canvod.filemap import NamingRecipe
 
-# Validate a data directory before processing
-validator = DataDirectoryValidator(site_config)
-validator.validate()  # raises on unmatched or overlapping files
+recipe = NamingRecipe.load(Path("config/recipes/rosalia/rosalia_reference.yaml"))
+vf = recipe.to_virtual_file(Path("rref001a15.25o"))
+print(vf.conventional_name)  # canonical canVOD name; the file keeps its name
 ```
 
 ## Documentation
