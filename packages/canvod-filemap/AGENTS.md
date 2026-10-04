@@ -5,6 +5,9 @@ canonical canVOD name, without renaming files on disk. canvodpy does the
 file discovery; this package only answers "which canonical name does this
 file have?" and "where is the recipe file?".
 
+Before changing it, read the canvodpy side: root `AGENTS.md`, section
+"canvodpy: read it before changing an extension".
+
 ## Where things are
 
 - `src/canvod/filemap/recipe.py`: `NamingRecipe`, the recipe model and the

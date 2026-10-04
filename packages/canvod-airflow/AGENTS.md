@@ -3,6 +3,9 @@
 Airflow DAGs that run canvodpy: thin TaskFlow wrappers around
 `canvodpy.workflows.tasks`, the same code as `canvodpy run`.
 
+Before changing it, read the canvodpy side: root `AGENTS.md`, section
+"canvodpy: read it before changing an extension".
+
 ## Where things are
 
 - `src/canvod/airflow/daily_processing.py`: one `@daily` DAG per site in

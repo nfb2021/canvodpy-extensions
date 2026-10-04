@@ -9,6 +9,10 @@ A package belongs here if it serves a specific workflow, data source or
 tool, can be installed on its own, and canvodpy works without it. Code
 every canvodpy user needs belongs in canvodpy.
 
+Before designing it, read the canvodpy side (root `AGENTS.md`, "canvodpy:
+read it before changing an extension"): find the canvodpy interface the
+package plugs into and the canvodpy code that will call it.
+
 Names: distribution `canvod-<short>`, import `canvod.<short>`, docs folder
 `docs/packages/<short>/`. Copy structure from `packages/canvod-filemap`
 (smallest).

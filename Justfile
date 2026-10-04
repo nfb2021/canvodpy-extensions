@@ -37,6 +37,10 @@ hooks:
 check-lock:
     uv lock --check
 
+# show the canvodpy version or commit every canvodpy package is locked at
+canvodpy-ref:
+    @uv run --no-sync python tools/canvodpy_ref.py
+
 # relock every canvodpy package taken from git at the current tip of its source
 lock-canvodpy:
     #!/usr/bin/env bash

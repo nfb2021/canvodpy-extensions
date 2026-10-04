@@ -64,6 +64,7 @@ just test                             # all tests
 just test-package canvod-filemap      # one package
 just docs                             # preview the docs site
 just versions                         # version of every package
+just canvodpy-ref                     # canvodpy code this workspace is locked at
 ```
 
 CI runs `just check-lock`, `just check-lint-only`, `just check-format-only`,
@@ -103,9 +104,56 @@ canvodpy in turn installs canvod-filemap as its workspace dependency group
 `filemap` (`uv sync --group filemap` in the canvodpy repo), pinned to a tag
 of this repo.
 
-## Background on canvodpy
+## canvodpy: read it before changing an extension
 
-- Docs: <https://nfb2021.github.io/canvodpy/>
+Every extension plugs into canvodpy: its file discovery, readers,
+configuration, workflows or stores. An extension is only right if it
+matches what canvodpy does, so read the canvodpy side first, every time.
+
+**1. Find the canvodpy code this workspace uses.**
+
+```bash
+just canvodpy-ref
+```
+
+It lists every canvodpy package with its locked version and the source
+tree: a commit of a canvodpy branch, or a release tag for packages from
+PyPI. They can differ per package. Read canvodpy there, not on its `main`
+and not in whatever branch a local checkout is on: with a checkout,
+`git -C <canvodpy checkout> show <ref>:<path>`; without one, the GitHub
+link printed by the recipe. If the extension needs canvodpy code newer
+than that, see the `canvodpy-dependency` guide.
+
+**2. Follow canvodpy's own trail.** canvodpy's agent instructions are its
+`CLAUDE.md` files:
+
+- `canvodpy:CLAUDE.md`, the root. Read at least "Scientific context",
+  "Project architecture", "Guardrails" and "Key documentation" (its
+  breadcrumb trail, canvodpy's docs in reading order).
+- The `CLAUDE.md` of each canvodpy package the extension imports, e.g.
+  `canvodpy:packages/canvod-readers/CLAUDE.md`,
+  `canvodpy:packages/canvod-store/CLAUDE.md`,
+  `canvodpy:packages/canvod-config/CLAUDE.md`, `canvodpy:canvodpy/CLAUDE.md`.
+- `canvodpy:docs/guides/extensions.md`: how canvodpy installs and uses the
+  extensions, and what happens when one is missing.
+
+**3. Read what your extension touches** (paths in the canvodpy
+repository; docs also at <https://nfb2021.github.io/canvodpy/>):
+
+| Extension | canvodpy docs | canvodpy code it must match |
+|---|---|---|
+| canvod-filemap | `canvodpy:docs/packages/naming/overview.md` (convention, which files a run processes, recipes), `canvodpy:docs/guides/configuration.md` (the `recipe:` setting) | `canvodpy:canvodpy/src/canvodpy/orchestrator/discovery.py` (calls the recipe), `canvodpy:packages/canvod-preflight/src/canvod/preflight/convention.py` |
+| canvod-airflow | `canvodpy:docs/guides/api-levels.md`, `canvodpy:docs/guides/parallel-processing.md`, `canvodpy:docs/packages/store/icechunk.md` (concurrent writes) | `canvodpy:canvodpy/src/canvodpy/workflows/tasks.py` (every task the DAGs call) |
+| canvod-adapters | `canvodpy:docs/packages/readers/architecture.md`, `canvodpy:docs/packages/readers/extending.md` (reader contract), `canvodpy:docs/packages/vod/overview.md`, `canvodpy:docs/packages/store/overview.md` | `canvodpy:packages/canvod-readers/src/canvod/readers/base.py` (contracts, `GNSSDataReader`) |
+
+**4. Check canvodpy's side of a change.** canvodpy imports canvod-filemap
+(`canvodpy.orchestrator.discovery`, its `Justfile`, tests). Before renaming
+or changing anything public in an extension, search the canvodpy repository
+for it (`git -C <canvodpy checkout> grep -n <name>`) and plan the canvodpy
+change too.
+
+### canvodpy facts used throughout
+
 - Canonical file name (canvod-preflight, `canvod.preflight.convention`):
   `{SIT}{T}{NN}{AGC}_R_{YYYY}{DOY}{HHMM}_{PERIOD}_{SAMPLING}_{CONTENT}.{TYPE}`,
   e.g. `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`. canvodpy finds files by

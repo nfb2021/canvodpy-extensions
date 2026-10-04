@@ -77,8 +77,8 @@ It lists the files each receiver gets and the ones nothing recognizes.
 - **Numbers.** Fields other than `hour_letter` and `skip` must be digits.
 - **Two-digit years:** 80-99 become 19xx, 00-79 20xx.
 - **Daily vs sub-daily.** Without an `hour`/`hour_letter` field the period
-  becomes `01D`. With one, every file gets the recipe's `period`, so RINEX 2
-  daily files (session `0`) and hourly files need separate recipes.
+  becomes `01D`, and so does the RINEX 2 daily session `0` in an
+  `hour_letter` field. All other files get the recipe's `period`.
 - **Placement.** A recipe directly in the `recipes` folder is refused;
   the error says where to move it.
 - **Two receivers, one identity.** canvodpy refuses receivers whose files

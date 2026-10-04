@@ -24,9 +24,10 @@ just changelog PKG            # what the release will list
   or outside that path; fix them in a follow-up commit or the release notes.
 - A breaking change since the last release means a major bump (minor while
   the version is 0.x). Look for `feat!` / `BREAKING CHANGE`.
-- Root `[tool.uv.sources]` must not point the released package's canvodpy
-  dependencies at a branch that will disappear (see the
-  `canvodpy-dependency` guide).
+- `just canvodpy-ref`: the released package must work with canvodpy from
+  PyPI, since an install from the tag ignores `[tool.uv.sources]`. If it
+  needs code that is only on a canvodpy branch, release canvodpy first (see
+  the `canvodpy-dependency` guide).
 
 ## 2. Release commit, on a branch
 

@@ -6,7 +6,10 @@ description: Add support for another GNSS-T program (besides gnssvod) to canvod-
 # Add an adapter for a GNSS-T program
 
 Model: `packages/canvod-adapters/src/canvod/adapters/gnssvod/`. Read
-`packages/canvod-adapters/AGENTS.md` first.
+`packages/canvod-adapters/AGENTS.md` first, then the canvodpy side (root
+`AGENTS.md`): the reader contract in
+`canvodpy:docs/packages/readers/extending.md` applies to the reader you
+write.
 
 ## 1. Find out what the program exchanges
 

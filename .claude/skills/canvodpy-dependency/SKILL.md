@@ -20,6 +20,16 @@ canvodpy code, PyPI once it is released. Sources are not published: an
 install from a tag of this repo resolves canvodpy from PyPI, by the bounds.
 So a release here must only need canvodpy code that is on PyPI.
 
+## See what is locked
+
+```bash
+just canvodpy-ref
+```
+
+Version and source tree of every canvodpy package. They can differ per
+package: a package not in root `[tool.uv.sources]` comes from PyPI even
+while others come from a branch.
+
 ## Pick up new commits of a canvodpy branch
 
 ```bash

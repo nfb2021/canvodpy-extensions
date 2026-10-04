@@ -3,6 +3,9 @@
 Data exchange between canvodpy and other GNSS-T programs. Today: gnssvod
 (Humphrey et al.).
 
+Before changing it, read the canvodpy side: root `AGENTS.md`, section
+"canvodpy: read it before changing an extension".
+
 ## Where things are
 
 - `src/canvod/adapters/base.py`: the interfaces, one ABC per kind of data
