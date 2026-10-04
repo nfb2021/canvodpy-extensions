@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -39,7 +40,7 @@ def test_find_recipe_of_another_site_is_not_used(tmp_path: Path) -> None:
 
 def test_missing_recipe_names_the_expected_path(tmp_path: Path) -> None:
     expected = tmp_path / "recipes" / "rosalia" / "ref.yaml"
-    with pytest.raises(RecipeNotFoundError, match=str(expected)):
+    with pytest.raises(RecipeNotFoundError, match=re.escape(str(expected))):
         find_recipe(tmp_path, "rosalia", "ref")
 
 
