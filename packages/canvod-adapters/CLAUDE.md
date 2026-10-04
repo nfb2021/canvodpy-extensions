@@ -1,47 +1,38 @@
 # canvod-adapters
 
-Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools.
+Data exchange between canvodpy and other GNSS-T programs.
 
 ## Key modules
 
 | Module | Purpose |
 |---|---|
-| `gnssvod/convert.py` | `to_gnssvod_dataset()` / `from_gnssvod_dataset()` — pure-format transform, no `canvod-store`/`gnssvod` import |
-| `gnssvod/provenance.py` | `build_provenance_attrs()` — records source/tool/version/direction/timestamp in output attrs |
-| `gnssvod/io.py` | `vod_store_to_gnssvod_nc()` / `gnssvod_nc_to_vod_store()` — Icechunk store I/O, requires the `store` extra |
+| `base.py` | `ObservationsAdapter`, `VodAdapter`: one ABC per kind of data; imports are checked against canvodpy's contracts (`canvod.readers.validate_dataset` / `validate_vod_dataset`) and get provenance |
+| `provenance.py` | `Tool`, `Provenance` (pydantic) <-> `conversion_*` attrs |
+| `store.py` | `import_vod` / `export_vod`: VOD store I/O through any `VodAdapter` (`store` extra) |
+| `gnssvod/convert.py` | dataset conversion gnssvod <-> canvodpy, pure functions |
+| `gnssvod/reader.py` | `GnssvodObsReader(GNSSDataReader)`: gnssvod observation files |
+| `gnssvod/adapter.py` | `GnssvodObservations`, `GnssvodVod` |
 
 ## Design
 
-`convert.py` has zero dependency on `canvod-store` or the real `gnssvod`
-package — it only matches gnssvod's documented data shape (verified against
-gnssvod's own `io/io.py::Observation.to_xarray()` /
-`io/exporters.py::export_as_nc()`). This keeps the core conversion logic
-importable and testable without either optional dependency installed.
+- Shared logic (interfaces, contract checks, provenance, store I/O) lives
+  at the package root; a program's subpackage only converts.
+- A program implements only the interfaces of the data it exchanges.
+- The contracts are canvodpy's (canvod-readers), not this package's; the
+  VOD store checks the VOD contract too.
+- Observations come in through a canvodpy reader of the program's files,
+  so they carry the file hash, reader attrs and epoch time scale.
+- Adapter settings are frozen pydantic fields, validated on creation.
+- sid <-> observation code: `canvod.readers.gnss_specs.obs_codes`; sid
+  coordinates: `canvod.readers.sid_coords`.
 
-Originally built for `canvod-audit`'s Tier-3 comparison
-(`audit_vs_gnssvod`), extracted here so it's reusable outside the audit
-suite. `canvod-audit` now depends on this package instead of vendoring its
-own copy.
+### gnssvod
 
-### canvodpy VOD store shape
-
-One Icechunk group per `analysis_name`: `(epoch, sid)` dims, variables
-`VOD`, `delta_snr`, `phi` (rad, azimuth from North CW), `theta` (rad, polar
-angle from zenith). SID format `"G01|L1|C"` (PRN|band|code).
-
-### gnssvod shape
-
-`(Epoch, SV)` dims (SV = PRN string like `"G01"`), columns `S1C`/`S2W`/...
-(SNR per band+code), `Azimuth` (deg, North CW), `Elevation` (deg, from
-horizon), `VOD1`/`VOD2`/... (VOD per band, codes already merged via
-gnssvod's own fillna). Mapping: `Elevation = 90 - degrees(theta)`,
-`Azimuth = degrees(phi) mod 360`.
-
-### Known lossy direction
-
-gnssvod → canvodpy is lossy for per-code identity on `VOD` columns (gnssvod
-merges codes before export); reconstructed SIDs use the band map's
-designated primary code and set `vod_reconstructed_code_ambiguous=True`.
+`(Epoch, SV)` dims, one variable per observation code or VOD band,
+`Azimuth`/`Elevation` in degrees. `calc_vod` merges a band's codes in
+sorted order (`numpy.intersect1d`), each filling the gaps of the previous;
+merged bands import with the unknown-code marker (`G01|L1|u`) and export
+back unchanged. Verified against gnssvod on the Rosalia test files.
 
 ## Testing
 

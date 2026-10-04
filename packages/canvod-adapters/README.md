@@ -1,59 +1,29 @@
 # canvod-adapters
 
-Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools.
+Data exchange between canvodpy and other GNSS-T programs.
 
 Part of the [canVODpy](https://github.com/nfb2021/canvodpy) ecosystem.
 
 ## Overview
 
-`canvod-adapters` converts canvodpy's native data structures into the
-shapes expected by other tools in the GNSS-Transmissometry/VOD field, and
-back — so each tool's ecosystem can be used on the other's output.
+`canvod-adapters` converts observations and VOD between canvodpy and
+other programs, in both directions. Every import is checked against
+canvodpy's own contract for that data, and every conversion records its
+provenance (program, versions, direction, source, time) in the dataset
+attributes.
 
-Every conversion records its provenance in the output dataset's global
-attributes (source tool, URL, version, direction, timestamp), so converted
-files remain traceable back to their origin.
-
-## Adapters
-
-| Adapter | Converts | Direction |
+| Adapter | Program | Data |
 |---|---|---|
-| `canvod.adapters.gnssvod` | canvodpy VOD Icechunk store ⟷ [gnssvod](https://github.com/GEUS-SATRO/gnssvod) (Humphrey et al.) NetCDF | Both |
-
-### gnssvod adapter
-
-canvodpy stores computed VOD per analysis pair as one Icechunk group with
-`(epoch, sid)`-dimensioned variables `VOD`, `delta_snr`, `phi`, `theta`
-(SID format `"G01|L1|C"`). gnssvod's own tooling (`Hemi.add_CellID()`,
-plotting, hemispheric statistics) expects `(Epoch, SV)`-dimensioned
-datasets with per-band columns like `S1C`/`Azimuth`/`Elevation`/`VOD1`.
+| `canvod.adapters.gnssvod` | [gnssvod](https://github.com/vincenthumphrey/gnssvod) (Humphrey et al.) | observations, VOD |
 
 ```python
-from canvod.adapters.gnssvod.convert import to_gnssvod_dataset, from_gnssvod_dataset
+from canvod.adapters.gnssvod import GnssvodVod
+from canvod.adapters.store import import_vod
 
-# canvodpy VOD dataset -> gnssvod-shaped dataset
-gnssvod_ds = to_gnssvod_dataset(vod_ds)
-gnssvod_ds.to_netcdf("canopy_01_vs_reference_01.nc")
-
-# gnssvod-shaped dataset -> canvodpy VOD dataset
-vod_ds = from_gnssvod_dataset(gnssvod_ds)
+adapter = GnssvodVod(bands={"VOD_L1": ["S1C", "S1W"], "VOD_L2": ["S2W"]})
+vod = adapter.import_file("vod_rosalia.nc")
+import_vod(adapter, "vod_rosalia.nc", site.vod_store, "canopy_01_vs_reference_01")
 ```
-
-With the optional `store` extra installed, convenience functions read/write
-an Icechunk VOD store directly:
-
-```python
-from canvod.adapters.gnssvod.io import vod_store_to_gnssvod_nc, gnssvod_nc_to_vod_store
-
-vod_store_to_gnssvod_nc(site, "canopy_01_vs_reference_01", "out.nc")
-gnssvod_nc_to_vod_store("gnssvod_output.nc", site, "imported_analysis")
-```
-
-**Note:** the reverse direction (gnssvod → canvodpy) is lossy for the
-per-code tracking identity of `VOD` — gnssvod merges multiple tracking
-codes per band via `fillna` before export, so the original per-code SID
-can't be recovered. Reconstructed datasets carry
-`vod_reconstructed_code_ambiguous=True` in their attrs to flag this.
 
 ## Installation
 
@@ -61,7 +31,7 @@ GitHub-only by design; install via the git-subdirectory pattern:
 
 ```bash
 uv add "canvod-adapters @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"
-uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"  # for direct Icechunk store I/O
+uv add "canvod-adapters[store] @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-adapters"  # for VOD store I/O
 ```
 
 ## Documentation

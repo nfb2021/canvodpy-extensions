@@ -1,26 +1,28 @@
-"""Adapters between canvodpy and gnssvod (Humphrey et al.) data structures."""
+"""Adapters between canvodpy and gnssvod (Humphrey et al.).
 
+:class:`GnssvodObservations` and :class:`GnssvodVod` convert files;
+the functions of :mod:`~canvod.adapters.gnssvod.convert` convert datasets
+in memory, without the contract checks and provenance of the adapters.
+"""
+
+from canvod.adapters.gnssvod.adapter import GNSSVOD, GnssvodObservations, GnssvodVod
 from canvod.adapters.gnssvod.convert import (
-    BAND_MAP,
-    GnssvodAdapter,
-    detect_band_map,
-    from_gnssvod_dataset,
-    gnssvod_df_to_xarray,
-    gnssvod_merge_codes,
-    to_gnssvod_dataset,
+    OBS_TYPES,
+    from_gnssvod_observations,
+    from_gnssvod_vod,
+    to_gnssvod_observations,
+    to_gnssvod_vod,
 )
-from canvod.adapters.gnssvod.io import gnssvod_nc_to_vod_store, vod_store_to_gnssvod_nc
-from canvod.adapters.gnssvod.provenance import build_provenance_attrs
+from canvod.adapters.gnssvod.reader import GnssvodObsReader
 
 __all__ = [
-    "BAND_MAP",
-    "GnssvodAdapter",
-    "build_provenance_attrs",
-    "detect_band_map",
-    "from_gnssvod_dataset",
-    "gnssvod_df_to_xarray",
-    "gnssvod_merge_codes",
-    "gnssvod_nc_to_vod_store",
-    "to_gnssvod_dataset",
-    "vod_store_to_gnssvod_nc",
+    "GNSSVOD",
+    "OBS_TYPES",
+    "GnssvodObsReader",
+    "GnssvodObservations",
+    "GnssvodVod",
+    "from_gnssvod_observations",
+    "from_gnssvod_vod",
+    "to_gnssvod_observations",
+    "to_gnssvod_vod",
 ]

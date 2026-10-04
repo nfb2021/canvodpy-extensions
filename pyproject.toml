@@ -15,9 +15,14 @@
 members = ["packages/*"]
 
 # canvod-filemap uses the canVOD naming convention of canvod-preflight, which
-# is not on PyPI yet. Branch until canvodpy is released with it.
+# is not on PyPI yet; canvod-adapters uses the observation code mapping and
+# the dataset contracts of canvod-readers and the VOD store's contract check,
+# which are not released yet. Branch until canvodpy is released with them.
 [tool.uv.sources]
 canvod-preflight = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-preflight", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-readers = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-readers", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-store = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-store", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-utils = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-utils", branch = "fix/gnssgeodesy-upstream-bugs" }
 
 # ============================================================================
 # Development Dependencies (Workspace-wide)

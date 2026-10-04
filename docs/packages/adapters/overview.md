@@ -1,82 +1,135 @@
 # canvod-adapters
 
-Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools.
+`canvod-adapters` exchanges data between canvodpy and other GNSS-T
+programs. It currently provides an adapter to
+[gnssvod](https://github.com/vincenthumphrey/gnssvod) (Humphrey et al.),
+widely used in the GNSS-T community.
 
-`canvod-adapters` converts canvodpy's native data structures into the
-shapes expected by other tools in the GNSS-Transmissometry/VOD field, and
-back — so each tool's ecosystem can be used on the other's output. Every
-conversion records its provenance (source tool, URL, version, direction,
-timestamp) in the output dataset's global attributes.
+## Design
 
-## gnssvod adapter
+The package separates what all programs share from what is specific to
+one program.
 
-canvodpy stores computed VOD per analysis pair as one Icechunk group with
-`(epoch, sid)`-dimensioned variables `VOD`, `delta_snr`, `phi`, `theta`
-(SID format `"G01|L1|C"`). [gnssvod](https://github.com/vincenthumphrey/gnssvod)
-(Humphrey et al. — the reference implementation that established this
-field) expects `(Epoch, SV)`-dimensioned datasets with per-band columns
-like `S1C`/`Azimuth`/`Elevation`/`VOD1`, consumed directly by its own
-`Hemi.add_CellID()`, plotting, and hemispheric-statistics tooling.
-
-```mermaid
-flowchart LR
-    A["canvodpy VOD Icechunk store<br/>(epoch, sid): VOD, delta_snr, phi, theta"]
-    B["gnssvod-shaped xr.Dataset<br/>(epoch, sid=PRN): Azimuth, Elevation, VODn, dSNRn"]
-    C["gnssvod NetCDF"]
-    D["gnssvod tooling<br/>Hemi.add_CellID(), plotting"]
-
-    A -->|to_gnssvod_dataset| B
-    B -->|to_netcdf| C
-    C --> D
-    C -->|from_gnssvod_dataset| A
 ```
+canvod/adapters/
+  base.py          one interface per kind of data: ObservationsAdapter, VodAdapter
+  provenance.py    Tool, Provenance
+  store.py         import_vod / export_vod: VOD store I/O through any VodAdapter
+  gnssvod/
+    convert.py     conversion of datasets, gnssvod <-> canvodpy
+    reader.py      GnssvodObsReader: canvodpy reader of gnssvod observation files
+    adapter.py     GnssvodObservations, GnssvodVod
+```
+
+**One interface per kind of data.** Programs exchange different data with
+canvodpy: one writes observations, another only VOD. A program's adapter
+implements the interfaces of the data it exchanges, and only those.
+
+**canvodpy's contracts guard everything that comes in.** canvodpy defines
+what its data looks like, and the interfaces check every import against
+it, whichever program it comes from:
+
+| Data | Contract | Also checked by |
+|---|---|---|
+| Observations | `canvod.readers.validate_dataset`, the contract of every canvodpy reader | every canvodpy reader |
+| VOD | `canvod.readers.validate_vod_dataset` | the VOD store, before every write |
+
+Observations are imported with a canvodpy reader of the program's files
+(a `canvod.readers.GNSSDataReader`), so imported observations carry the
+same file hash, attributes and epoch time scale as observations read from
+RINEX or SBF files.
+
+**Settings are pydantic models.** An adapter is a frozen pydantic model
+whose fields are the program's settings, checked when the adapter is
+created, e.g. the bands of `GnssvodVod`.
+
+**Provenance.** Every conversion records the program, its URL and
+installed version, the canvod-adapters version, the direction, the source
+and the time in the dataset attributes (`conversion_*`), readable back
+with `Provenance.from_attrs`.
+
+## gnssvod
+
+gnssvod works on datasets with dimensions `(Epoch, SV)`, one variable per
+RINEX observation code (`S1C`, `C1C`, ...) or per VOD band, and angles in
+degrees. canvodpy works on `(epoch, sid)`, sid `"G01|L1|C"`, angles in
+radians. Signal IDs and observation codes are mapped with the rules of
+canvodpy's RINEX readers.
+
+### VOD
 
 ```python
-from canvod.adapters.gnssvod.convert import to_gnssvod_dataset, from_gnssvod_dataset
+from canvod.adapters.gnssvod import GnssvodVod
+from canvod.adapters.store import export_vod, import_vod
 
-# canvodpy VOD dataset -> gnssvod-shaped dataset
-gnssvod_ds = to_gnssvod_dataset(vod_ds)
-gnssvod_ds.to_netcdf("canopy_01_vs_reference_01.nc")
+# The bands argument of gnssvod.calc_vod
+adapter = GnssvodVod(bands={"VOD_L1": ["S1C", "S1W", "S1X"], "VOD_L2": ["S2W"]})
 
-# gnssvod-shaped dataset -> canvodpy VOD dataset
-vod_ds = from_gnssvod_dataset(gnssvod_ds)
+# gnssvod -> canvodpy: into the VOD store group "gnssvod/canopy_01_vs_reference_01"
+import_vod(adapter, "vod_rosalia.nc", site.vod_store, "canopy_01_vs_reference_01")
+
+# canvodpy -> gnssvod, merged per band as calc_vod merges
+export_vod(
+    adapter,
+    site.vod_store,
+    "tau_omega_zeroth_order/canopy_01_vs_reference_01",
+    "vod_canvodpy.nc",
+)
+
+# Without a store
+vod = adapter.import_file("vod_rosalia.nc")
+adapter.export_file(vod, "again.nc", source="vod_rosalia.nc")
 ```
 
-With the optional `store` extra, convenience functions read/write an
-Icechunk VOD store directly (accepting a `MyIcechunkStore`, a site/manager
-object exposing `.vod_store`, or a filesystem path):
+A gnssvod VOD file is the result of `calc_vod` for one station pair,
+written with `DataFrame.to_xarray().to_netcdf()`.
+
+`calc_vod` merges the observation codes of a band. Imported VOD of a band
+with one code gets that code's sids (`S2W` → `G01|L2|W`). A band with
+several codes gets canvodpy's marker for an unknown tracking code
+(`G01|L1|u`). Exporting such data gives the same file back.
+
+`calc_vod` reports the reference receiver's `Azimuth`/`Elevation`;
+canvodpy reports the canopy receiver's. Imported VOD keeps gnssvod's
+angles.
+
+The VOD store keeps imported VOD under the program's name in place of
+the VOD model, apart from VOD canvodpy computed. Importing the same file
+again is skipped.
+
+### Observations
 
 ```python
-from canvod.adapters.gnssvod.io import vod_store_to_gnssvod_nc, gnssvod_nc_to_vod_store
+from canvod.adapters.gnssvod import GnssvodObservations
 
-vod_store_to_gnssvod_nc(site, "canopy_01_vs_reference_01", "out.nc")
-gnssvod_nc_to_vod_store("gnssvod_output.nc", site, "imported_analysis")
+adapter = GnssvodObservations(time_system="GPS")
+obs = adapter.import_file("ROSA_obs.nc")  # a file gnssvod.preprocess wrote
+adapter.export_file(obs, "for_gnssvod.nc", source="canopy_01")
 ```
 
-### Known lossy direction
+gnssvod keeps the epochs of the RINEX file, so the time scale of the
+file (its `TIME OF FIRST OBS` record) is a required setting.
 
-gnssvod merges multiple tracking codes per band via `fillna` before it
-ever exports a `VOD1`/`VOD2` column, so the per-code identity is lost by
-the time a NetCDF export exists. Converting gnssvod → canvodpy therefore
-can't recover the original observed tracking code — reconstructed SIDs use
-the band map's declared primary code as a placeholder. Datasets produced
-this way carry `attrs["vod_reconstructed_code_ambiguous"] = True` so this
-is never silent.
+### Verification
 
-### Band configuration
+On the Rosalia test RINEX files, gnssvod's own observation files read
+with `GnssvodObservations` give the same signals, sid coordinates and
+values as canvodpy's RINEX reader. canvodpy's VOD exported with
+`GnssvodVod` matches gnssvod's `calc_vod` on the same input to 1e-6.
+Importing gnssvod's VOD and exporting it again gives the same file.
 
-`BAND_MAP` (default) and `detect_band_map()` (auto-detection from the
-input datasets) both live in `canvod.adapters.gnssvod.convert` — pass a
-custom `band_map` to either conversion function to override which
-tracking code represents each band.
+## Adding an adapter for another program
 
-## Origin
+1. Create a subpackage `canvod/adapters/<program>/`.
+2. Describe the program with a `Tool` (name, Python distribution, URL).
+3. Implement the interfaces of the data it exchanges:
+    - `VodAdapter`: `open`, `save`, `convert_to_canvodpy`,
+      `convert_from_canvodpy`;
+    - `ObservationsAdapter`: `reader` (a `canvod.readers.GNSSDataReader`
+      of the program's files), `convert_from_canvodpy`, `save`.
+4. Put the program's settings in fields of the adapter.
 
-This adapter's core logic was originally written for `canvod-audit`'s
-Tier-3 comparison against gnssvod (`audit_vs_gnssvod`) in the main
-canvodpy monorepo, then extracted here so it's reusable outside the audit
-suite. `canvod-audit` now depends on `canvod-adapters` instead of
-vendoring its own copy.
+Contract checks, provenance and store I/O come with the interfaces.
 
 ## Installation
 

@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 resolution-markers = [
     "platform_machine == 'ARM64' and sys_platform == 'win32'",
@@ -327,38 +327,6 @@ wheels = [
 ]
 
 [[package]]
-name = "astropy"
-version = "8.0.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "astropy-iers-data" },
-    { name = "numpy" },
-    { name = "packaging" },
-    { name = "pyerfa" },
-    { name = "pyyaml" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0e/c4/21be4313ddfde5f60e0607fd307f367b9e0f0bf153a89b10cbd036dd8cfd/astropy-8.0.1.tar.gz", hash = "sha256:45ca31d5b91fa294cd590a4791a32db94de7f9c8a343155f4d5877baa82351da", size = 7152500, upload-time = "2026-07-05T07:24:48.482Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/80/69a84af0b35d55a859cde38e16b71553840a156bdf7dc4b767ec2b2d2829/astropy-8.0.1-cp311-abi3-macosx_10_9_x86_64.whl", hash = "sha256:24813c764d5ea111e7f716127121e22a0cfe233ca1eac2ed23c4a3848390610e", size = 6635649, upload-time = "2026-07-05T07:24:31.957Z" },
-    { url = "https://files.pythonhosted.org/packages/a6/34/074f367d5699a1008b24c50acc1539f05f2cfc881b1901f4b110d57eae20/astropy-8.0.1-cp311-abi3-macosx_11_0_arm64.whl", hash = "sha256:222f0b9837e79fd3d101e6d4e4579e3aa98c490000bb01e35cd32fd3e3c12bf5", size = 6607950, upload-time = "2026-07-05T07:24:34.148Z" },
-    { url = "https://files.pythonhosted.org/packages/56/3b/d29035da0a08e3b0b03d63abe9ce69b900d8ef7863dc557a2e34ebf56a4e/astropy-8.0.1-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:9a4044396c15969bb029b648521f7c25d294e982dbd23e7c2c7dd328178b8b98", size = 10414634, upload-time = "2026-07-05T07:24:36.129Z" },
-    { url = "https://files.pythonhosted.org/packages/fa/14/6f4427419f8a02e1d0a885fb64d8d4454c5d443627aa7cb1a3a36e16abb7/astropy-8.0.1-cp311-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:fa11d56855e10107ea2231a6b6a33dbf1edbea6890adf34634c1f1d8f25c5a5a", size = 10452095, upload-time = "2026-07-05T07:24:38.424Z" },
-    { url = "https://files.pythonhosted.org/packages/b2/ef/a5cf36a402c4511a776405f12d0b35196f55f4312ce407012a2fbcf1e4e0/astropy-8.0.1-cp311-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:5b482bc6c57c966e6c6234410a1d9afbcf92bcac858cf287812f8c99ddc3fafc", size = 10407732, upload-time = "2026-07-05T07:24:40.774Z" },
-    { url = "https://files.pythonhosted.org/packages/58/6d/59e7fb6f9ade53889c9553afff89991b8076c021581ba66eb51d913ca6c9/astropy-8.0.1-cp311-abi3-win32.whl", hash = "sha256:13a6ef59347a15c55406bb630e0d25d0248a179af84fae06a7ddb85a229065b2", size = 6394540, upload-time = "2026-07-05T07:24:43.146Z" },
-    { url = "https://files.pythonhosted.org/packages/ec/6a/8534fd98e2d3eb51cbaa261e6c6b59e4ad969a1787d72bb1208499080dbd/astropy-8.0.1-cp311-abi3-win_amd64.whl", hash = "sha256:ee9024f2237243ebc98726f8eff2efbf201ea4e0bba1d21f6e2dee0cb499fbdf", size = 6529976, upload-time = "2026-07-05T07:24:44.693Z" },
-    { url = "https://files.pythonhosted.org/packages/8a/df/96b8bf4ec218d03969a8b904ade5fc5b1a63f4a7f02c4e107b6264bcf152/astropy-8.0.1-cp311-abi3-win_arm64.whl", hash = "sha256:435e784f2cd9a4c31a03102e6ad27a51b901a8d5587bc78afe8d28e41eb44824", size = 6395252, upload-time = "2026-07-05T07:24:46.56Z" },
-]
-
-[[package]]
-name = "astropy-iers-data"
-version = "0.2026.7.6.1.1.20"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7f/e3/d32d2401c53fa1aaf118c963c51c4eb9cd10d074a72a52430904dc8ef46e/astropy_iers_data-0.2026.7.6.1.1.20.tar.gz", hash = "sha256:bc38de235802c9f006c8a04693706e2adcc9e7ac1cbf415dc042b5f0ac14f1f3", size = 1939850, upload-time = "2026-07-06T01:02:02.379Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8c/a3/1d816863674c610234afef9a444d4eb562689a3fa1a872ac5687b4e0eac4/astropy_iers_data-0.2026.7.6.1.1.20-py3-none-any.whl", hash = "sha256:7aa50fa7f6d13258357d1e17fa97f3a8c2f04b9a7429d056e986a91cc46576a0", size = 1994649, upload-time = "2026-07-06T01:02:00.977Z" },
-]
-
-[[package]]
 name = "attrs"
 version = "26.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -407,10 +375,13 @@ name = "canvod-adapters"
 version = "0.1.0"
 source = { editable = "packages/canvod-adapters" }
 dependencies = [
+    { name = "canvod-readers" },
+    { name = "canvod-utils" },
     { name = "h5netcdf" },
     { name = "h5py" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "pydantic" },
     { name = "xarray" },
 ]
 
@@ -421,11 +392,14 @@ store = [
 
 [package.metadata]
 requires-dist = [
-    { name = "canvod-store", marker = "extra == 'store'", specifier = ">=0.2.3" },
+    { name = "canvod-readers", git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-readers&branch=fix%2Fgnssgeodesy-upstream-bugs" },
+    { name = "canvod-store", marker = "extra == 'store'", git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-store&branch=fix%2Fgnssgeodesy-upstream-bugs" },
+    { name = "canvod-utils", git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-utils&branch=fix%2Fgnssgeodesy-upstream-bugs" },
     { name = "h5netcdf", specifier = ">=1.3.0" },
     { name = "h5py", specifier = ">=3.10.0" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "pandas", specifier = ">=2.0.0" },
+    { name = "pydantic", specifier = ">=2.0" },
     { name = "xarray", specifier = ">=2024.1.0" },
 ]
 provides-extras = ["store"]
@@ -454,9 +428,10 @@ provides-extras = ["airflow"]
 
 [[package]]
 name = "canvod-auxiliary"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-auxiliary&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
+    { name = "canvod-config" },
     { name = "canvod-readers" },
     { name = "canvod-utils" },
     { name = "numpy" },
@@ -469,9 +444,17 @@ dependencies = [
     { name = "tqdm" },
     { name = "xarray" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/65/9d/3b6cc78ca2dee4680cab14c8220e7c8778c50e4b68e5968a2e8a7a6ef71c/canvod_auxiliary-0.2.3.tar.gz", hash = "sha256:61fea7252a0d0b2d82b32a9b59a8e19013af37531c434efbd53e2ca3d2e7ff80", size = 53172, upload-time = "2026-04-30T11:24:03.593Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/cb/ada34bfd0d3973fc3dfa221f5223a1d92516cfb4e6e11371849b2667ebc3/canvod_auxiliary-0.2.3-py3-none-any.whl", hash = "sha256:b3ad13fd6dab8dc93038947ef952afec71fda494c00285d8fdd7d93662dd5525", size = 70378, upload-time = "2026-04-30T11:23:44.521Z" },
+
+[[package]]
+name = "canvod-config"
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-config&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
+dependencies = [
+    { name = "canvod-utils" },
+    { name = "email-validator" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pyyaml" },
 ]
 
 [[package]]
@@ -495,15 +478,14 @@ requires-dist = [
 
 [[package]]
 name = "canvod-grids"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-grids&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
-    { name = "astropy" },
     { name = "canvod-store" },
+    { name = "canvod-utils" },
     { name = "dask" },
     { name = "loguru" },
     { name = "matplotlib" },
-    { name = "numba" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "polars" },
@@ -511,10 +493,6 @@ dependencies = [
     { name = "structlog" },
     { name = "tqdm" },
     { name = "xarray" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/56/2d/173bed14c72301e902b07eaa85467a8e45333413e9e0d33cbcedc45c553c/canvod_grids-0.2.3.tar.gz", hash = "sha256:7722bd29e48977a61af774e00c21319c4af44e5e63b50a42ffc869a02032cf51", size = 88160, upload-time = "2026-04-30T11:24:04.579Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/1a/0ce25f34550b1ad99491a50febb5be4c301ef37c36d9412417295bbb4aa8/canvod_grids-0.2.3-py3-none-any.whl", hash = "sha256:ec530d88df323b46915f296e13c37dcdd6069b80170c40b17f38a044fc3fc042", size = 110570, upload-time = "2026-04-30T11:23:45.867Z" },
 ]
 
 [[package]]
@@ -539,7 +517,7 @@ wheels = [
 [[package]]
 name = "canvod-preflight"
 version = "0.4.0"
-source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-preflight&branch=fix%2Fgnssgeodesy-upstream-bugs#2ee4c6cc50b323334c9cfe0798a0918ff4677e9d" }
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-preflight&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
     { name = "canvod-utils" },
     { name = "natsort" },
@@ -549,33 +527,31 @@ dependencies = [
 
 [[package]]
 name = "canvod-readers"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-readers&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
+    { name = "canvod-config" },
     { name = "canvod-utils" },
-    { name = "canvod-virtualiconvname" },
     { name = "georinex" },
     { name = "matplotlib" },
     { name = "natsort" },
     { name = "numpy" },
     { name = "pint" },
     { name = "pydantic" },
+    { name = "pymap3d" },
     { name = "pytz" },
     { name = "sbf-parser" },
     { name = "structlog" },
     { name = "xarray" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c2/a9/638dea346e68e7eb763bfd64691e042081ff849d3e1b066997f32ef5f46a/canvod_readers-0.2.3.tar.gz", hash = "sha256:e82c64dc168e4ca9372dd110b53f2a53291ee1ef51d80c8fbb448d6951bdedc5", size = 19463656, upload-time = "2026-04-30T11:24:06.883Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/2c/81/3ba3e8625e32cebe02283a537b4dff9bdb52756df8fb8c0118147d56c58b/canvod_readers-0.2.3-py3-none-any.whl", hash = "sha256:9431078d5aebcd8cb465d1efb83005deae6ff807448006b064928699722ec464", size = 19475422, upload-time = "2026-04-30T11:23:48.725Z" },
-]
 
 [[package]]
 name = "canvod-store"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-store&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
     { name = "canvod-auxiliary" },
+    { name = "canvod-config" },
     { name = "canvod-grids" },
     { name = "canvod-readers" },
     { name = "canvod-utils" },
@@ -586,10 +562,6 @@ dependencies = [
     { name = "polars" },
     { name = "xarray" },
     { name = "zarr" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2b/dc/618bf09df58a834278ca5d4039e1f03011ccd5d57975a56ac7bb5dc12b1a/canvod_store-0.2.3.tar.gz", hash = "sha256:f2f6d654bf4b69fb3e181443e7ae705cc509edfef6b9c11cfeb6e097899788ad", size = 65649, upload-time = "2026-04-30T11:24:09.476Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/57/80/ecdbe4a95df4794dc2abab39a14fc4337ea7640c8ddd67132b22b37e7989/canvod_store-0.2.3-py3-none-any.whl", hash = "sha256:3f9f29c40ff9001db9f5b4c083cd6eac755c7b85a7bd45f8b1937f671729bdc7", size = 71119, upload-time = "2026-04-30T11:23:51.334Z" },
 ]
 
 [[package]]
@@ -611,9 +583,10 @@ wheels = [
 [[package]]
 name = "canvod-utils"
 version = "0.4.0"
-source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-utils&branch=fix%2Fgnssgeodesy-upstream-bugs#2ee4c6cc50b323334c9cfe0798a0918ff4677e9d" }
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-utils&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
     { name = "pydantic" },
+    { name = "structlog" },
 ]
 
 [[package]]
@@ -648,17 +621,14 @@ wheels = [
 
 [[package]]
 name = "canvod-vod"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
+version = "0.4.0"
+source = { git = "https://github.com/nfb2021/canvodpy.git?subdirectory=packages%2Fcanvod-vod&branch=fix%2Fgnssgeodesy-upstream-bugs#216435dfd5e02f9288d8d5bf35729577be5b1ee9" }
 dependencies = [
+    { name = "canvod-utils" },
     { name = "numpy" },
     { name = "pydantic" },
     { name = "structlog" },
     { name = "xarray" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/fa/6b/11330587691e3a7abba2660ae31f3d270f9904799504c49695718f95bc6c/canvod_vod-0.2.3.tar.gz", hash = "sha256:6321a7b2cc579895a0f786026a60bde23d94c8c871707ed822f024e2004806e4", size = 4379, upload-time = "2026-04-30T11:24:15.544Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/ab/009d20600291d47583fdfbb87ab8b8f95aaa7679401fb7f26b7fe708c11d/canvod_vod-0.2.3-py3-none-any.whl", hash = "sha256:0e8af3a8579a72fbffbeb3787411784dbe633613b1c7f452aaebdc2270099c54", size = 5713, upload-time = "2026-04-30T11:23:59.121Z" },
 ]
 
 [[package]]
@@ -1794,22 +1764,6 @@ wheels = [
 ]
 
 [[package]]
-name = "llvmlite"
-version = "0.48.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/dc/a0/acc8ffcd5bdc63df0097e22c719bfcd61b604358343089313a8aebbb24ab/llvmlite-0.48.0.tar.gz", hash = "sha256:543b19f9ef8f3c7c60d1468191e4ee1b1537bf9f8a3d56f64c0ddd98de92edd2", size = 184016, upload-time = "2026-07-02T20:20:05.308Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/8e/8170f2e0c217f88069c333d85bb976e536b332aecfcce606ddbdb249385f/llvmlite-0.48.0-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:321f1ac39b462603f0b589751aecf2d237d056f6d005749c1752b6f23ec3f074", size = 40480650, upload-time = "2026-07-01T18:42:07.935Z" },
-    { url = "https://files.pythonhosted.org/packages/d6/e1/05b50692b647cac3c18200ac485b04f342f00ed173c9cc46767274469a15/llvmlite-0.48.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:05f0103c8f2f96a37441337e3643863c01b8e83e530aff38960dcb383c54a065", size = 59890115, upload-time = "2026-07-01T18:42:17.805Z" },
-    { url = "https://files.pythonhosted.org/packages/f7/c3/470b8c4ff9ae2db2f9cf5c3e73de76ed908a32788ae9eb5602d43e6a476b/llvmlite-0.48.0-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:37d66fae72802175b0bfe1ea06e624b51e2d7aee6c3c34bbd09739b8f88e8e0b", size = 58343457, upload-time = "2026-07-01T18:42:13.217Z" },
-    { url = "https://files.pythonhosted.org/packages/c9/2d/6a5171fb7236ac0895e1a02ccba3735bf291e8597239aa6421894d3c0ba8/llvmlite-0.48.0-cp314-cp314-win_amd64.whl", hash = "sha256:966dcab0a598e2bd8fb5f2cc082cf7b07bae564fc485a3a8692393caf986facf", size = 42986372, upload-time = "2026-07-01T18:42:21.483Z" },
-    { url = "https://files.pythonhosted.org/packages/94/e3/7a93e09c9f94e637ca90209ceef0334a9a1d45b0bdb7c92ff922d25d6187/llvmlite-0.48.0-cp314-cp314t-macosx_12_0_arm64.whl", hash = "sha256:7a5c413317050a1d67c34708bde97707f9b2257ef1017f7532d21fe7d9a9ff30", size = 40480654, upload-time = "2026-07-01T18:42:25.076Z" },
-    { url = "https://files.pythonhosted.org/packages/27/98/a29133b4728671a175f7d616fab8b1c6e1d8c269d1523581d3160697bfb1/llvmlite-0.48.0-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1d9f952dff6c350c529997423d4fa43abae9722a884ac7ffafc37a3af676e7db", size = 59890119, upload-time = "2026-07-01T18:42:33.88Z" },
-    { url = "https://files.pythonhosted.org/packages/1a/cf/7aac11a1f1c7ec54b60c7f6814e87561fb6b55b2f290455d7941eb113420/llvmlite-0.48.0-cp314-cp314t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:054aa7d46595935565f276cf0c1659b4f10929c996dd4a606875fae26fba2a23", size = 58343460, upload-time = "2026-07-01T18:42:29.545Z" },
-    { url = "https://files.pythonhosted.org/packages/db/41/b96f440c7df5ebba07872cad4e30fbc3560387755b1ea0b629adb76d5ca8/llvmlite-0.48.0-cp314-cp314t-win_amd64.whl", hash = "sha256:d0b3c61aac83b42fb48cc96bffbf57c81b82b2aa92276b7ed6420c814629a99a", size = 42986383, upload-time = "2026-07-01T18:42:37.544Z" },
-]
-
-[[package]]
 name = "locket"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2197,26 +2151,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
-]
-
-[[package]]
-name = "numba"
-version = "0.66.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "llvmlite" },
-    { name = "numpy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ae/a0/570e3dc53e5602b49108f62a13e529f1eec8bfc7ef37d49c825924dcf546/numba-0.66.0.tar.gz", hash = "sha256:b900e63a0e26c05ea9a6d5a3a5a0a177cb64c5011887bf43edb8c3ed2c38d363", size = 2806181, upload-time = "2026-07-01T23:12:46.36Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/7a/7e0e73550eb4e41ede6e72fb5371f4539537a4d770a3b73fa9b61aea0622/numba-0.66.0-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:46ae5f2b19e2af3c33c2df100306a90ea2f981c8158b0390f8bf6c20eee7357e", size = 2727296, upload-time = "2026-07-01T23:12:32.39Z" },
-    { url = "https://files.pythonhosted.org/packages/0f/26/885774c006de6620ed3d10f45d8e20fe0b8e6aad6d573211a2cbc8b3e528/numba-0.66.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:e2b101f23b8b63978d334574d2039f27f0dccfe1d891756f33a2e2f3e4c88cf4", size = 3842720, upload-time = "2026-07-01T23:12:33.938Z" },
-    { url = "https://files.pythonhosted.org/packages/93/99/edebf7de890b73973d839dd971cf73734adfb81ffa1b4504f84b9059c3e5/numba-0.66.0-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:63b943eb2c9ba371908ce2cd6dfc643db51fc40f7966993376a1701bc922f537", size = 3543537, upload-time = "2026-07-01T23:12:35.566Z" },
-    { url = "https://files.pythonhosted.org/packages/66/c5/b46ad28ac3681d035ea21365c5e052149062e1a0a9affd0563d2760ea6ff/numba-0.66.0-cp314-cp314-win_amd64.whl", hash = "sha256:bd57790acd20f6a468e0ad333ef6b82355e309a92310fb7dff80e919f01a21a9", size = 2799250, upload-time = "2026-07-01T23:12:37.154Z" },
-    { url = "https://files.pythonhosted.org/packages/10/6f/5e77a7397a37dd16f57a7b72e7e470db5227b68e3639df0d13a8e674883d/numba-0.66.0-cp314-cp314t-macosx_12_0_arm64.whl", hash = "sha256:db7735d15ea17a283d6485b9fa3504769f78fd86e5146638ad5e8da57c031b9e", size = 2730342, upload-time = "2026-07-01T23:12:38.758Z" },
-    { url = "https://files.pythonhosted.org/packages/39/fd/e9c9680a3813f3d781c20e5d53c1074801b787d4feecca0472fdd7c05ce1/numba-0.66.0-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:651a2b53298340956db26ecbe7ab043106b50a40c2807e66d617a4917245a4ab", size = 3878695, upload-time = "2026-07-01T23:12:40.302Z" },
-    { url = "https://files.pythonhosted.org/packages/61/3a/9b363287b85fcd4537ea3878793822878b2ac1008a78159d2096fea628de/numba-0.66.0-cp314-cp314t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8c1144ba1720ea59ad79f4f488ed54d149b2613b357f7e445678b7d0739c70e9", size = 3596323, upload-time = "2026-07-01T23:12:42.805Z" },
-    { url = "https://files.pythonhosted.org/packages/4c/f2/dca53d50b8f2289dd01954ace9da261e0487d5b74b188b4304e4ecc3492c/numba-0.66.0-cp314-cp314t-win_amd64.whl", hash = "sha256:d426178fb991a85714c43112a8ea7b9d9579ea856ad8dcdb9c1c3941903ba5be", size = 2804772, upload-time = "2026-07-01T23:12:44.399Z" },
 ]
 
 [[package]]
@@ -2760,24 +2694,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5c/b5/8f48e906c3e0205276e8bd8cb7512217a87b2685304d64be27cad5b3019f/pydantic_settings-2.14.2.tar.gz", hash = "sha256:c19dd64b19097f1de80184f0cc7b0272a13ae6e170cbf240a3e27e381ed14a5f", size = 237700, upload-time = "2026-06-19T13:44:56.324Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/77/c1/6e422f34e569cf8e18df68d1939c81c099d2b61e4f7d9621c8a77560799c/pydantic_settings-2.14.2-py3-none-any.whl", hash = "sha256:a20c97b37910b6550d5ea50fbcc2d4187defe58cd57070b73863d069419c9440", size = 61715, upload-time = "2026-06-19T13:44:55.02Z" },
-]
-
-[[package]]
-name = "pyerfa"
-version = "2.0.1.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/71/39/63cc8291b0cf324ae710df41527faf7d331bce573899199d926b3e492260/pyerfa-2.0.1.5.tar.gz", hash = "sha256:17d6b24fe4846c65d5e7d8c362dcb08199dc63b30a236aedd73875cc83e1f6c0", size = 818430, upload-time = "2024-11-11T15:22:30.852Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7d/d9/3448a57cb5bd19950de6d6ab08bd8fbb3df60baa71726de91d73d76c481b/pyerfa-2.0.1.5-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:b282d7c60c4c47cf629c484c17ac504fcb04abd7b3f4dfcf53ee042afc3a5944", size = 341818, upload-time = "2024-11-11T15:22:16.467Z" },
-    { url = "https://files.pythonhosted.org/packages/11/4a/31a363370478b63c6289a34743f2ba2d3ae1bd8223e004d18ab28fb92385/pyerfa-2.0.1.5-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:be1aeb70390dd03a34faf96749d5cabc58437410b4aab7213c512323932427df", size = 329370, upload-time = "2024-11-11T15:22:17.829Z" },
-    { url = "https://files.pythonhosted.org/packages/cb/96/b6210fc624123c8ae13e1eecb68fb75e3f3adff216d95eee1c7b05843e3e/pyerfa-2.0.1.5-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b0603e8e1b839327d586c8a627cdc634b795e18b007d84f0cda5500a0908254e", size = 692794, upload-time = "2024-11-11T15:22:19.429Z" },
-    { url = "https://files.pythonhosted.org/packages/e5/e0/050018d855d26d3c0b4a7d1b2ed692be758ce276d8289e2a2b44ba1014a5/pyerfa-2.0.1.5-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0e43c7194e3242083f2350b46c09fd4bf8ba1bcc0ebd1460b98fc47fe2389906", size = 738711, upload-time = "2024-11-11T15:22:20.661Z" },
-    { url = "https://files.pythonhosted.org/packages/b9/f5/ff91ee77308793ae32fa1e1de95e9edd4551456dd888b4e87c5938657ca5/pyerfa-2.0.1.5-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:07b80cd70701f5d066b1ac8cce406682cfcd667a1186ec7d7ade597239a6021d", size = 722966, upload-time = "2024-11-11T15:22:21.905Z" },
-    { url = "https://files.pythonhosted.org/packages/2c/56/b22b35c8551d2228ff8d445e63787112927ca13f6dc9e2c04f69d742c95b/pyerfa-2.0.1.5-cp39-abi3-win32.whl", hash = "sha256:d30b9b0df588ed5467e529d851ea324a67239096dd44703125072fd11b351ea2", size = 339955, upload-time = "2024-11-11T15:22:23.087Z" },
-    { url = "https://files.pythonhosted.org/packages/b4/11/97233cf23ad5411ac6f13b1d6ee3888f90ace4f974d9bf9db887aa428912/pyerfa-2.0.1.5-cp39-abi3-win_amd64.whl", hash = "sha256:66292d437dcf75925b694977aa06eb697126e7b86553e620371ed3e48b5e0ad0", size = 349410, upload-time = "2024-11-11T15:22:24.817Z" },
 ]
 
 [[package]]
