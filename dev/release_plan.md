@@ -114,11 +114,7 @@ python -c "import canvod.filemap, canvod.airflow, canvod.adapters.gnssvod, canvo
   matches GitHub-only), or publish canvod-filemap to PyPI?
 - canvodpy's deprecated `FluentWorkflow` still imports
   `canvod.filemap.FilenameMapper`, which PR #45 removes; it then falls back
-  to globbing with a log message. Raise instead, or accept for a deprecated
-  path?
-- The old lockstep tag `v0.1.0` points at 2e914ba, which is not on `main`
-  (the release PR was rebased; main's copy is 9e24904). Installs pinned to
-  `v0.1.0` keep working. Without per-package 0.1.0 tags, each 1.0.0
-  changelog covers the whole history. Optional: tag 9e24904 as
-  `canvod-<package>-v0.1.0` for all three before step 2, so each 1.0.0
-  changelog starts after 0.1.0.
+  to globbing `*.25o` (2025 only). Must be fixed before release (user,
+  2026-10-04): use canvodpy's shared `discover_files`. Same for
+  `DataDirMatcher` (canvod-readers `dir_matcher.py`), which imports
+  `canvod.filemap.patterns.BUILTIN_PATTERNS` and silently skips SBF folders.
