@@ -1,6 +1,6 @@
 """canvod-airflow: Airflow DAG definitions for canvodpy GNSS-T pipelines.
 
-See ``daily_processing.py`` (per-site SBF/RINEX/SBF+agency DAGs) and
+See ``daily_processing.py`` (one daily DAG per site) and
 ``backfill.py`` (manual date-range backfill DAG). No pipeline logic lives
 here; every task wraps a stateless function from ``canvodpy.workflows.tasks``.
 
