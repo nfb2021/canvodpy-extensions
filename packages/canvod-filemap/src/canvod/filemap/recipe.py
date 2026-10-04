@@ -36,7 +36,6 @@ Example recipe (YAML)
     content: "AA"
     file_type: rnx
 
-    layout: yyddd_subdirs
     glob: "*.??o"
 
     # Example: rref001a15.25o
@@ -72,10 +71,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, Field, model_validator
-
-from .config_models import DirectoryLayout
-from .convention import (
+from canvod.preflight.convention import (
     AgencyId,
     CanVODFilename,
     ContentCode,
@@ -84,6 +80,8 @@ from .convention import (
     ReceiverType,
     SiteId,
 )
+from pydantic import BaseModel, Field, model_validator
+
 from .mapping import VirtualFile
 from .patterns import hour_letter_to_int, resolve_year_from_yy
 
@@ -121,9 +119,6 @@ class NamingRecipe(BaseModel):
     period: Duration = "15M"
     content: ContentCode = "AA"
     file_type: Literal["rnx", "sbf", "ubx", "nmea"] = "rnx"
-
-    # Directory layout
-    layout: DirectoryLayout = DirectoryLayout.YYDDD_SUBDIRS
 
     # File discovery
     glob: str = Field(description="Glob pattern to find files (e.g. '*.??o', '*.rinex')")

@@ -1,11 +1,15 @@
 # canvod-filemap
 
-Canonical GNSS-T filename parser and data directory validator.
+Naming recipes for receiver files that don't follow the canVOD filename
+convention.
 
-`canvod-filemap` enforces and virtualizes the canVOD filename convention throughout
-the processing pipeline. It is the single source of truth for GNSS file naming,
-discovery, and pre-pipeline validation — including receiver output that doesn't
-follow the canonical convention (Septentrio SBF, RINEX v2 short names, etc.).
+`canvodpy run` processes files whose names follow the canVOD convention, in any
+folder layout. For a receiver whose files are named differently (Septentrio SBF,
+RINEX v2 short names, etc.), a naming recipe translates each filename to its
+canonical name, without renaming any file on disk.
+
+`canvodpy config validate --site <site>` checks before a run which files the
+run would process.
 
 ## Convention format
 
@@ -19,12 +23,12 @@ Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 
 | Module | Component | Purpose |
 |---|---|---|
-| `convention.py` | `CanVODFilename` | Pydantic model — parses and validates a single filename |
-| `mapping.py` | `FilenameMapper` | Maps physical filenames to canonical names (virtual renaming) |
-| `validator.py` | `DataDirectoryValidator` | Pre-pipeline hard gate: blocks on unmatched or overlapping files |
-| `patterns.py` | `BUILTIN_PATTERNS` | Glob patterns for all GNSS file types (single source of truth) |
-| `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` | Pydantic config models |
-| `recipe.py` | `NamingRecipe` | Recipe-based config generation for non-canonical layouts |
+| `recipe.py` | `NamingRecipe` | Translates a receiver's own filenames to canonical names |
+| `recipe_files.py` | `find_recipe`, `create_recipe` | Where recipe files live; new recipes from the template |
+| `mapping.py` | `VirtualFile` | A physical file paired with its canonical name (`NamingRecipe.to_virtual_file`) |
+
+The canonical names are parsed and built with `CanVODFilename` of `canvod-preflight`
+(`canvod.preflight.convention`), the same class `canvodpy run` uses.
 
 ## Installation
 
@@ -37,21 +41,25 @@ uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git@
 ## Quick Start
 
 ```python
-from canvod.filemap import CanVODFilename, DataDirectoryValidator
+from pathlib import Path
 
-# Parse a filename
-fname = CanVODFilename.from_string("ROSA01TUW_R_20250010000_15M_05S_AA.rnx")
-print(fname.site, fname.year, fname.doy)  # ROSA, 2025, 1
+from canvod.filemap import NamingRecipe
 
-# Validate a data directory before processing
-validator = DataDirectoryValidator(site_config)
-validator.validate()  # raises on unmatched or overlapping files
+recipe = NamingRecipe.load(Path("config/recipes/rosalia/rosalia_reference.yaml"))
+vf = recipe.to_virtual_file(Path("rref001a15.25o"))
+print(vf.conventional_name)  # canonical canVOD name; the file keeps its name
+```
+
+Before a run, check which files the run would process:
+
+```bash
+canvodpy config validate --site rosalia
 ```
 
 ## NamingRecipe YAML format
 
 If your GNSS receiver outputs files in a proprietary or legacy format, a
-`NamingRecipe` tells the mapper how to extract canonical fields from a physical
+`NamingRecipe` tells canvodpy how to extract canonical fields from a physical
 filename:
 
 ```yaml
@@ -64,7 +72,6 @@ receiver_type: reference
 sampling: "05S"
 period: "15M"
 file_type: rnx
-layout: yyddd_subdirs   # or yyyyddd_subdirs, flat
 glob: "*.??o"
 fields:
   - skip: 4          # "rref"
@@ -94,12 +101,22 @@ sites:
   my_site:
     receivers:
       reference_01:
-        recipe: my_site_reference   # → config/recipes/my_site_reference.yaml
+        recipe: my_site_reference   # → <config dir>/recipes/my_site/my_site_reference.yaml
 ```
+
+Recipe files are kept per site in the configuration directory, at
+`<config dir>/recipes/<site>/<name>.yaml`. `find_recipe(config_dir, site, name)`
+returns that path, and raises `RecipeNotFoundError` if the file does not exist.
+A recipe saved directly in `<config dir>/recipes/` is not used; the error says
+where to move it. `create_recipe(config_dir, site, name)` creates a new recipe
+from the template shipped with this package, with `name` filled in.
+
+A recipe has no `layout` field: `canvodpy run` finds the files in any folder
+layout and takes each file's day from its name. An older recipe that still
+sets `layout` loads unchanged; the field is ignored.
 
 ## Important
 
-- `DataDirMatcher` and `PairDataDirMatcher` in canvod-readers are **deprecated** — use this package instead
-- `BUILTIN_PATTERNS` is the single source of truth for file glob patterns
+- `DataDirMatcher` and `PairDataDirMatcher` in canvod-readers are **deprecated**: `canvodpy run` finds the files itself
 
 See the [API Reference](../../api/canvod-filemap.md) for the full public API.

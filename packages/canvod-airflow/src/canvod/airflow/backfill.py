@@ -17,7 +17,6 @@ Usage (Airflow UI or CLI)::
 
     airflow dags trigger canvod_backfill --conf '{
         "site": "Rosalia",
-        "branch": "sbf",
         "start_date": "2025-001",
         "end_date": "2025-010"
     }'
@@ -25,7 +24,7 @@ Usage (Airflow UI or CLI)::
 Or via ``af``::
 
     af runs trigger canvod_backfill \\
-        -F site=Rosalia -F branch=sbf \\
+        -F site=Rosalia \\
         -F start_date=2025-001 -F end_date=2025-010
 """
 
@@ -70,17 +69,6 @@ def _task_failure_callback(context):
     tags=["canvod", "gnss", "backfill"],
     params={
         "site": Param("Rosalia", type="string", description="Site name from sites.yaml"),
-        "branch": Param(
-            "sbf",
-            type="string",
-            enum=["sbf", "rinex", "sbf_agency"],
-            description=(
-                "Processing branch: "
-                "sbf (broadcast ephemeris, same-day), "
-                "rinex (agency SP3/CLK, ~12-18 day lag), "
-                "sbf_agency (SBF observables + agency geometry)"
-            ),
-        ),
         "start_date": Param(
             "2025-001",
             type="string",
@@ -95,7 +83,7 @@ def _task_failure_callback(context):
     doc_md=__doc__,
 )
 def canvod_backfill():
-    """Process a date range for a single site and branch."""
+    """Process a date range for a single site."""
 
     @task
     def t_resolve_dates(**context) -> list[str]:
@@ -121,9 +109,8 @@ def canvod_backfill():
             current += dt.timedelta(days=1)
 
         logger.info(
-            "backfill: %s/%s — %d days (%s → %s)",
+            "backfill: %s — %d days (%s → %s)",
             params["site"],
-            params["branch"],
             len(dates),
             params["start_date"],
             params["end_date"],
@@ -145,94 +132,24 @@ def canvod_backfill():
         Idempotent: already-processed dates are skipped by the store's
         three-layer dedup (hash match → temporal overlap → intra-batch).
         """
-        params = context["params"]
-        site = params["site"]
-        branch = params["branch"]
+        from canvodpy.workflows.tasks import (
+            calculate_vod,
+            check_day,
+            process_day,
+            validate_ingest,
+        )
 
-        if branch == "sbf":
-            _process_single_day_sbf(site, yyyydoy)
-        elif branch == "rinex":
-            _process_single_day_rinex(site, yyyydoy)
-        elif branch == "sbf_agency":
-            _process_single_day_sbf_agency(site, yyyydoy)
-        else:
-            raise ValueError(f"Unknown branch: {branch!r}")
+        site = context["params"]["site"]
+        check_day(site, yyyydoy)
+        process_day(site, yyyydoy)
+        validate_ingest(site, yyyydoy)
+        calculate_vod(site, yyyydoy)
 
-        logger.info("backfill: %s/%s %s — ok", site, branch, yyyydoy)
-        return {"site": site, "branch": branch, "yyyydoy": yyyydoy, "status": "ok"}
+        logger.info("backfill: %s %s — ok", site, yyyydoy)
+        return {"site": site, "yyyydoy": yyyydoy, "status": "ok"}
 
     dates = t_resolve_dates()
     t_process_day.expand(yyyydoy=dates)
-
-
-# ---------------------------------------------------------------------------
-# Per-day pipeline helpers (ingest → VOD; no analytics in public package)
-# ---------------------------------------------------------------------------
-
-
-def _process_single_day_sbf(site: str, yyyydoy: str) -> None:
-    """SBF + broadcast ephemeris pipeline for one day."""
-    from canvodpy.workflows.tasks import (
-        calculate_vod,
-        check_sbf,
-        cleanup,
-        process_sbf,
-        validate_ingest,
-    )
-
-    sbf_info = check_sbf(site, yyyydoy)
-    process_sbf(site, yyyydoy, receiver_files=sbf_info["receivers"])
-    validate_ingest(site, yyyydoy)
-    calculate_vod(site, yyyydoy)
-    cleanup(site, yyyydoy)
-
-
-def _process_single_day_rinex(site: str, yyyydoy: str) -> None:
-    """RINEX + agency SP3/CLK pipeline for one day."""
-    from canvodpy.workflows.tasks import (
-        calculate_vod,
-        check_rinex,
-        cleanup,
-        fetch_aux_data,
-        process_rinex,
-        validate_ingest,
-    )
-
-    rinex_info = check_rinex(site, yyyydoy)
-    aux_info = fetch_aux_data(site, yyyydoy)
-    process_rinex(
-        site,
-        yyyydoy,
-        aux_zarr_path=aux_info["aux_zarr_path"],
-        receiver_files=rinex_info["receivers"],
-    )
-    validate_ingest(site, yyyydoy)
-    calculate_vod(site, yyyydoy)
-    cleanup(site, yyyydoy)
-
-
-def _process_single_day_sbf_agency(site: str, yyyydoy: str) -> None:
-    """SBF observables + agency SP3/CLK geometry pipeline for one day."""
-    from canvodpy.workflows.tasks import (
-        calculate_vod,
-        check_sbf,
-        cleanup,
-        fetch_aux_data,
-        process_sbf,
-        validate_ingest,
-    )
-
-    sbf_info = check_sbf(site, yyyydoy)
-    aux_info = fetch_aux_data(site, yyyydoy)
-    process_sbf(
-        site,
-        yyyydoy,
-        receiver_files=sbf_info["receivers"],
-        aux_zarr_path=aux_info["aux_zarr_path"],
-    )
-    validate_ingest(site, yyyydoy)
-    calculate_vod(site, yyyydoy)
-    cleanup(site, yyyydoy)
 
 
 # Instantiate

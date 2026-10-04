@@ -1,17 +1,16 @@
 # canvod-filemap
 
-Filename convention virtualization — single source of truth for GNSS file naming and discovery.
+Naming recipes: translate non-canonical receiver filenames to canonical canVOD names, without renaming files. `canvodpy run` does the file discovery (any folder layout, day from the filename).
 
 ## Key modules
 
 | Module | Purpose |
 |---|---|
 | `convention.py` | `CanVODFilename` — parses `{SIT}{T}{NN}{AGC}_R_{YYYY}{DOY}{HHMM}_{PERIOD}_{SAMPLING}_{CONTENT}.{TYPE}` |
-| `mapping.py` | `FilenameMapper` — physical filenames → canonical names |
-| `validator.py` | `DataDirectoryValidator` — pre-flight hard gate (unmatched/overlapping = blocked) |
-| `patterns.py` | `BUILTIN_PATTERNS` — glob patterns for all GNSS file types |
-| `config_models.py` | `SiteNamingConfig`, `ReceiverNamingConfig` (Pydantic) |
-| `recipe.py` | `NamingRecipe` — config generation |
+| `recipe.py` | `NamingRecipe` — filename → canonical name (`to_virtual_file`) |
+| `mapping.py` | `VirtualFile` — physical file + canonical name |
+| `patterns.py` | `hour_letter_to_int`, `resolve_year_from_yy` |
+| `recipe_files.py` | `find_recipe`, `create_recipe` — recipes live at `<config dir>/recipes/<site>/<name>.yaml`; template in `templates/recipe.yaml` |
 
 ## Convention format
 
@@ -19,16 +18,16 @@ Filename convention virtualization — single source of truth for GNSS file nami
 
 Example: `ROSA01TUW_R_20250010000_15M_05S_AA.rnx`
 
-## Validation
+## Removed
 
-`DataDirectoryValidator` is the pre-pipeline hard gate. If files don't match the
-convention or have temporal overlaps, processing is blocked. This runs before any
-data is read.
+`FilenameMapper`, `DataDirectoryValidator`, the pattern registry
+(`BUILTIN_PATTERNS`, `match_pattern`), `SiteNamingConfig`/`ReceiverNamingConfig`
+and the recipe field `layout` were removed, not deprecated: this is an
+extension, not core code. An old recipe with `layout:` still loads (ignored).
 
 ## Important
 
-- `DataDirMatcher` and `PairDataDirMatcher` in canvod-readers are **deprecated** — use this package
-- `BUILTIN_PATTERNS` is the single source of truth for file glob patterns
+- `DataDirMatcher` and `PairDataDirMatcher` in canvod-readers are **deprecated**: `canvodpy run` finds the files itself
 - Test data files use canonical names
 
 ## Testing

@@ -14,6 +14,16 @@
 [tool.uv.workspace]
 members = ["packages/*"]
 
+# canvod-filemap uses the canVOD naming convention of canvod-preflight, which
+# is not on PyPI yet; canvod-adapters uses the observation code mapping and
+# the dataset contracts of canvod-readers and the VOD store's contract check,
+# which are not released yet. Branch until canvodpy is released with them.
+[tool.uv.sources]
+canvod-preflight = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-preflight", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-readers = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-readers", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-store = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-store", branch = "fix/gnssgeodesy-upstream-bugs" }
+canvod-utils = { git = "https://github.com/nfb2021/canvodpy.git", subdirectory = "packages/canvod-utils", branch = "fix/gnssgeodesy-upstream-bugs" }
+
 # ============================================================================
 # Development Dependencies (Workspace-wide)
 # ============================================================================
@@ -88,18 +98,7 @@ unresolved-import = "ignore"
 # Commitizen Configuration (Conventional Commits)
 # ============================================================================
 
+# Checks commit messages only (commit-msg hook). Versions, changelogs and tags
+# are per package: see "Release Management" in the Justfile.
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
-version_files = [
-    "packages/canvod-filemap/pyproject.toml:version",
-    "packages/canvod-airflow/pyproject.toml:version",
-    "packages/canvod-adapters/pyproject.toml:version",
-]
-tag_format = "v$version"
-# CHANGELOG.md is owned by `just changelog` (git-changelog), run as its own
-# step in `just release` before bump -- update_changelog_on_bump would have
-# cz try to regenerate it too, and changelog_incremental fails outright with
-# no prior tag to diff against (broke the very first release attempt).
-update_changelog_on_bump = false
-annotated_tag = true

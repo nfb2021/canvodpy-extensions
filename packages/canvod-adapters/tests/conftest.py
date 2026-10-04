@@ -3,47 +3,61 @@
 import numpy as np
 import pytest
 import xarray as xr
+from canvod.readers import SignalID, sid_coords
+from canvod.readers.gnss_specs.signals import SignalIDMapper
 
 
 @pytest.fixture
 def vod_ds() -> xr.Dataset:
-    """Synthetic canvodpy VOD dataset matching the real VOD store shape.
+    """Synthetic canvodpy VOD dataset meeting the VOD dataset contract.
 
-    Two satellites (G01, G02), two bands (L1|C, L2|W), five epochs.
-    Matches ``canvod.vod.calculator.TauOmegaZerothOrder.calculate_vod()``'s
-    output: dims (epoch, sid), variables VOD/delta_snr/phi/theta.
+    Satellites G01, G02, E05; GPS L1|C, L1|W, L2|W and Galileo E1|C, E5a|Q;
+    five epochs. dims (epoch, sid) with canvodpy's sid coordinates,
+    variables VOD/phi/theta. G02 has no L1|C, so its L1 VOD comes from
+    L1|W only.
     """
     rng = np.random.default_rng(0)
     epochs = np.array(
         [f"2025-01-01T00:{i:02d}:00" for i in range(5)],
         dtype="datetime64[ns]",
     )
-    prns = ["G01", "G02"]
-    bands = ["L1|C", "L2|W"]
-    sids = [f"{prn}|{band}" for band in bands for prn in prns]
-
-    n_epoch, n_prn = len(epochs), len(prns)
-    # Same-satellite geometry is physically identical across bands -- only
-    # SNR/VOD differ per band. Generate per-PRN theta/phi, then broadcast
-    # across both bands (matches real GNSS data; independently random
-    # per-SID phi/theta would make round-trip assertions physically
-    # meaningless, since to_gnssvod_dataset() correctly shares one band's
-    # Azimuth/Elevation across all bands for the same satellite).
-    theta_per_prn = rng.uniform(0.1, 1.4, (n_epoch, n_prn))  # rad, [0, pi/2)
-    phi_per_prn = rng.uniform(0, 2 * np.pi, (n_epoch, n_prn))
-    theta = np.tile(theta_per_prn, (1, len(bands)))
-    phi = np.tile(phi_per_prn, (1, len(bands)))
-
-    n_sid = len(sids)
-    delta_snr = rng.uniform(-2.0, 2.0, (n_epoch, n_sid))
-    vod = -np.log(10 ** (delta_snr / 10)) * np.cos(theta)
-
+    sids = [
+        "E05|E1|C",
+        "E05|E5a|Q",
+        "G01|L1|C",
+        "G01|L1|W",
+        "G01|L2|W",
+        "G02|L1|W",
+        "G02|L2|W",
+    ]
+    svs = [sid.split("|")[0] for sid in sids]
+    sv_index = sorted(set(svs))
+    n_epoch = len(epochs)
+    # Geometry is per satellite, identical for all its sids
+    theta_sv = rng.uniform(0.1, 1.4, (n_epoch, len(sv_index)))
+    phi_sv = rng.uniform(0, 2 * np.pi, (n_epoch, len(sv_index)))
+    cols = [sv_index.index(sv) for sv in svs]
+    vod = rng.uniform(0.0, 1.0, (n_epoch, len(sids)))
+    vod[1, sids.index("G01|L1|C")] = np.nan
     return xr.Dataset(
         {
             "VOD": (["epoch", "sid"], vod),
-            "delta_snr": (["epoch", "sid"], delta_snr),
-            "phi": (["epoch", "sid"], phi),
-            "theta": (["epoch", "sid"], theta),
+            "phi": (["epoch", "sid"], phi_sv[:, cols]),
+            "theta": (["epoch", "sid"], theta_sv[:, cols]),
         },
-        coords={"epoch": epochs, "sid": sids},
+        coords={
+            "epoch": epochs,
+            **sid_coords([SignalID.from_string(s) for s in sids], mapper=SignalIDMapper()),
+        },
+    )
+
+
+@pytest.fixture
+def obs_ds(vod_ds) -> xr.Dataset:
+    """Synthetic canvodpy observations: SNR and Pseudorange per sid."""
+    rng = np.random.default_rng(1)
+    shape = (vod_ds.sizes["epoch"], vod_ds.sizes["sid"])
+    return vod_ds.drop_vars("VOD").assign(
+        SNR=(["epoch", "sid"], rng.uniform(20, 50, shape)),
+        Pseudorange=(["epoch", "sid"], rng.uniform(2e7, 2.5e7, shape)),
     )

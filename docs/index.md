@@ -50,8 +50,8 @@ and other slot-in components. Install only what you need.
 
     ---
 
-    Bidirectional data adapters between canvodpy and third-party GNSS-VOD tools
-    (currently gnssvod) — convert VOD stores to and from gnssvod's data model.
+    Data exchange between canvodpy and other GNSS-T programs: observations
+    and VOD to and from gnssvod, checked against canvodpy's contracts.
 
     [:octicons-arrow-right-24: Overview](packages/adapters/overview.md)
 

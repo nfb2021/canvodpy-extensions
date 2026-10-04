@@ -106,38 +106,61 @@ docs-deploy:
 # Release Management
 # ============================================================================
 
-# generate CHANGELOG.md from git commits (VERSION can be "auto" or specific like "v0.2.0")
-changelog VERSION="auto":
-    uvx git-changelog -Tio CHANGELOG.md -B="{{VERSION}}" -c angular
+# Each package is released on its own, under the tag <package>-v<version>
+# (e.g. canvod-filemap-v0.2.0). See "Releasing" in CONTRIBUTING.md.
 
-# bump version across all packages (major, minor, patch, or explicit like 0.2.0)
-bump VERSION:
-    @echo "{{GREEN}}{{BOLD}}Bumping all packages to {{VERSION}}{{NORMAL}}"
-    @case "{{VERSION}}" in \
-        major|minor|patch|MAJOR|MINOR|PATCH) uv run cz bump --increment "$(echo {{VERSION}} | tr '[:lower:]' '[:upper:]')" --yes ;; \
-        *) uv run cz bump {{VERSION}} --yes ;; \
+# show the version of every package
+versions:
+    @for pkg in packages/*/; do pkg=$(basename "$pkg"); echo "$pkg $(uv version --package "$pkg" --short --frozen)"; done
+
+# show the changes to PKG since its last release
+changelog PKG:
+    uvx git-cliff --include-path "packages/{{PKG}}/**" --tag-pattern "^{{PKG}}-v[0-9]" --unreleased
+
+# release commit for PKG: bump (major, minor, patch or e.g. 0.2.0), changelog, install pins
+release PKG VERSION: (test-package PKG)
+    #!/usr/bin/env bash
+    set -euo pipefail
+    test -d "packages/{{PKG}}" || { echo "No package packages/{{PKG}}" >&2; exit 1; }
+    test -z "$(git status --porcelain)" || { echo "Commit or discard your changes first" >&2; exit 1; }
+    case "{{VERSION}}" in
+        major|minor|patch) uv version --package "{{PKG}}" --bump "{{VERSION}}" ;;
+        *) uv version --package "{{PKG}}" "{{VERSION}}" ;;
     esac
-    uv lock
-    @echo "{{GREEN}}Version bumped to {{VERSION}}{{NORMAL}}"
+    version=$(uv version --package "{{PKG}}" --short --frozen)
+    tag="{{PKG}}-v${version}"
+    if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+        echo "Tag ${tag} exists already" >&2; exit 1
+    fi
+    uvx git-cliff --include-path "packages/{{PKG}}/**" --tag-pattern "^{{PKG}}-v[0-9]" \
+        --tag "${tag}" --output "packages/{{PKG}}/CHANGELOG.md"
+    # Pin the install snippets of PKG to the new tag
+    pin='canvodpy-extensions\.git@[^#]*#subdirectory=packages/{{PKG}}"'
+    files=$(grep -rlE "${pin}" README.md docs "packages/{{PKG}}/README.md" || true)
+    for f in ${files}; do
+        sed -i.bak -E "s|(canvodpy-extensions\.git@)[^#]*(#subdirectory=packages/{{PKG}}\")|\1${tag}\2|g" "${f}"
+        rm "${f}.bak"
+    done
+    git add "packages/{{PKG}}" uv.lock ${files}
+    git commit -m "chore(release): {{PKG}} ${version}"
+    echo ""
+    echo -e "{{GREEN}}{{BOLD}}Release commit for ${tag} created.{{NORMAL}}"
+    echo ""
+    echo "Next steps (main requires a PR, see CONTRIBUTING.md):"
+    echo "  1. Push this branch, open a PR and merge it"
+    echo "  2. git checkout main && git pull, then: just tag {{PKG}}"
+    echo "  3. Publish the draft GitHub Release that the tag creates"
+    echo "  4. Update the pin in downstream [tool.uv.sources] (canvodpy's root pyproject.toml)"
 
-# create a new release (runs tests, updates changelog, bumps version, tags)
-release VERSION: test
-    @echo "{{GREEN}}{{BOLD}}Creating release {{VERSION}}{{NORMAL}}"
-    @just changelog "v{{VERSION}}"
-    git add CHANGELOG.md
-    git commit -m "chore: update changelog for v{{VERSION}}"
-    @just bump {{VERSION}}
-    git add .
-    git commit -m "chore: bump version to {{VERSION}}"
-    git tag -a "v{{VERSION}}" -m "Release v{{VERSION}}"
-    @echo ""
-    @echo "{{GREEN}}{{BOLD}}Release v{{VERSION}} created!{{NORMAL}}"
-    @echo ""
-    @echo "Next steps (main requires a PR -- see CONTRIBUTING.md):"
-    @echo "  1. Review the commit; drop the local tag for now: git tag -d v{{VERSION}}"
-    @echo "  2. Push a branch + open a PR for the commit, merge it"
-    @echo "  3. Pull main, recreate the tag there, push it:"
-    @echo "       git pull origin main && git tag -a v{{VERSION}} -m 'Release v{{VERSION}}' && git push origin v{{VERSION}}"
-    @echo "  4. GitHub Actions will draft a GitHub Release (GitHub-only, no PyPI)"
-    @echo "  5. Bump the @v{{VERSION}} pin in this README's install snippet and"
-    @echo "     in downstream consumers' [tool.uv.sources] (e.g. canvodpy's root pyproject.toml)"
+# tag the current version of PKG on an up-to-date main and push the tag
+tag PKG:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    git fetch --quiet origin main --tags
+    test "$(git branch --show-current)" = main || { echo "Check out main first" >&2; exit 1; }
+    test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || { echo "main differs from origin/main: git pull first" >&2; exit 1; }
+    version=$(uv version --package "{{PKG}}" --short --frozen)
+    tag="{{PKG}}-v${version}"
+    grep -q "\[${tag}\]" "packages/{{PKG}}/CHANGELOG.md" || { echo "${tag} is not in packages/{{PKG}}/CHANGELOG.md: run just release first" >&2; exit 1; }
+    git tag -a "${tag}" -m "{{PKG}} ${version}"
+    git push origin "${tag}"
