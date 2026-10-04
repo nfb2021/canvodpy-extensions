@@ -90,7 +90,7 @@ fields:
 | `doy` | Day of year |
 | `month` / `day` | Month + day of month (converted to DOY) |
 | `hour` | Hour (0–23) |
-| `hour_letter` | RINEX v2 hour letter (a–x = 0–23) |
+| `hour_letter` | RINEX v2 session letter (a–x = hours 0–23; `0` = daily file, period `01D`) |
 | `minute` | Minute (0–59) |
 | `skip` | Ignore N characters |
 

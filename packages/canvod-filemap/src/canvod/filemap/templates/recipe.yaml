@@ -46,7 +46,8 @@ glob: "*.??o"                  # pattern the file names must match
 #   month, day   calendar month and day (together, instead of doy)
 #   hour         hour (00-23)
 #   minute       minute (00-59)
-#   hour_letter  RINEX hour letter (a-x), instead of hour
+#   hour_letter  RINEX 2 session letter, instead of hour: a-x = hours 0-23,
+#                0 = daily file (period 01D)
 #   skip         ignore these characters
 #
 # Example 1, RINEX short name rref001a15.25o

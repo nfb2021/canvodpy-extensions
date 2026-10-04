@@ -187,6 +187,36 @@ class TestToVirtualFile:
         assert cn.minute == 15
         assert cn.period == "01H"
 
+    @pytest.mark.parametrize(
+        ("filename", "hour", "period"),
+        [
+            ("rref0010.25o", 0, "01D"),  # daily session "0"
+            ("rref001a.25o", 0, "01H"),
+            ("rref001x.25o", 23, "01H"),
+        ],
+    )
+    def test_rinex2_session_letter(self, filename, hour, period, tmp_path):
+        recipe = NamingRecipe(
+            name="rinex2_short",
+            site="ROS",
+            agency="TUW",
+            receiver_number=1,
+            period="01H",
+            glob="*.??o",
+            fields=[
+                {"skip": 4},
+                {"doy": 3},
+                {"hour_letter": 1},
+                {"skip": 1},
+                {"yy": 2},
+                {"skip": 1},
+            ],
+        )
+        cn = recipe.to_virtual_file(tmp_path / filename).conventional_name
+        assert cn.hour == hour
+        assert cn.minute == 0
+        assert cn.period == period
+
     def test_daily_no_hour(self, daily_recipe, tmp_path):
         f = tmp_path / "data_2025_042.obs"
         f.touch()
