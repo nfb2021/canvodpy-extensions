@@ -18,7 +18,7 @@ command).
 | Package | Purpose | Status |
 |---|---|---|
 | [`canvod-filemap`](packages/canvod-filemap) | Recipe-based filename mapping for non-canonical GNSS filenames; slot-in for canvodpy >= 0.3.0 | Available |
-| [`canvod-airflow`](packages/canvod-airflow) | Airflow DAG definitions (daily SBF/RINEX/SBF-agency + backfill) for canvodpy pipelines | Available |
+| [`canvod-airflow`](packages/canvod-airflow) | Airflow DAGs for canvodpy: one daily DAG per site, plus backfill | Available |
 | [`canvod-adapters`](packages/canvod-adapters) | Data exchange between canvodpy and other GNSS-T programs (gnssvod) | Available |
 
 ## Installation
@@ -59,7 +59,6 @@ just --list       # Show all commands
 just test         # Run all tests
 just check        # Lint + format + type-check
 just docs         # Preview documentation locally
-just build-all    # Build all packages into dist/
 ```
 
 ## Documentation

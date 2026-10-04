@@ -42,6 +42,15 @@ repos:
 
   - repo: local
     hooks:
+      # Paths and just recipes named in AGENTS.md files and skills must exist;
+      # runs on every commit, since renaming code can break them too
+      - id: check-agent-docs
+        name: agent docs
+        entry: uv run --no-sync python tools/check_agent_docs.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
       - id: ty-check
         name: ty type check
         entry: uv run ty check

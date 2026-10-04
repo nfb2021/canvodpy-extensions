@@ -37,6 +37,24 @@ hooks:
 check-lock:
     uv lock --check
 
+# show the canvodpy version or commit every canvodpy package is locked at
+canvodpy-ref:
+    @uv run --no-sync python tools/canvodpy_ref.py
+
+# relock every canvodpy package taken from git at the current tip of its source
+lock-canvodpy:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # uv keeps the locked commit of a git repository while any package from
+    # it is not upgraded, so all of them are upgraded together
+    pkgs=$(uv run --no-sync python -c 'import tomllib; lock = tomllib.load(open("uv.lock", "rb")); print(" ".join(p["name"] for p in lock["package"] if "nfb2021/canvodpy.git" in p.get("source", {}).get("git", "")))')
+    test -n "${pkgs}" || { echo "No canvodpy package is taken from git" >&2; exit 0; }
+    args=()
+    for p in ${pkgs}; do args+=(--upgrade-package "${p}"); done
+    uv lock --no-cache "${args[@]}"
+    echo "canvodpy commit(s) in uv.lock:"
+    grep -o 'nfb2021/canvodpy.git[^"]*#[0-9a-f]*' uv.lock | sed 's/.*#//' | sort -u
+
 # lint python code using ruff
 [private]
 check-lint:
@@ -59,8 +77,12 @@ check-format-only:
 check-types:
     uv run ty check
 
-# lint, format and type-check all packages
-check: check-lint check-format check-types
+# check that AGENTS.md files and skills name only existing paths and recipes
+check-agent-docs:
+    uv run --no-sync python tools/check_agent_docs.py
+
+# lint, format and type-check all packages, check the agent docs
+check: check-lint check-format check-types check-agent-docs
 
 # run all tests
 test:

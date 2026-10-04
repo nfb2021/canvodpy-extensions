@@ -1,11 +1,12 @@
 # ============================================================================
 # Claude Code — track project setup, ignore private state
 # ============================================================================
-# CLAUDE.md files are tracked (project + package instructions)
-# .claude/commands/ is tracked (slash commands ship with the repo)
+# AGENTS.md / CLAUDE.md files and .claude/skills/ are tracked
 .claude/*
-!.claude/commands/
 !.claude/skills/
+
+# graphify (code knowledge graph): generated, local
+graphify-out/
 
 # ============================================================================
 # Python
