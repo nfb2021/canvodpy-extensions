@@ -97,27 +97,22 @@ python -c "import canvod.filemap, canvod.airflow, canvod.adapters.gnssvod, canvo
 
 ### 4. Downstream
 
-- [ ] canvodpy root `[tool.uv.sources]`: canvod-filemap
-      `tag = "canvod-filemap-v1.0.0"` (today: branch `feat/filemap-recipes`),
-      canvod-adapters `tag = "canvod-adapters-v1.0.0"` (today: `v0.1.0`);
-      relock. Resolves A8 (two URLs for canvod-preflight) since both sides
+- [ ] canvodpy root `pyproject.toml`: group
+      `filemap = ["canvod-filemap>=1.0.0"]`, source
+      `tag = "canvod-filemap-v1.0.0"` (today: branch `feat/filemap-recipes`);
+      canvod-adapters source `tag = "canvod-adapters-v1.0.0"` (today:
+      `v0.1.0`); relock. Resolves A8 (two URLs for canvod-preflight) since both sides
       then take canvod-preflight from PyPI.
 - [ ] canvodpy demo: notebooks that use filemap install it from the tag.
 - [ ] Paper: the extensions section says the packages are pinned via Git
       tag; name the tag form `<package>-v<version>` if the text names one.
 
-## Open questions
+## Decided
 
-- canvodpy's extra `canvodpy[filemap] = ["canvod-filemap"]` cannot resolve
-  from PyPI (no such project there) and leaves the name open to anyone who
-  registers it. Inside the canvodpy repo `uv sync --extra filemap` works
-  (root `[tool.uv.sources]`) and must stay (user, 2026-10-04). Options:
-  (a) keep the extra and reserve the name with a placeholder on PyPI
-  (recommended); (b) publish canvod-filemap to PyPI; (c) dependency group
-  instead of the extra (`uv sync --group filemap`, nothing published).
-- canvodpy's deprecated `FluentWorkflow` still imports
-  `canvod.filemap.FilenameMapper`, which PR #45 removes; it then falls back
-  to globbing `*.25o` (2025 only). Must be fixed before release (user,
-  2026-10-04): use canvodpy's shared `discover_files`. Same for
-  `DataDirMatcher` (canvod-readers `dir_matcher.py`), which imports
-  `canvod.filemap.patterns.BUILTIN_PATTERNS` and silently skips SBF folders.
+- canvodpy's extra `canvodpy[filemap]` is gone: it named a package not on
+  PyPI. canvod-filemap is now the canvodpy workspace dependency group
+  `filemap` (`uv sync --group filemap`), which is never published (user,
+  2026-10-04; canvodpy 8e059da9). Paper and docs updated.
+- canvodpy's deprecated `FluentWorkflow` and `DataDirMatcher` no longer use
+  removed filemap code (canvodpy 97fd0e84): `FluentWorkflow` finds files as
+  `canvodpy run` does.
