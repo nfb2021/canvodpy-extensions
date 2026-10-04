@@ -110,8 +110,11 @@ python -c "import canvod.filemap, canvod.airflow, canvod.adapters.gnssvod, canvo
 
 - canvodpy's extra `canvodpy[filemap] = ["canvod-filemap"]` cannot resolve
   from PyPI (no such project there) and leaves the name open to anyone who
-  registers it. Drop the extra and document the git install (recommended,
-  matches GitHub-only), or publish canvod-filemap to PyPI?
+  registers it. Inside the canvodpy repo `uv sync --extra filemap` works
+  (root `[tool.uv.sources]`) and must stay (user, 2026-10-04). Options:
+  (a) keep the extra and reserve the name with a placeholder on PyPI
+  (recommended); (b) publish canvod-filemap to PyPI; (c) dependency group
+  instead of the extra (`uv sync --group filemap`, nothing published).
 - canvodpy's deprecated `FluentWorkflow` still imports
   `canvod.filemap.FilenameMapper`, which PR #45 removes; it then falls back
   to globbing `*.25o` (2025 only). Must be fixed before release (user,
