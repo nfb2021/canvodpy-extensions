@@ -17,7 +17,7 @@ Recognized field names
 - ``day``          day of month (01-31)
 - ``hour``         hour (00-23)
 - ``minute``       minute (00-59)
-- ``hour_letter``  RINEX hour code (a-x, single char)
+- ``hour_letter``  RINEX 2 session letter (a-x = hours 0-23; 0 = daily file)
 - ``skip``         ignore these characters
 
 Example recipe (YAML)
@@ -273,12 +273,12 @@ class NamingRecipe(BaseModel):
         # Resolve minute
         minute = _require_int("minute") if "minute" in parsed else 0
 
-        # Determine period: daily if hour=0 and minute=0 and no hour field
+        # Daily file: no hour in the name, or the RINEX 2 daily session "0"
+        # (hourly sessions are "a"-"x", so one recipe matches both)
         period = self.period
-        if hour == 0 and minute == 0:
-            has_hour = any("hour" in e or "hour_letter" in e for e in self.fields)
-            if not has_hour:
-                period = "01D"
+        has_hour = any("hour" in e or "hour_letter" in e for e in self.fields)
+        if parsed.get("hour_letter") == "0" or (hour == 0 and minute == 0 and not has_hour):
+            period = "01D"
 
         rx_type = (
             ReceiverType.REFERENCE if self.receiver_type == "reference" else ReceiverType.ACTIVE

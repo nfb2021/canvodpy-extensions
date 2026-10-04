@@ -13,10 +13,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/nfb2021/canvodpy"
-Documentation = "https://nfb2021.github.io/canvodpy/packages/naming/overview/"
-Repository = "https://github.com/nfb2021/canvodpy"
-Issues = "https://github.com/nfb2021/canvodpy/issues"
+Homepage = "https://github.com/nfb2021/canvodpy-extensions"
+Documentation = "https://nfb2021.github.io/canvodpy-extensions/packages/filemap/overview/"
+Repository = "https://github.com/nfb2021/canvodpy-extensions"
+Issues = "https://github.com/nfb2021/canvodpy-extensions/issues"
 
 [build-system]
 requires = ["uv_build>=0.9.17,<0.10.0"]
