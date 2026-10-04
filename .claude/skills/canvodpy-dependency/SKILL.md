@@ -30,6 +30,12 @@ Version and source tree of every canvodpy package. They can differ per
 package: a package not in root `[tool.uv.sources]` comes from PyPI even
 while others come from a branch.
 
+While any canvodpy package comes from a branch, list `canvodpy` itself in
+root `[tool.uv.sources]` too (subdirectory `canvodpy`, same branch). Then
+every canvodpy package resolves from one commit; otherwise canvodpy and the
+packages it pulls in come from PyPI, an older state, and canvod-airflow is
+tested against a canvodpy it will not run with.
+
 ## Pick up new commits of a canvodpy branch
 
 ```bash
