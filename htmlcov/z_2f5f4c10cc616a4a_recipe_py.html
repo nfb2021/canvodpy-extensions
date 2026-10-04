@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">121 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">114<span class="text"> run</span></button>
+            <span class="text">120 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">113<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">7<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_2f5f4c10cc616a4a_recipe_files_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.1">coverage.py v7.16.1</a>,
-            created at 2026-10-04 14:17 +0000
+            created at 2026-10-04 14:21 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -99,7 +99,7 @@
     <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t"><span class="str">- ``day``          day of month (01-31)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="str">- ``hour``         hour (00-23)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="str">- ``minute``       minute (00-59)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="str">- ``hour_letter``  RINEX hour code (a-x, single char)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="str">- ``hour_letter``  RINEX 2 session letter (a-x = hours 0-23; 0 = daily file)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="str">- ``skip``         ignore these characters</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="str">Example recipe (YAML)</span>&nbsp;</span><span class="r"></span></p>
@@ -355,12 +355,12 @@
     <p class="pln"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">        <span class="com"># Resolve minute</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">        <span class="nam">minute</span> <span class="op">=</span> <span class="nam">_require_int</span><span class="op">(</span><span class="str">&quot;minute&quot;</span><span class="op">)</span> <span class="key">if</span> <span class="str">&quot;minute&quot;</span> <span class="key">in</span> <span class="nam">parsed</span> <span class="key">else</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="com"># Determine period: daily if hour=0 and minute=0 and no hour field</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="nam">period</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">period</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">        <span class="key">if</span> <span class="nam">hour</span> <span class="op">==</span> <span class="num">0</span> <span class="key">and</span> <span class="nam">minute</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">            <span class="nam">has_hour</span> <span class="op">=</span> <span class="nam">any</span><span class="op">(</span><span class="str">&quot;hour&quot;</span> <span class="key">in</span> <span class="nam">e</span> <span class="key">or</span> <span class="str">&quot;hour_letter&quot;</span> <span class="key">in</span> <span class="nam">e</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">fields</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">has_hour</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">                <span class="nam">period</span> <span class="op">=</span> <span class="str">&quot;01D&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="com"># Daily file: no hour in the name, or the RINEX 2 daily session &quot;0&quot;</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="com"># (hourly sessions are &quot;a&quot;-&quot;x&quot;, so one recipe matches both)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">        <span class="nam">period</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">period</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">        <span class="nam">has_hour</span> <span class="op">=</span> <span class="nam">any</span><span class="op">(</span><span class="str">&quot;hour&quot;</span> <span class="key">in</span> <span class="nam">e</span> <span class="key">or</span> <span class="str">&quot;hour_letter&quot;</span> <span class="key">in</span> <span class="nam">e</span> <span class="key">for</span> <span class="nam">e</span> <span class="key">in</span> <span class="nam">self</span><span class="op">.</span><span class="nam">fields</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">        <span class="key">if</span> <span class="nam">parsed</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">&quot;hour_letter&quot;</span><span class="op">)</span> <span class="op">==</span> <span class="str">&quot;0&quot;</span> <span class="key">or</span> <span class="op">(</span><span class="nam">hour</span> <span class="op">==</span> <span class="num">0</span> <span class="key">and</span> <span class="nam">minute</span> <span class="op">==</span> <span class="num">0</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">has_hour</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">            <span class="nam">period</span> <span class="op">=</span> <span class="str">&quot;01D&quot;</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">        <span class="nam">rx_type</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t284" href="#t284">284</a></span><span class="t">            <span class="nam">ReceiverType</span><span class="op">.</span><span class="nam">REFERENCE</span> <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">receiver_type</span> <span class="op">==</span> <span class="str">&quot;reference&quot;</span> <span class="key">else</span> <span class="nam">ReceiverType</span><span class="op">.</span><span class="nam">ACTIVE</span>&nbsp;</span><span class="r"></span></p>
@@ -434,7 +434,7 @@
             <a class="nav" href="z_2f5f4c10cc616a4a_recipe_files_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.1">coverage.py v7.16.1</a>,
-            created at 2026-10-04 14:17 +0000
+            created at 2026-10-04 14:21 +0000
         </p>
     </div>
 </footer>
