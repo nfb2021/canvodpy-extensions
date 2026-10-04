@@ -42,7 +42,8 @@ own `pyproject.toml`, `src/`, `tests/`, `README.md`, and `CLAUDE.md`.
 | `ty` | `uv run ty check` | Type checking (Astral's type checker) |
 | `pytest` | `uv run pytest` | Test runner |
 | `Zensical` | `uv run zensical build` | MkDocs Material-based docs site |
-| `commitizen` | `just bump`, `just release` | Version bumps across all packages, conventional commits |
+| `commitizen` | commit-msg hook | Conventional commit check |
+| `git-cliff` | `just changelog`, `just release` | Per-package changelog (`cliff.toml`) |
 
 ### Common commands
 
@@ -60,9 +61,9 @@ just build-all        # Build every package into dist/
 ## Conventions
 
 - Monorepo managed with `uv` workspaces (`packages/*`) — all packages share one `.venv` at root
-- Packages are versioned in lockstep via commitizen (`[tool.commitizen]` in root `pyproject.toml`)
+- Packages are versioned and released on their own: `just release <package> <version>`, then `just tag <package>` on main; tag `<package>-v<version>`
 - Commits: conventional commits (`feat(filemap): ...`, `fix(filemap): ...`, `chore: ...`)
-- New packages must be added to `[tool.commitizen] version_files` and the uv workspace picks them up automatically via `packages/*`
+- New packages need no registration: the uv workspace picks them up via `packages/*`
 - Generated files: do NOT commit `*.png`, `*.svg`, `site/`, `dist/`, `.DS_Store`
 
 ## Key documentation — breadcrumb trail

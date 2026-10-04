@@ -140,38 +140,50 @@ Run `just check` before committing.
 
 ## Releasing (Maintainers)
 
-Packages are versioned in lockstep via [Commitizen](https://commitizen-tools.github.io/commitizen/)
-(see `[tool.commitizen]` in the root `pyproject.toml` — `version_files` lists every
-package's `pyproject.toml`). To cut a release:
+Each package is versioned and released on its own. A release is the git tag
+`<package>-v<version>`, e.g. `canvod-filemap-v0.2.0`, on `main`.
 
 ```bash
-just release 0.4.0   # runs tests, updates changelog, bumps all packages, tags
+just versions                         # current version of every package
+just changelog canvod-filemap         # changes since its last release
+just release canvod-filemap minor     # or major, patch, or e.g. 0.2.0
 ```
 
-`main` requires a PR (branch protection) — `git push origin main` directly
-will fail without an admin bypass, which is not how this project cuts
-releases. Instead:
+`just release` runs the package's tests and makes one commit that
+
+- sets the version in `packages/<package>/pyproject.toml` (and `uv.lock`),
+- writes `packages/<package>/CHANGELOG.md` from the commits that changed
+  `packages/<package>/` ([git-cliff](https://git-cliff.org), `cliff.toml`),
+- pins the package's install snippets in the READMEs and docs to the new tag.
+
+Commit messages become the changelog, so follow the commit convention above
+and mark breaking changes (`feat!:` or a `BREAKING CHANGE:` footer).
+
+`main` requires a PR (branch protection), so the tag is set after the merge:
 
 ```bash
-git tag -d v0.4.0                       # drop the local tag for now
-git checkout -b chore/release-v0.4.0
-git push -u origin chore/release-v0.4.0
-gh pr create --title "bump: version X.Y.Z → 0.4.0" --body "..."
+git checkout -b chore/release-canvod-filemap-0.2.0   # before just release
+just release canvod-filemap 0.2.0
+git push -u origin chore/release-canvod-filemap-0.2.0
+gh pr create --fill
 # once merged:
-git checkout main && git pull origin main
-git tag -a v0.4.0 -m "Release v0.4.0"
-git push origin v0.4.0
+git checkout main && git pull
+just tag canvod-filemap                # tags main and pushes the tag
 ```
 
-(Don't push the tag before the PR merges — a merge can produce a different
-commit SHA than what you tagged locally, orphaning the tag.)
+(Don't tag before the PR merges: a merge can produce a different commit SHA
+than the one you tagged, orphaning the tag.)
 
-canvodpy-extensions is deliberately GitHub-only — packages are still tightly
-coupled to canvodpy's internal API surface, so a PyPI release would imply a
-stability contract that isn't ready yet. Pushing a `v*.*.*` tag triggers
-[`release.yml`](.github/workflows/release.yml), which drafts a GitHub Release
-with generated notes; nothing is published to PyPI or TestPyPI. Users install
-packages via the git-subdirectory pattern (see each package's README).
+Pushing the tag runs [`release.yml`](.github/workflows/release.yml), which
+checks that the tag matches the package version and drafts a GitHub Release
+with the package's changes. Publish the draft by hand. Then update the pin in
+downstream `[tool.uv.sources]`, e.g. canvodpy's root `pyproject.toml`.
 
-When adding a new package under `packages/`, add its `pyproject.toml:version` to
-`version_files` in the root `pyproject.toml` so it stays in lockstep.
+canvodpy-extensions is deliberately GitHub-only. It is where logic for
+specific needs, workflows and data realities lives, looser than the canvodpy
+core, so a PyPI release would imply a stability contract it doesn't make.
+Nothing is published to PyPI or TestPyPI. Users install packages via the
+git-subdirectory pattern, pinned to a release tag (see each package's README).
+
+A new package under `packages/` needs nothing else: its first `just release`
+starts its changelog and tags.

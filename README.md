@@ -24,22 +24,23 @@ command).
 ## Installation
 
 Each package installs from this repo directly via a git-subdirectory source —
-there's no PyPI package to `uv add <name>` for. Pin to a tagged release, not
-the default branch, so installs stay reproducible. For `canvod-filemap`:
+there's no PyPI package to `uv add <name>` for. Each package is released on
+its own, under the tag `<package>-v<version>`. Pin to a release tag, not the
+default branch, so installs stay reproducible. For `canvod-filemap`:
 
 ```bash
 uv add "canvod-filemap @ git+https://github.com/nfb2021/canvodpy-extensions.git@v0.1.0#subdirectory=packages/canvod-filemap"
 ```
 
-The other packages follow the same pattern — just swap `canvod-filemap` for
-`canvod-airflow` or `canvod-adapters` in both the package name and the
-`subdirectory=` path. See each package's own README for extras (e.g.
+The other packages follow the same pattern: swap `canvod-filemap` for
+`canvod-airflow` or `canvod-adapters` in the package name and the
+`subdirectory=` path, and use that package's release tag. See each package's own README for extras (e.g.
 `canvod-airflow[airflow]`, `canvod-adapters[store]`).
 
-**Every new tagged release must bump the `@v0.1.0` ref above** (and the
-matching `tag =` pins in downstream consumers' `[tool.uv.sources]`, e.g.
-canvodpy's root `pyproject.toml`) — add this to the `just release` checklist
-so it doesn't silently regress to "pinned to whatever was last set."
+`just release` keeps the pins in this README and the docs on the latest
+release; downstream consumers' `[tool.uv.sources]` (e.g. canvodpy's root
+`pyproject.toml`) are updated by hand. See "Releasing" in
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Development Setup
 

@@ -1,5 +1,6 @@
 # GitHub Release Workflow
-# Automatically creates a draft release when a version tag is pushed
+# Drafts a GitHub Release when a package tag <package>-v<version> is pushed
+# (e.g. canvod-filemap-v0.2.0, canvod-adapters-v0.3.0rc1).
 # https://docs.github.com/en/actions/using-workflows
 
 name: Release
@@ -7,10 +8,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"           # Production: v0.1.0, v1.0.0
-      - "v*.*.*-beta.*"    # Beta: v0.1.0-beta.1
-      - "v*.*.*-alpha.*"   # Alpha: v0.1.0-alpha.1
-      - "v*.*.*-rc.*"      # Release candidate: v0.1.0-rc.1
+      - "canvod-*-v*"
 
 permissions: read-all
 
@@ -33,40 +31,58 @@ jobs:
       - name: Set up Python
         run: uv python install 3.14
 
-      - name: Generate release notes from git commits
+      - name: Read the package and version from the tag
+        id: tag
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          uvx git-changelog --release-notes > release-notes.md
-          echo "Generated release notes:"
-          cat release-notes.md
+          pkg="${TAG%-v*}"
+          version="${TAG##*-v}"
+          if [ ! -d "packages/${pkg}" ]; then
+            echo "::error::Tag ${TAG} names no package under packages/"
+            exit 1
+          fi
+          declared=$(uv version --package "${pkg}" --short --frozen)
+          if [ "${declared}" != "${version}" ]; then
+            echo "::error::Tag ${TAG} does not match packages/${pkg} version ${declared}"
+            exit 1
+          fi
+          echo "package=${pkg}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      - name: Extract version from tag
-        id: version
+      - name: Generate release notes from the package's commits
+        env:
+          PKG: ${{ steps.tag.outputs.package }}
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Version: $VERSION"
+          uvx git-cliff --include-path "packages/${PKG}/**" --tag-pattern "^${PKG}-v[0-9]" \
+            --latest --strip all > release-notes.md
+          cat release-notes.md
 
       - name: Create GitHub release (draft)
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          PKG: ${{ steps.tag.outputs.package }}
+          VERSION: ${{ steps.tag.outputs.version }}
         run: |
-          # Determine if this is a pre-release
-          if echo "${{ github.ref_name }}" | grep -qE '(alpha|beta|rc)'; then
+          # PEP 440 pre-releases: 0.2.0a1, 0.2.0b1, 0.2.0rc1
+          if echo "${VERSION}" | grep -qE '(a|b|rc)[0-9]+$'; then
             PRERELEASE="--prerelease"
           else
             PRERELEASE=""
           fi
-
-          gh release create ${{ github.ref_name }} \
-            --repo ${{ github.repository }} \
-            --title "canvodpy-extensions ${{ github.ref_name }}" \
+          gh release create "${TAG}" \
+            --repo "${{ github.repository }}" \
+            --title "${PKG} ${VERSION}" \
             --notes-file release-notes.md \
             --draft \
-            $PRERELEASE \
+            ${PRERELEASE} \
             --verify-tag
 
       - name: Summary
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
-          echo "Draft release created: ${{ github.ref_name }}"
+          echo "Draft release created: ${TAG}"
           echo "Review at: https://github.com/${{ github.repository }}/releases"
           echo "Publish the release manually when ready"

@@ -98,18 +98,7 @@ unresolved-import = "ignore"
 # Commitizen Configuration (Conventional Commits)
 # ============================================================================
 
+# Checks commit messages only (commit-msg hook). Versions, changelogs and tags
+# are per package: see "Release Management" in the Justfile.
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
-version_files = [
-    "packages/canvod-filemap/pyproject.toml:version",
-    "packages/canvod-airflow/pyproject.toml:version",
-    "packages/canvod-adapters/pyproject.toml:version",
-]
-tag_format = "v$version"
-# CHANGELOG.md is owned by `just changelog` (git-changelog), run as its own
-# step in `just release` before bump -- update_changelog_on_bump would have
-# cz try to regenerate it too, and changelog_incremental fails outright with
-# no prior tag to diff against (broke the very first release attempt).
-update_changelog_on_bump = false
-annotated_tag = true

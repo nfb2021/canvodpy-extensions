@@ -1,0 +1,42 @@
+# git-cliff configuration: one changelog per package.
+# The package (--include-path) and its tags (--tag-pattern) are passed by
+# `just changelog` / `just release` and by the release workflow.
+
+[changelog]
+header = """
+# Changelog
+
+All notable changes to this package are documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+and this package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n
+"""
+body = """
+{% if version %}\
+## [{{ version }}](https://github.com/nfb2021/canvodpy-extensions/releases/tag/{{ version }}) - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## Unreleased
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+{% for commit in commits %}
+- {% if commit.breaking %}**Breaking:** {% endif %}\
+{{ commit.message | split(pat="\n") | first | upper_first | trim }} \
+([{{ commit.id | truncate(length=7, end="") }}](https://github.com/nfb2021/canvodpy-extensions/commit/{{ commit.id }}))\
+{% endfor %}
+{% endfor %}\n
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+commit_parsers = [
+    { message = "^chore\\(release\\)", skip = true },
+    { message = "^feat", group = "<!-- 0 -->Features" },
+    { message = "^fix", group = "<!-- 1 -->Bug fixes" },
+    { message = "^perf", group = "<!-- 2 -->Performance" },
+    { message = "^refactor", group = "<!-- 3 -->Refactoring" },
+    { message = "^docs", group = "<!-- 4 -->Documentation" },
+    { message = "^(build|chore|ci|style|test)", skip = true },
+]
+sort_commits = "oldest"
