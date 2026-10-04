@@ -94,7 +94,7 @@ for the expected layout (`pyproject.toml`, `src/`, `tests/`, `README.md`).
 
 **Types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`
 
-**Scopes:** `filemap`, `airflow`, `deps`, `ci`, `docs`, `release`
+**Scopes:** `filemap`, `airflow`, `adapters`, `deps`, `ci`, `docs`, `release`
 
 **Examples:**
 ```bash
@@ -112,8 +112,14 @@ just --list                    # Show all commands
 just test                      # Run all tests
 just test-coverage             # With coverage report
 just check                     # Lint + format + type-check
-just build-all                 # Build all packages into dist/
 ```
+
+## Coding agents
+
+`AGENTS.md` (root and per package) holds the instructions for coding
+agents; the `CLAUDE.md` files import it. Task guides for agents are in
+`.claude/skills/`. Keep them correct when you change what they describe;
+`just check-agent-docs` checks that the paths and recipes they name exist.
 
 ## Pull Request Guidelines
 
