@@ -4,7 +4,8 @@ Reads ``AGENTS.md``, ``packages/*/AGENTS.md`` and
 ``.claude/skills/*/SKILL.md``. A path in backticks must exist relative to
 the repository root or to the file's directory; a ``just <recipe>`` must be
 a recipe of the root Justfile. ``canvodpy:<path>`` names a path in the
-canvodpy repository; it is checked if a canvodpy checkout is found
+canvodpy repository; it is checked at the canvodpy commit the workspace is
+locked at (``canvodpy_ref.reference``) if a canvodpy git checkout is found
 (``$CANVODPY_REPO``, or ``canvodpy`` next to this repository). Placeholders
 (``<...>``, ``PKG``, ``*``) and the paths listed below are not checked.
 """
@@ -16,6 +17,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+
+from canvodpy_ref import reference
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -64,14 +67,30 @@ def is_path(span: str) -> bool:
     return "/" in span or span.endswith(_PATH_SUFFIXES)
 
 
-def problems(file: Path, recipes: set[str], canvodpy: Path | None) -> list[str]:
+def git_object_exists(repo: Path, spec: str) -> bool:
+    """Whether the git object ``spec`` exists in ``repo``.
+
+    Git sets ``GIT_DIR`` and friends for hooks; they would point this call
+    at this repository instead of ``repo``.
+    """
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    cmd = ["git", "-C", str(repo), "cat-file", "-e", spec]
+    return subprocess.run(cmd, env=env, capture_output=True).returncode == 0
+
+
+def in_canvodpy(repo: Path, ref: str, path: str) -> bool:
+    """Whether ``path`` exists in the canvodpy checkout ``repo`` at ``ref``."""
+    return git_object_exists(repo, f"{ref}:{path.rstrip('/')}")
+
+
+def problems(file: Path, recipes: set[str], canvodpy: tuple[Path, str] | None) -> list[str]:
     text = file.read_text(encoding="utf-8")
     found = []
     for span in _CODE_SPAN.findall(_FENCE.sub("", text)):
         if span.startswith(CANVODPY):
             path = span.removeprefix(CANVODPY)
-            if canvodpy and not _PLACEHOLDER.search(path) and not (canvodpy / path).exists():
-                found.append(f"path `{path}` does not exist in canvodpy ({canvodpy})")
+            if canvodpy and not _PLACEHOLDER.search(path) and not in_canvodpy(*canvodpy, path):
+                found.append(f"path `{path}` does not exist in canvodpy at {canvodpy[1]}")
             continue
         if not is_path(span) or span.startswith(OTHER_REPO_PREFIXES) or span in USER_FILES:
             continue
@@ -85,9 +104,16 @@ def problems(file: Path, recipes: set[str], canvodpy: Path | None) -> list[str]:
 
 def main() -> int:
     recipes = just_recipes()
-    canvodpy = canvodpy_repo()
-    if canvodpy is None:
+    repo = canvodpy_repo()
+    canvodpy = None
+    if repo is None:
         print("No canvodpy checkout found: canvodpy paths not checked")
+    else:
+        ref = reference()
+        if not git_object_exists(repo, f"{ref}^{{commit}}"):
+            print(f"canvodpy {ref} is not in {repo}: fetch it (git -C {repo} fetch --tags origin)")
+            return 1
+        canvodpy = (repo, ref)
     failed = False
     for file in agent_files():
         for problem in problems(file, recipes, canvodpy):

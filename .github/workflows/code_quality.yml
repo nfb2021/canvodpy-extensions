@@ -78,6 +78,7 @@ jobs:
               with:
                   repository: nfb2021/canvodpy
                   path: canvodpy-checkout
+                  fetch-depth: 0 # the locked commit may be on any branch
                   persist-credentials: false
             - name: Check paths and recipes named in AGENTS.md and skills
               env:

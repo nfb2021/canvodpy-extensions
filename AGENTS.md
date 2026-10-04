@@ -171,4 +171,7 @@ change too.
   traps, where things live. Don't list functions or restate docstrings.
 - Every path and `just` recipe named in `AGENTS.md` and the guides must
   exist: `just check-agent-docs` verifies this (also a pre-commit hook).
+- Write paths in the canvodpy repository as `canvodpy:<path>`; they are
+  checked at the locked canvodpy commit when a canvodpy checkout is next to
+  this repository (or at `$CANVODPY_REPO`), and always in CI.
 - When a change makes a statement here wrong, fix it in the same PR.
